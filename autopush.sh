@@ -11,7 +11,7 @@ REPO_VISIBILITY="private" # << CHANGE THIS to "public" or "private"
 
 # Initial Git setup if not already a Git repo
 if [ ! -d ".git" ]; then
-  echo "Initializing Git for repo: $REPO_NAME"
+  echo "Initializing Git for repo: $REPO_NAME
   git init
   git branch -M $BRANCH_NAME
   git config user.name "$GITHUB_USERNAME"
