@@ -20,7 +20,7 @@ if [ ! -d ".git" ]; then
   git commit -m "Initial commit"
 
   # Check if gh is installed
-  if ! command -v gh &> /dev/null
+  if ! command -v gh &> /dev/nul
   then
       echo "GitHub CLI (gh) could not be found. Please install it to create repositories automatically."
       echo "Or create the repo '$REPO_NAME' manually on GitHub and connect it, then run this script again."
