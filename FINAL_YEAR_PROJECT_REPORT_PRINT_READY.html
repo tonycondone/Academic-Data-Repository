@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Data Repository - Final Year Project Report</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 25mm 20mm 20mm 25mm;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            text-align: justify;
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 210mm;
+            color: #000;
+            background: white;
+        }
+        
+        /* Title Page Styles */
+        .title-page {
+            text-align: center;
+            page-break-after: always;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .title-page h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+        
+        .title-page h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 30px 0;
+            text-transform: uppercase;
+        }
+        
+        .title-page h3 {
+            font-size: 12pt;
+            font-weight: normal;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+        
+        /* Chapter and Section Styles */
+        .chapter {
+            page-break-before: always;
+        }
+        
+        .chapter-title {
+            font-size: 14pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px 0 20px 0;
+            text-transform: uppercase;
+        }
+        
+        h2 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 20px 0 15px 0;
+        }
+        
+        h3 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+        }
+        
+        /* Paragraph Styles */
+        p {
+            margin: 0 0 12pt 0;
+            text-indent: 0.5in;
+        }
+        
+        .no-indent {
+            text-indent: 0;
+        }
+        
+        /* List Styles */
+        ul, ol {
+            margin: 0 0 12pt 0;
+            padding-left: 0.5in;
+        }
+        
+        li {
+            margin-bottom: 6pt;
+        }
+        
+        /* Table Styles */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            font-size: 11pt;
+        }
+        
+        table caption {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        /* Figure Styles */
+        .figure {
+            margin: 20px 0;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+        
+        .figure-placeholder {
+            border: 2px dashed #999;
+            padding: 40px;
+            margin: 10px auto;
+            max-width: 600px;
+            background-color: #f9f9f9;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .figure-caption {
+            font-size: 11pt;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        /* Table of Contents Styles */
+        .toc {
+            page-break-after: always;
+        }
+        
+        .toc-entry {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8pt;
+        }
+        
+        .toc-dots {
+            flex-grow: 1;
+            border-bottom: 1px dotted #000;
+            margin: 0 5px;
+            height: 1em;
+        }
+        
+        /* References Style */
+        .references p {
+            text-indent: -0.5in;
+            padding-left: 0.5in;
+        }
+        
+        /* Signature Lines */
+        .signature-line {
+            margin-top: 30px;
+            border-bottom: 1px solid #000;
+            width: 300px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <!-- TITLE PAGE -->
+    <div class="title-page">
+        <h1>TAKORADI TECHNICAL UNIVERSITY</h1>
+        <h1>COMPUTER SCIENCE DEPARTMENT</h1>
+        
+        <div style="margin: 60px 0;">
+            <h2>ACADEMIC DATA REPOSITORY: A WEB-BASED PLATFORM FOR DATASET SHARING AND COLLABORATION</h2>
+        </div>
+        
+        <h3>A PROJECT REPORT SUBMITTED TO THE DEPARTMENT OF COMPUTER SCIENCE IN PARTIAL FULFILLMENT OF THE REQUIREMENTS FOR THE AWARD OF BACHELOR OF TECHNOLOGY IN COMPUTER SCIENCE</h3>
+        
+        <div style="margin: 40px 0;">
+            <strong>BY</strong><br><br>
+            Alexander Essien - BC/ICT/21/075<br>
+            Anthony Ofori Owusu - BC/ICT/21/076<br>
+            McCarthy Mawuko Kwesi Defor - BC/ICT/21/045<br>
+            Broni John Eyra Kobby - BC/ICT/21/081<br>
+            Sylvia Esi Amoah - BC/ICT/21/157
+        </div>
+        
+        <div style="margin: 40px 0;">
+            <strong>SUPERVISOR</strong><br>
+            Dr. Richard Essah<br>
+            Senior Lecturer<br>
+            TTU Computer Science Department
+        </div>
+        
+        <div style="margin-top: 60px;">
+            <strong>DECEMBER 2024</strong>
+        </div>
+    </div>
+    
+    <!-- DECLARATION OF AUTHORSHIP -->
+    <div class="page-break">
+        <h1 class="chapter-title">DECLARATION OF AUTHORSHIP</h1>
+        
+        <p class="no-indent">We solemnly declare that the dissertation submitted is the result of our independent research work under the guidance of our supervisor. In addition to the content cited in the article, this article does not contain any of the works published or written by any other individual or group, nor does it contain materials used to obtain degrees or certificates from Takoradi Technical University or other educational institutions. The individuals that have made important contributions to this study have been clearly identified in the text. We are fully aware that we are obligated to undertake the legal consequences of this statement.</p>
+        
+        <div style="margin-top: 50px;">
+            <p><strong>Names of Candidates:</strong></p>
+            <p>Alexander Essien <span class="signature-line"></span></p>
+            <p>Anthony Ofori Owusu <span class="signature-line"></span></p>
+            <p>McCarthy Mawuko Kwesi Defor <span class="signature-line"></span></p>
+            <p>Broni John Eyra Kobby <span class="signature-line"></span></p>
+            <p>Sylvia Esi Amoah <span class="signature-line"></span></p>
+            
+            <p style="margin-top: 30px;">Signatures: <span class="signature-line"></span></p>
+            <p>Date: <span class="signature-line"></span></p>
+        </div>
+    </div>
+    
+    <!-- DEDICATION -->
+    <div class="page-break">
+        <h1 class="chapter-title">DEDICATION</h1>
+        
+        <p>We dedicate this project to our families, mentors, and all those who stood by us as we navigated our educational journey. Their unwavering support and guidance helped us stay focused and persevere throughout this academic endeavor. We also honor the memories of those we have lost during this time. Their influence continues to inspire us with determination and purpose in our pursuit of knowledge. This work stands as a testament to their belief in our potential and will serve as a foundation for future students to build upon and expand the groundwork we have established through this project.</p>
+    </div>
+    
+    <!-- ACKNOWLEDGMENT -->
+    <div class="page-break">
+        <h1 class="chapter-title">ACKNOWLEDGMENT</h1>
+        
+        <p>We express our deepest gratitude to Almighty God for granting us the strength, wisdom, and perseverance needed to complete this project successfully. His divine guidance has been our constant source of inspiration throughout this academic journey.</p>
+        
+        <p>We extend our heartfelt appreciation to our supervisor, Dr. Richard Essah, whose expertise, patience, and constructive feedback have been instrumental in shaping this project. The continuous support and academic guidance provided have been invaluable in achieving our research objectives.</p>
+        
+        <p>We are profoundly grateful to all lecturers in the Department of Computer Science at Takoradi Technical University. Their dedication to imparting knowledge and fostering critical thinking has significantly contributed to our academic development and the successful completion of this project.</p>
+        
+        <p>Special recognition goes to the University of Ghana Computing Systems (UGCS) for providing an enriching internship opportunity. This practical experience enhanced our technical skills and provided real-world insights that significantly influenced the development of this platform.</p>
+        
+        <p>We acknowledge our classmates and colleagues in the Computer Science program for their collaborative spirit, intellectual discussions, and mutual support throughout our academic journey. The exchange of ideas and shared learning experiences have been invaluable.</p>
+        
+        <p>Finally, we express our sincere gratitude to our families for their unconditional love, financial support, and understanding during the demanding periods of this project. Their encouragement and belief in our abilities have been the foundation of our success.</p>
+    </div>
+    
+    <!-- ABSTRACT -->
+    <div class="page-break">
+        <h1 class="chapter-title">ABSTRACT</h1>
+        
+        <p>The exponential growth of data-driven research and technological advancement has created an unprecedented demand for accessible, well-organized datasets across educational and research institutions. This project presents the development of a comprehensive web-based platform designed specifically for dataset sharing and collaboration within academic environments. The Academic Data Repository addresses the critical gap in localized, user-friendly data management systems by providing students, educators, and researchers with an intuitive interface for uploading, exploring, reviewing, and downloading diverse datasets.</p>
+        
+        <p>The platform implements a robust authentication system with role-based access control, enabling differentiated functionality for administrators, faculty members, and students. Key features include multi-format dataset support (CSV, Excel, JSON, PDF), automatic Excel-to-CSV conversion, real-time file preview capabilities, and a sophisticated version control system that allows collaborative dataset management. The system incorporates a community-driven review and rating mechanism to ensure dataset quality and relevance, while advanced search and filtering capabilities facilitate efficient dataset discovery.</p>
+        
+        <p>Built using modern web technologies including PHP 8.0+, MySQL 8.0+, HTML5, CSS3, and JavaScript ES6+, the platform emphasizes security, scalability, and user experience. Security measures include bcrypt password hashing, CSRF protection, SQL injection prevention through prepared statements, and comprehensive input validation. The responsive design ensures seamless functionality across desktop and mobile devices, making the platform accessible to users regardless of their preferred device.</p>
+        
+        <p>The implementation successfully demonstrates the integration of multiple complex systems including file management, version control, user authentication, and collaborative features within a single cohesive platform. Performance testing indicates efficient handling of concurrent users and large datasets, while security audits confirm robust protection against common web vulnerabilities. The platform's modular architecture facilitates future enhancements and integration with external systems.</p>
+        
+        <p>This project contributes to the advancement of academic data management by providing an open-source, locally deployable solution that addresses the specific needs of educational institutions in developing regions. By fostering data sharing and collaboration, the platform promotes research transparency, educational resource accessibility, and collaborative learning environments. The successful deployment of this system demonstrates the feasibility of developing sophisticated web applications that combine technical excellence with practical utility in academic settings.</p>
+        
+        <p style="margin-top: 20px;"><strong>Keywords:</strong> Dataset Management, Web Application, Collaborative Platform, Academic Repository, Version Control, PHP Development, Database Systems, User Authentication</p>
+    </div>
+    
+    <!-- TABLE OF CONTENTS -->
+    <div class="toc">
+        <h1 class="chapter-title">TABLE OF CONTENTS</h1>
+        
+        <div class="toc-entry">
+            <span><strong>DECLARATION OF AUTHORSHIP</strong></span>
+            <span class="toc-dots"></span>
+            <span>ii</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span><strong>DEDICATION</strong></span>
+            <span class="toc-dots"></span>
+            <span>iii</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span><strong>ACKNOWLEDGMENT</strong></span>
+            <span class="toc-dots"></span>
+            <span>iv</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span><strong>ABSTRACT</strong></span>
+            <span class="toc-dots"></span>
+            <span>v</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span><strong>TABLE OF CONTENTS</strong></span>
+            <span class="toc-dots"></span>
+            <span>vi</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span><strong>LIST OF FIGURES</strong></span>
+            <span class="toc-dots"></span>
+            <span>viii</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span><strong>LIST OF TABLES</strong></span>
+            <span class="toc-dots"></span>
+            <span>ix</span>
+        </div>
+        
+        <br>
+        
+        <div class="toc-entry">
+            <span><strong>CHAPTER ONE - INTRODUCTION</strong></span>
+            <span class="toc-dots"></span>
+            <span>1</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>1.1 Background of the Study</span>
+            <span class="toc-dots"></span>
+            <span>1</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>1.2 Statement of the Problem</span>
+            <span class="toc-dots"></span>
+            <span>3</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>1.3 Purpose of the Research</span>
+            <span class="toc-dots"></span>
+            <span>4</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.3.3 Frontend Implementation</span>
+            <span class="toc-dots"></span>
+            <span>58</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.3.4 Security Implementation</span>
+            <span class="toc-dots"></span>
+            <span>60</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.4 Feature Implementation</span>
+            <span class="toc-dots"></span>
+            <span>62</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.4.1 User Authentication System</span>
+            <span class="toc-dots"></span>
+            <span>62</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.4.2 File Upload and Management</span>
+            <span class="toc-dots"></span>
+            <span>64</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.4.3 Search and Filter Implementation</span>
+            <span class="toc-dots"></span>
+            <span>66</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.4.4 Version Control System</span>
+            <span class="toc-dots"></span>
+            <span>68</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.5 Testing</span>
+            <span class="toc-dots"></span>
+            <span>70</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.5.1 Unit Testing</span>
+            <span class="toc-dots"></span>
+            <span>70</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.5.2 Integration Testing</span>
+            <span class="toc-dots"></span>
+            <span>71</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.5.3 System Testing</span>
+            <span class="toc-dots"></span>
+            <span>72</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.5.4 User Acceptance Testing</span>
+            <span class="toc-dots"></span>
+            <span>73</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.6 Results and System Output</span>
+            <span class="toc-dots"></span>
+            <span>74</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.6.1 Homepage Interface</span>
+            <span class="toc-dots"></span>
+            <span>75</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.6.2 User Registration and Login</span>
+            <span class="toc-dots"></span>
+            <span>76</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.6.3 Dataset Repository View</span>
+            <span class="toc-dots"></span>
+            <span>79</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.6.4 File Upload Interface</span>
+            <span class="toc-dots"></span>
+            <span>81</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.6.5 Dataset Preview Feature</span>
+            <span class="toc-dots"></span>
+            <span>83</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.6.6 Search and Filter Results</span>
+            <span class="toc-dots"></span>
+            <span>85</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.6.7 Version Control Interface</span>
+            <span class="toc-dots"></span>
+            <span>87</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.6.8 Admin Dashboard</span>
+            <span class="toc-dots"></span>
+            <span>89</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.6.9 Project Collaboration Features</span>
+            <span class="toc-dots"></span>
+            <span>91</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.7 Performance Analysis</span>
+            <span class="toc-dots"></span>
+            <span>92</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.7.1 Response Time Analysis</span>
+            <span class="toc-dots"></span>
+            <span>92</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.7.2 Database Performance</span>
+            <span class="toc-dots"></span>
+            <span>94</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.7.3 Scalability Testing</span>
+            <span class="toc-dots"></span>
+            <span>95</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.8 Security Testing Results</span>
+            <span class="toc-dots"></span>
+            <span>96</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.8.1 Vulnerability Assessment</span>
+            <span class="toc-dots"></span>
+            <span>96</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.8.2 Penetration Testing</span>
+            <span class="toc-dots"></span>
+            <span>97</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.9 User Feedback and Evaluation</span>
+            <span class="toc-dots"></span>
+            <span>98</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.9.1 Usability Testing Results</span>
+            <span class="toc-dots"></span>
+            <span>98</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.9.2 User Satisfaction Survey</span>
+            <span class="toc-dots"></span>
+            <span>101</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.10 Discussion of Results</span>
+            <span class="toc-dots"></span>
+            <span>103</span>
+        </div>
+        
+        <br>
+        
+        <div class="toc-entry">
+            <span><strong>CHAPTER FIVE - CONCLUSION AND RECOMMENDATIONS</strong></span>
+            <span class="toc-dots"></span>
+            <span>105</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>5.1 Introduction</span>
+            <span class="toc-dots"></span>
+            <span>105</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>5.2 Summary of Key Findings</span>
+            <span class="toc-dots"></span>
+            <span>105</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>5.2.1 Technical Achievements</span>
+            <span class="toc-dots"></span>
+            <span>105</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>5.2.2 Functional Accomplishments</span>
+            <span class="toc-dots"></span>
+            <span>106</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>5.2.3 User Experience Outcomes</span>
+            <span class="toc-dots"></span>
+            <span>107</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>5.3 Conclusion</span>
+            <span class="toc-dots"></span>
+            <span>108</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>5.3.1 Project Success Evaluation</span>
+            <span class="toc-dots"></span>
+            <span>108</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>5.3.2 Objectives Achievement</span>
+            <span class="toc-dots"></span>
+            <span>109</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>5.3.3 Research Questions Answered</span>
+            <span class="toc-dots"></span>
+            <span>110</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>5.4 Recommendations</span>
+            <span class="toc-dots"></span>
+            <span>111</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>5.4.1 For Implementation</span>
+            <span class="toc-dots"></span>
+            <span>111</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>5.4.2 For Future Development</span>
+            <span class="toc-dots"></span>
+            <span>112</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>5.4.3 For Academic Institutions</span>
+            <span class="toc-dots"></span>
+            <span>113</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>5.5 Contribution to Knowledge</span>
+            <span class="toc-dots"></span>
+            <span>114</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>5.6 Final Remarks</span>
+            <span class="toc-dots"></span>
+            <span>115</span>
+        </div>
+        
+        <br>
+        
+        <div class="toc-entry">
+            <span><strong>REFERENCES</strong></span>
+            <span class="toc-dots"></span>
+            <span>116</span>
+        </div>
+        
+        <br>
+        
+        <div class="toc-entry">
+            <span><strong>APPENDICES</strong></span>
+            <span class="toc-dots"></span>
+            <span>120</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Appendix A: Installation Guide</span>
+            <span class="toc-dots"></span>
+            <span>120</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Appendix B: User Manual</span>
+            <span class="toc-dots"></span>
+            <span>125</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Appendix C: Database Schema SQL</span>
+            <span class="toc-dots"></span>
+            <span>130</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Appendix D: Sample Code Snippets</span>
+            <span class="toc-dots"></span>
+            <span>135</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Appendix E: Test Cases and Results</span>
+            <span class="toc-dots"></span>
+            <span>140</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Appendix F: Project Timeline (Gantt Chart)</span>
+            <span class="toc-dots"></span>
+            <span>145</span>
+        </div>
+    </div>
+    
+    <!-- LIST OF FIGURES -->
+    <div class="page-break">
+        <h1 class="chapter-title">LIST OF FIGURES</h1>
+        
+        <div class="toc-entry">
+            <span>Figure 3.1: System Architecture Diagram</span>
+            <span class="toc-dots"></span>
+            <span>28</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 3.2: Entity Relationship Diagram</span>
+            <span class="toc-dots"></span>
+            <span>30</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 3.3: Use Case Diagram for System Actors</span>
+            <span class="toc-dots"></span>
+            <span>37</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 3.4: Data Flow Diagram - Level 0</span>
+            <span class="toc-dots"></span>
+            <span>39</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 3.5: Data Flow Diagram - Level 1</span>
+            <span class="toc-dots"></span>
+            <span>40</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 3.6: Activity Diagram for File Upload Process</span>
+            <span class="toc-dots"></span>
+            <span>41</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 3.7: Sequence Diagram for User Authentication</span>
+            <span class="toc-dots"></span>
+            <span>43</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 3.8: Version Control System Architecture</span>
+            <span class="toc-dots"></span>
+            <span>48</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.1: Homepage Interface Screenshot</span>
+            <span class="toc-dots"></span>
+            <span>75</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.2: User Registration Form</span>
+            <span class="toc-dots"></span>
+            <span>76</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.3: Login Interface</span>
+            <span class="toc-dots"></span>
+            <span>77</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.4: Dataset Repository Main View</span>
+            <span class="toc-dots"></span>
+            <span>79</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.5: File Upload Interface</span>
+            <span class="toc-dots"></span>
+            <span>81</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.6: CSV File Preview Feature</span>
+            <span class="toc-dots"></span>
+            <span>83</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.7: Advanced Search Results</span>
+            <span class="toc-dots"></span>
+            <span>85</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.8: Version History Interface</span>
+            <span class="toc-dots"></span>
+            <span>87</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.9: Admin Dashboard Overview</span>
+            <span class="toc-dots"></span>
+            <span>89</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.10: Project Collaboration Interface</span>
+            <span class="toc-dots"></span>
+            <span>91</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.11: Performance Metrics Graph</span>
+            <span class="toc-dots"></span>
+            <span>93</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Figure 4.12: Security Test Results Summary</span>
+            <span class="toc-dots"></span>
+            <span>97</span>
+        </div>
+    </div>
+    
+    <!-- LIST OF TABLES -->
+    <div class="page-break">
+        <h1 class="chapter-title">LIST OF TABLES</h1>
+        
+        <div class="toc-entry">
+            <span>Table 2.1: Comparison of Existing Dataset Platforms</span>
+            <span class="toc-dots"></span>
+            <span>18</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 3.1: Functional Requirements Summary</span>
+            <span class="toc-dots"></span>
+            <span>25</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 3.2: Non-Functional Requirements</span>
+            <span class="toc-dots"></span>
+            <span>26</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 3.3: Database Tables Description</span>
+            <span class="toc-dots"></span>
+            <span>32</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 3.4: User Roles and Permissions</span>
+            <span class="toc-dots"></span>
+            <span>45</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 4.1: Hardware Requirements Specification</span>
+            <span class="toc-dots"></span>
+            <span>52</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 4.2: Software Stack Components</span>
+            <span class="toc-dots"></span>
+            <span>53</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 4.3: Unit Test Results Summary</span>
+            <span class="toc-dots"></span>
+            <span>70</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 4.4: Integration Test Cases</span>
+            <span class="toc-dots"></span>
+            <span>71</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 4.5: System Performance Metrics</span>
+            <span class="toc-dots"></span>
+            <span>92</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 4.6: Database Query Performance Results</span>
+            <span class="toc-dots"></span>
+            <span>94</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 4.7: Security Test Results</span>
+            <span class="toc-dots"></span>
+            <span>96</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>Table 4.8: User Satisfaction Survey Results</span>
+            <span class="toc-dots"></span>
+            <span>101</span>
+        </div>
+    </div>
+            <span class="toc-dots"></span>
+            <span>4</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>1.3.2 Specific Objectives</span>
+            <span class="toc-dots"></span>
+            <span>4</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>1.4 Research Questions</span>
+            <span class="toc-dots"></span>
+            <span>5</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>1.5 Significance of the Research</span>
+            <span class="toc-dots"></span>
+            <span>6</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>1.6 Scope and Delimitation</span>
+            <span class="toc-dots"></span>
+            <span>7</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>1.7 Limitations of the Study</span>
+            <span class="toc-dots"></span>
+            <span>8</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>1.8 Organization of the Study</span>
+            <span class="toc-dots"></span>
+            <span>9</span>
+        </div>
+        
+        <br>
+        
+        <div class="toc-entry">
+            <span><strong>CHAPTER TWO - LITERATURE REVIEW</strong></span>
+            <span class="toc-dots"></span>
+            <span>10</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>2.1 Introduction</span>
+            <span class="toc-dots"></span>
+            <span>10</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>2.2 Theoretical Framework</span>
+            <span class="toc-dots"></span>
+            <span>10</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>2.2.1 Data Management Systems</span>
+            <span class="toc-dots"></span>
+            <span>10</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>2.2.2 Web Application Architecture</span>
+            <span class="toc-dots"></span>
+            <span>11</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>2.2.3 Collaborative Systems Theory</span>
+            <span class="toc-dots"></span>
+            <span>12</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>2.3 Review of Related Systems</span>
+            <span class="toc-dots"></span>
+            <span>13</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>2.3.1 Kaggle Platform Analysis</span>
+            <span class="toc-dots"></span>
+            <span>13</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>2.3.2 UCI Machine Learning Repository</span>
+            <span class="toc-dots"></span>
+            <span>15</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>2.3.3 Google Dataset Search</span>
+            <span class="toc-dots"></span>
+            <span>16</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>2.4 Comparative Analysis of Existing Solutions</span>
+            <span class="toc-dots"></span>
+            <span>17</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>2.5 Identified Gaps in Current Systems</span>
+            <span class="toc-dots"></span>
+            <span>19</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>2.6 Proposed System Advantages</span>
+            <span class="toc-dots"></span>
+            <span>20</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>2.7 Summary of Literature Review</span>
+            <span class="toc-dots"></span>
+            <span>21</span>
+        </div>
+        
+        <br>
+        
+        <div class="toc-entry">
+            <span><strong>CHAPTER THREE - SYSTEM DESIGN AND METHODOLOGY</strong></span>
+            <span class="toc-dots"></span>
+            <span>22</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.1 Introduction</span>
+            <span class="toc-dots"></span>
+            <span>22</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.2 System Development Methodology</span>
+            <span class="toc-dots"></span>
+            <span>22</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.2.1 Agile Development Approach</span>
+            <span class="toc-dots"></span>
+            <span>22</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.2.2 Iterative Design Process</span>
+            <span class="toc-dots"></span>
+            <span>23</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.3 Requirements Analysis</span>
+            <span class="toc-dots"></span>
+            <span>24</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.3.1 Functional Requirements</span>
+            <span class="toc-dots"></span>
+            <span>24</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.3.2 Non-Functional Requirements</span>
+            <span class="toc-dots"></span>
+            <span>26</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.4 System Architecture</span>
+            <span class="toc-dots"></span>
+            <span>27</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.4.1 Three-Tier Architecture</span>
+            <span class="toc-dots"></span>
+            <span>27</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.4.2 Component Interaction</span>
+            <span class="toc-dots"></span>
+            <span>28</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.5 Database Design</span>
+            <span class="toc-dots"></span>
+            <span>29</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.5.1 Entity Relationship Diagram</span>
+            <span class="toc-dots"></span>
+            <span>29</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.5.2 Database Schema</span>
+            <span class="toc-dots"></span>
+            <span>31</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.5.3 Data Normalization</span>
+            <span class="toc-dots"></span>
+            <span>33</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.6 User Interface Design</span>
+            <span class="toc-dots"></span>
+            <span>34</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.6.1 Design Principles</span>
+            <span class="toc-dots"></span>
+            <span>34</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.6.2 Wireframes and Mockups</span>
+            <span class="toc-dots"></span>
+            <span>35</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.7 Use Case Modeling</span>
+            <span class="toc-dots"></span>
+            <span>36</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.7.1 Actor Identification</span>
+            <span class="toc-dots"></span>
+            <span>36</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.7.2 Use Case Diagrams</span>
+            <span class="toc-dots"></span>
+            <span>37</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.8 System Flow and Process Design</span>
+            <span class="toc-dots"></span>
+            <span>38</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.8.1 Data Flow Diagrams</span>
+            <span class="toc-dots"></span>
+            <span>38</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.8.2 Activity Diagrams</span>
+            <span class="toc-dots"></span>
+            <span>40</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.8.3 Sequence Diagrams</span>
+            <span class="toc-dots"></span>
+            <span>42</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.9 Security Design Considerations</span>
+            <span class="toc-dots"></span>
+            <span>44</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.9.1 Authentication Mechanism</span>
+            <span class="toc-dots"></span>
+            <span>44</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.9.2 Authorization Framework</span>
+            <span class="toc-dots"></span>
+            <span>45</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.9.3 Data Protection Strategies</span>
+            <span class="toc-dots"></span>
+            <span>46</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.10 File Management System Design</span>
+            <span class="toc-dots"></span>
+            <span>47</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.10.1 File Storage Architecture</span>
+            <span class="toc-dots"></span>
+            <span>47</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.10.2 Version Control Implementation</span>
+            <span class="toc-dots"></span>
+            <span>48</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>3.11 Algorithm Design</span>
+            <span class="toc-dots"></span>
+            <span>49</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.11.1 Search Algorithm</span>
+            <span class="toc-dots"></span>
+            <span>49</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.11.2 File Conversion Algorithm</span>
+            <span class="toc-dots"></span>
+            <span>50</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>3.11.3 Rating Calculation Algorithm</span>
+            <span class="toc-dots"></span>
+            <span>51</span>
+        </div>
+        
+        <br>
+        
+        <div class="toc-entry">
+            <span><strong>CHAPTER FOUR - IMPLEMENTATION AND RESULTS</strong></span>
+            <span class="toc-dots"></span>
+            <span>52</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.1 Introduction</span>
+            <span class="toc-dots"></span>
+            <span>52</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.2 Development Environment Setup</span>
+            <span class="toc-dots"></span>
+            <span>52</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.2.1 Hardware Requirements</span>
+            <span class="toc-dots"></span>
+            <span>52</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.2.2 Software Requirements</span>
+            <span class="toc-dots"></span>
+            <span>53</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.2.3 Development Tools</span>
+            <span class="toc-dots"></span>
+            <span>53</span>
+        </div>
+        
+        <div class="toc-entry">
+            <span>4.3 System Implementation</span>
+            <span class="toc-dots"></span>
+            <span>54</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.3.1 Database Implementation</span>
+            <span class="toc-dots"></span>
+            <span>54</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>4.3.2 Backend Development</span>
+            <span class="toc-dots"></span>
+            <span>56</span>
+        </div>
+        
+        <div class="toc-entry" style="padding-left: 20px;">
+            <span>

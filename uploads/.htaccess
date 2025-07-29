@@ -1,0 +1,7 @@
+Options -Indexes
+Order deny,allow
+Deny from all
+<Files ~ "\.(csv|json|txt|xlsx|xls)$">
+    Order allow,deny
+    Allow from all
+</Files>

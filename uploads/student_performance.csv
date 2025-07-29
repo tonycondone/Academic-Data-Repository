@@ -1,0 +1,21 @@
+student_id,name,age,gender,math_score,english_score,science_score,attendance_rate,grade_level,semester
+1001,Alice Johnson,16,Female,85,92,78,95.5,10,Fall 2024
+1002,Bob Smith,17,Male,78,85,82,88.2,11,Fall 2024
+1003,Carol Davis,16,Female,92,88,95,97.1,10,Fall 2024
+1004,David Wilson,18,Male,76,79,73,82.4,12,Fall 2024
+1005,Emma Brown,17,Female,89,94,87,93.8,11,Fall 2024
+1006,Frank Miller,16,Male,82,76,84,90.3,10,Fall 2024
+1007,Grace Lee,17,Female,95,91,92,96.7,11,Fall 2024
+1008,Henry Taylor,18,Male,73,82,79,85.1,12,Fall 2024
+1009,Ivy Chen,16,Female,88,89,91,94.2,10,Fall 2024
+1010,Jack Anderson,17,Male,81,77,80,87.6,11,Fall 2024
+1011,Kate Thompson,16,Female,90,93,86,95.9,10,Fall 2024
+1012,Liam Garcia,18,Male,79,84,78,83.7,12,Fall 2024
+1013,Mia Rodriguez,17,Female,87,90,89,92.4,11,Fall 2024
+1014,Noah Martinez,16,Male,84,81,85,89.8,10,Fall 2024
+1015,Olivia Hernandez,17,Female,91,87,93,96.3,11,Fall 2024
+1016,Paul Lopez,18,Male,77,83,76,84.5,12,Fall 2024
+1017,Quinn White,16,Female,86,88,84,91.7,10,Fall 2024
+1018,Ryan Clark,17,Male,80,85,81,88.9,11,Fall 2024
+1019,Sophia Lewis,16,Female,93,95,90,97.8,10,Fall 2024
+1020,Tyler Walker,18,Male,75,78,77,81.2,12,Fall 2024

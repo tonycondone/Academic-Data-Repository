@@ -1,0 +1,21 @@
+post_id,platform,username,post_text,sentiment,confidence_score,likes,shares,comments,timestamp,topic_category
+1001,Twitter,@techuser123,"Just got the new iPhone and it's amazing! The camera quality is incredible.",positive,0.92,245,67,23,2024-01-01 10:30:00,Technology
+1002,Facebook,john_doe,"Traffic is terrible today. Been stuck for 2 hours!",negative,0.87,12,3,8,2024-01-01 08:15:00,Transportation
+1003,Instagram,foodie_sarah,"This restaurant has the best pasta in town! Highly recommend.",positive,0.95,189,45,31,2024-01-01 19:45:00,Food
+1004,Twitter,@news_reader,"The new policy changes are confusing and poorly explained.",negative,0.78,56,89,142,2024-01-01 14:20:00,Politics
+1005,LinkedIn,career_coach,"Great networking event today. Met so many inspiring professionals!",positive,0.91,78,23,15,2024-01-01 17:30:00,Business
+1006,Reddit,gamer_pro,"This game update broke everything. Developers need to fix this ASAP.",negative,0.85,234,12,67,2024-01-01 21:10:00,Gaming
+1007,Twitter,@weather_fan,"Beautiful sunny day! Perfect for a picnic in the park.",positive,0.88,34,8,5,2024-01-01 12:00:00,Weather
+1008,Facebook,movie_buff,"Just watched the latest Marvel movie. It was okay, nothing special.",neutral,0.65,23,4,12,2024-01-01 22:30:00,Entertainment
+1009,Instagram,fitness_guru,"Completed my first marathon today! Feeling accomplished and exhausted.",positive,0.93,456,123,89,2024-01-01 16:45:00,Sports
+1010,Twitter,@student_life,"Finals week is stressing me out. Too much to study, too little time.",negative,0.82,67,34,28,2024-01-01 23:15:00,Education
+1011,LinkedIn,startup_founder,"Excited to announce our Series A funding round! Thank you to all investors.",positive,0.96,234,156,45,2024-01-02 09:00:00,Business
+1012,Facebook,parent_blogger,"Kids are back to school. House is quiet but I miss them already.",neutral,0.72,45,12,23,2024-01-02 08:30:00,Family
+1013,Twitter,@eco_warrior,"Climate change is real and we need to act now! Every small action counts.",positive,0.89,178,234,67,2024-01-02 11:20:00,Environment
+1014,Instagram,travel_addict,"Airport delays are ruining my vacation plans. So frustrated right now.",negative,0.84,89,23,34,2024-01-02 06:45:00,Travel
+1015,Reddit,book_lover,"Just finished reading this amazing novel. Couldn't put it down!",positive,0.90,123,45,56,2024-01-02 20:15:00,Literature
+1016,Twitter,@health_tips,"Remember to drink water and take breaks during your workday.",neutral,0.68,56,78,12,2024-01-02 14:30:00,Health
+1017,Facebook,music_fan,"Concert was absolutely incredible! Best live performance I've ever seen.",positive,0.97,345,89,78,2024-01-02 23:45:00,Music
+1018,LinkedIn,job_seeker,"Still looking for opportunities in data science. The job market is tough.",negative,0.76,34,12,23,2024-01-02 10:15:00,Career
+1019,Instagram,chef_mike,"Trying out a new recipe today. Hope it turns out as good as it looks!",neutral,0.71,67,23,15,2024-01-02 18:20:00,Food
+1020,Twitter,@sports_fan,"What a game! That last-minute goal was absolutely spectacular!",positive,0.94,234,156,89,2024-01-02 21:30:00,Sports

@@ -1,0 +1,31 @@
+sensor_id,device_type,location,timestamp,temperature_celsius,humidity_percent,motion_detected,light_level_lux,battery_level_percent,signal_strength_dbm
+IOT001,Temperature Sensor,Living Room,2024-01-01 00:00:00,22.5,45.2,false,250,-,-65
+IOT002,Motion Detector,Front Door,2024-01-01 00:00:00,21.8,48.7,false,180,85,-58
+IOT003,Smart Thermostat,Bedroom,2024-01-01 00:00:00,20.1,52.3,false,120,-,-62
+IOT004,Humidity Sensor,Bathroom,2024-01-01 00:00:00,24.3,78.9,false,95,92,-55
+IOT005,Light Sensor,Kitchen,2024-01-01 00:00:00,23.7,41.6,false,420,-,-60
+IOT006,Security Camera,Garage,2024-01-01 00:00:00,18.9,55.4,false,85,78,-68
+IOT007,Smoke Detector,Hallway,2024-01-01 00:00:00,22.1,46.8,false,150,95,-52
+IOT008,Door Sensor,Back Door,2024-01-01 00:00:00,19.5,51.2,false,75,88,-64
+IOT009,Window Sensor,Office,2024-01-01 00:00:00,21.3,43.9,false,320,91,-59
+IOT010,Air Quality Monitor,Living Room,2024-01-01 00:00:00,22.8,44.1,false,280,-,-61
+IOT001,Temperature Sensor,Living Room,2024-01-01 00:15:00,22.7,45.5,false,245,-,-65
+IOT002,Motion Detector,Front Door,2024-01-01 00:15:00,21.9,48.9,true,185,84,-58
+IOT003,Smart Thermostat,Bedroom,2024-01-01 00:15:00,20.3,52.1,false,115,-,-62
+IOT004,Humidity Sensor,Bathroom,2024-01-01 00:15:00,24.1,79.2,false,92,92,-55
+IOT005,Light Sensor,Kitchen,2024-01-01 00:15:00,23.9,41.8,false,415,-,-60
+IOT006,Security Camera,Garage,2024-01-01 00:15:00,18.7,55.7,false,82,78,-68
+IOT007,Smoke Detector,Hallway,2024-01-01 00:15:00,22.3,47.1,false,148,95,-52
+IOT008,Door Sensor,Back Door,2024-01-01 00:15:00,19.7,51.5,false,73,88,-64
+IOT009,Window Sensor,Office,2024-01-01 00:15:00,21.5,44.2,false,315,91,-59
+IOT010,Air Quality Monitor,Living Room,2024-01-01 00:15:00,23.0,44.4,false,275,-,-61
+IOT001,Temperature Sensor,Living Room,2024-01-01 00:30:00,22.9,45.8,false,240,-,-65
+IOT002,Motion Detector,Front Door,2024-01-01 00:30:00,22.1,49.1,false,180,84,-58
+IOT003,Smart Thermostat,Bedroom,2024-01-01 00:30:00,20.5,51.9,false,110,-,-62
+IOT004,Humidity Sensor,Bathroom,2024-01-01 00:30:00,23.9,79.5,false,89,91,-55
+IOT005,Light Sensor,Kitchen,2024-01-01 00:30:00,24.1,42.0,false,410,-,-60
+IOT006,Security Camera,Garage,2024-01-01 00:30:00,18.5,56.0,false,79,77,-68
+IOT007,Smoke Detector,Hallway,2024-01-01 00:30:00,22.5,47.4,false,145,95,-52
+IOT008,Door Sensor,Back Door,2024-01-01 00:30:00,19.9,51.8,false,70,87,-64
+IOT009,Window Sensor,Office,2024-01-01 00:30:00,21.7,44.5,false,310,90,-59
+IOT010,Air Quality Monitor,Living Room,2024-01-01 00:30:00,23.2,44.7,false,270,-,-61
