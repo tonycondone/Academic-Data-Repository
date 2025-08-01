@@ -169,11 +169,11 @@ include 'includes/header.php';
             <i class="bi bi-inbox display-1 text-muted"></i>
             <h5 class="mt-3">No datasets found</h5>
             <p class="text-muted">Try adjusting your search criteria or browse all categories.</p>
-            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+          <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
             <a href="admin.php" class="btn btn-primary mt-3">
               <i class="bi bi-plus-circle me-2"></i>Upload Dataset
             </a>
-            <?php endif; ?>
+          <?php endif; ?>
           </div>
         <?php else: ?>
           <div class="row">
@@ -229,10 +229,10 @@ include 'includes/header.php';
                       <a href="preview.php?id=<?php echo $dataset['id']; ?>" class="btn btn-sm btn-primary">
                         <i class="bi bi-eye me-1"></i>Preview
                       </a>
-                      <a href="download.php?id=<?php echo $dataset['id']; ?>" class="btn btn-sm btn-outline-primary">
+                      <a href="#" class="btn btn-sm btn-outline-primary download-button" data-dataset-id="<?php echo $dataset['id']; ?>">
                         <i class="bi bi-download me-1"></i>Download
                       </a>
-                      <a href="review.php?id=<?php echo $dataset['id']; ?>" class="btn btn-sm btn-outline-secondary">
+                      <a href="#" class="btn btn-sm btn-outline-secondary review-button" data-dataset-id="<?php echo $dataset['id']; ?>">
                         <i class="bi bi-star me-1"></i>Rate
                       </a>
                     <?php else: ?>
@@ -370,6 +370,65 @@ include 'includes/header.php';
   opacity: 0.3;
 }
 </style>
+
+<script>
+// Live download count update
+document.querySelectorAll('.download-button').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const datasetId = this.dataset.datasetId;
+        const downloadLink = this;
+        
+        // Get current download count
+        fetch(`download.php?action=get_download_count&id=${datasetId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update download count display
+                    const downloadCount = data.download_count;
+                    const parentCard = this.closest('.dataset-card');
+                    parentCard.querySelector('.bi-download').parentElement.textContent = '';
+                    parentCard.querySelector('.bi-download').parentElement.innerHTML = `
+                        <i class="bi bi-download me-1"></i>${downloadCount} downloads
+                    `;
+                    
+                    // Show success message
+                    const message = 'Download successful!';
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-success alert-dismissible fade show';
+                    alert.innerHTML = `
+                        <i class="bi bi-check-circle me-2"></i>
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    parentCard.insertBefore(alert, parentCard.querySelector('.card-body').firstChild);
+                    
+                    // Auto dismiss after 3 seconds
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 3000);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update download count');
+            });
+    });
+});
+
+// Live review count update
+document.querySelectorAll('.review-button').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const datasetId = this.dataset.datasetId;
+        
+        // Open review modal or redirect to review page
+        window.location.href = `review.php?id=${datasetId}`;
+    });
+});
+</script>
 
 <?php
 // Include footer

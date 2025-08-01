@@ -180,7 +180,12 @@ The following pages still need template updates (lower priority):
 php -S localhost:8000
 
 # Test URLs:
-http://localhost:8000/index.php       # Home with live stats
+http://localhost:8000/index.php       # Home with live statsatistics update in real-time
+- Test file upload functionality
+- Check download tracking
+- Validate user registration/login
+
+### 3.
 http://localhost:8000/login.php       # Login form
 http://localhost:8000/register.php    # Registration
 http://localhost:8000/browse.php      # Dataset browsing
@@ -188,12 +193,7 @@ http://localhost:8000/admin.php       # Admin panel (requires admin login)
 ```
 
 ### 2. **Database Testing**
-- Verify statistics update in real-time
-- Test file upload functionality
-- Check download tracking
-- Validate user registration/login
-
-### 3. **Responsive Testing**
+- Verify st **Responsive Testing**
 - Test on mobile devices
 - Verify navigation collapse
 - Check form layouts

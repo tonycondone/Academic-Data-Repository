@@ -1,13 +1,22 @@
 <?php
-require_once 'includes/session.php';
-require_once 'includes/csrf.php';
-require_once 'includes/excel_converter.php';
+session_start();
 
-// Initialize session
-startSecureSession();
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
 
-// Require admin access
-requireAdmin();
+// Check if user is admin
+if ($_SESSION['role'] !== 'admin') {
+    header('Location: index.php');
+    exit;
+}
+
+// Include Excel converter
+if (file_exists('includes/excel_converter.php')) {
+    require_once 'includes/excel_converter.php';
+}
 
 // Database connection
 $host = 'localhost';
@@ -26,9 +35,7 @@ $message = '';
 $messageType = '';
 
 // Handle dataset upload
-if ($_POST && isset($_POST['upload_dataset'])) {
-    checkCSRFToken();
-    
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_dataset'])) {
     $title = trim($_POST['title'] ?? '');
     $category = trim($_POST['category'] ?? '');
     $description = trim($_POST['description'] ?? '');
@@ -41,14 +48,14 @@ if ($_POST && isset($_POST['upload_dataset'])) {
         $messageType = 'danger';
     } else {
         $file = $_FILES['dataset_file'];
-        $allowedTypes = ['csv', 'xlsx', 'xls', 'json', 'txt'];
+        $allowedTypes = ['csv', 'xlsx', 'xls', 'json', 'txt', 'pdf'];
         $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         
         if (!in_array($fileExtension, $allowedTypes)) {
-            $message = 'Only CSV, Excel, JSON, and TXT files are allowed.';
+            $message = 'Only CSV, Excel, JSON, TXT, and PDF files are allowed.';
             $messageType = 'danger';
-        } elseif ($file['size'] > 10 * 1024 * 1024) { // 10MB limit
-            $message = 'File size must be less than 10MB.';
+        } elseif ($file['size'] > 50 * 1024 * 1024) { // 50MB limit
+            $message = 'File size must be less than 50MB.';
             $messageType = 'danger';
         } else {
             // Create uploads directory if it doesn't exist
@@ -66,7 +73,7 @@ if ($_POST && isset($_POST['upload_dataset'])) {
                 $finalPath = $filePath;
                 $finalFilename = $filename;
                 
-                if (in_array($fileExtension, ['xlsx', 'xls'])) {
+                if (in_array($fileExtension, ['xlsx', 'xls']) && class_exists('ExcelConverter')) {
                     // Use ExcelConverter for proper conversion
                     $csvFilename = pathinfo($filename, PATHINFO_FILENAME) . '.csv';
                     $csvPath = $uploadDir . $csvFilename;
@@ -84,7 +91,7 @@ if ($_POST && isset($_POST['upload_dataset'])) {
                         }
                     } else {
                         // Conversion failed, use original Excel file
-                        $message = 'Excel conversion failed: ' . $conversionResult['message'] . '. Original Excel file saved.';
+                        $message = 'Excel conversion note: ' . $conversionResult['message'] . '. Original Excel file saved.';
                         $messageType = 'warning';
                     }
                 }
@@ -102,8 +109,10 @@ if ($_POST && isset($_POST['upload_dataset'])) {
                         $_SESSION['user_id']
                     ]);
                     
-                    $message = 'Dataset uploaded successfully!';
-                    $messageType = 'success';
+                    if (empty($message)) {
+                        $message = 'Dataset uploaded successfully!';
+                        $messageType = 'success';
+                    }
                     
                     // Clear form
                     $_POST = [];
@@ -120,7 +129,7 @@ if ($_POST && isset($_POST['upload_dataset'])) {
 }
 
 // Get upload statistics
-$stmt = $pdo->query("SELECT COUNT(*) as total_datasets FROM datasets");
+$stmt = $pdo->query("SELECT COUNT(*) as total_datasets FROM datasets WHERE is_active = 1");
 $totalDatasets = $stmt->fetch(PDO::FETCH_ASSOC)['total_datasets'];
 
 $stmt = $pdo->query("SELECT COUNT(*) as total_users FROM users WHERE role = 'user'");
@@ -129,377 +138,552 @@ $totalUsers = $stmt->fetch(PDO::FETCH_ASSOC)['total_users'];
 $stmt = $pdo->query("SELECT SUM(download_count) as total_downloads FROM datasets");
 $totalDownloads = $stmt->fetch(PDO::FETCH_ASSOC)['total_downloads'] ?? 0;
 
-// Page specific variables
-$page_title = 'Upload Dataset';
-$page_description = 'Upload a new dataset to the platform';
-$body_class = 'upload-page';
-
-// Include header
-include 'includes/header.php';
+// Get user's upload count
+$stmt = $pdo->prepare("SELECT COUNT(*) as my_uploads FROM datasets WHERE uploaded_by = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$myUploads = $stmt->fetch(PDO::FETCH_ASSOC)['my_uploads'];
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Dataset - Dataset Sharing Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet">
+    <style>
+        /* Custom styles for upload page */
+        .upload-hero {
+            background: linear-gradient(135deg, #2487ce 0%, #2487ce 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
 
-<!-- Page Title -->
-<section class="page-title section">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12">
-        <h2>Upload Dataset</h2>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item"><a href="admin.php">Admin</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Upload</li>
-          </ol>
-        </nav>
-      </div>
-    </div>
-  </div>
-</section>
+        .upload-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-<!-- Upload Section -->
-<section class="upload section">
-  <div class="container">
-    <div class="row">
-      <!-- Upload Form -->
-      <div class="col-lg-8">
-        <div class="upload-form">
-          <h4>
-            <i class="bi bi-upload me-2"></i>Upload New Dataset
-          </h4>
-          
-          <?php if ($message): ?>
-            <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show">
-              <i class="bi bi-<?php echo $messageType === 'success' ? 'check-circle' : 'exclamation-triangle'; ?> me-2"></i>
-              <?php echo htmlspecialchars($message); ?>
-              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-          <?php endif; ?>
-          
-          <form method="POST" enctype="multipart/form-data">
-            <?php echo csrfTokenField(); ?>
+        .upload-box {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 3px dashed #e0e0e0;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #2487ce;
+            background: #f0f8ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            box-shadow: 0 5px 20px rgba(36, 135, 206, 0.2);
+        }
+
+        .upload-icon {
+            font-size: 80px;
+            color: #2487ce;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .upload-button {
+            background: #2487ce;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(36, 135, 206, 0.3);
+        }
+
+        .upload-button:hover {
+            background: #1a6fb5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(36, 135, 206, 0.4);
+        }
+
+        .upload-button i {
+            font-size: 20px;
+        }
+
+        .file-info-display {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .file-info-display.active {
+            display: flex;
+        }
+
+        .file-icon {
+            font-size: 40px;
+            color: #2487ce;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .remove-file {
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .remove-file:hover {
+            transform: scale(1.2);
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .stats-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2487ce;
+            margin-bottom: 10px;
+        }
+
+        .stats-label {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .guidelines-box {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .guidelines-box h5 {
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .guideline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .guideline-item i {
+            color: #28a745;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .supported-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .type-badge {
+            background: #e9ecef;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #495057;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .type-badge i {
+            color: #2487ce;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .upload-box {
+                padding: 20px;
+            }
             
-            <div class="mb-3">
-              <label for="title" class="form-label">Dataset Title *</label>
-              <input type="text" class="form-control" id="title" name="title" 
-                     value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>" required>
-              <div class="form-text">Choose a descriptive title for your dataset</div>
-            </div>
+            .upload-area {
+                padding: 40px 15px;
+            }
             
-            <div class="mb-3">
-              <label for="category" class="form-label">Category *</label>
-              <select class="form-select" id="category" name="category" required>
-                <option value="">Select Category</option>
-                <option value="Machine Learning" <?php echo ($_POST['category'] ?? '') === 'Machine Learning' ? 'selected' : ''; ?>>Machine Learning</option>
-                <option value="Business" <?php echo ($_POST['category'] ?? '') === 'Business' ? 'selected' : ''; ?>>Business</option>
-                <option value="Health" <?php echo ($_POST['category'] ?? '') === 'Health' ? 'selected' : ''; ?>>Health</option>
-                <option value="Education" <?php echo ($_POST['category'] ?? '') === 'Education' ? 'selected' : ''; ?>>Education</option>
-                <option value="Social Sciences" <?php echo ($_POST['category'] ?? '') === 'Social Sciences' ? 'selected' : ''; ?>>Social Sciences</option>
-                <option value="Environment" <?php echo ($_POST['category'] ?? '') === 'Environment' ? 'selected' : ''; ?>>Environment</option>
-                <option value="Technology" <?php echo ($_POST['category'] ?? '') === 'Technology' ? 'selected' : ''; ?>>Technology</option>
-                <option value="Finance" <?php echo ($_POST['category'] ?? '') === 'Finance' ? 'selected' : ''; ?>>Finance</option>
-              </select>
-            </div>
+            .upload-icon {
+                font-size: 60px;
+            }
             
-            <div class="mb-3">
-              <label for="description" class="form-label">Description</label>
-              <textarea class="form-control" id="description" name="description" rows="4" 
-                        placeholder="Provide a detailed description of your dataset..."><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
-              <div class="form-text">Describe what the dataset contains and its potential uses</div>
+            .upload-button {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.php">
+                <i class="bi bi-database me-2"></i>Dataset Platform
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="browse.php">Browse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin.php">Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="upload.php">Upload</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout.php">Logout</a>
+                    </li>
+                </ul>
             </div>
-            
-            <div class="mb-4">
-              <label for="dataset_file" class="form-label">Dataset File *</label>
-              <div class="file-drop-zone" onclick="document.getElementById('dataset_file').click()">
-                <i class="bi bi-cloud-upload display-4 text-muted mb-3"></i>
-                <p class="mb-2">Click to select file or drag and drop</p>
-                <small class="text-muted">Supported formats: CSV, Excel (.xlsx, .xls), JSON, TXT (Max: 10MB)</small>
-              </div>
-              <input type="file" class="form-control d-none" id="dataset_file" name="dataset_file" 
-                     accept=".csv,.xlsx,.xls,.json,.txt" required>
-              <div class="file-info" id="file-info"></div>
-            </div>
-            
-            <div class="upload-actions">
-              <button type="submit" name="upload_dataset" class="btn btn-primary">
-                <i class="bi bi-upload me-2"></i>Upload Dataset
-              </button>
-              <a href="admin.php" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-2"></i>Back to Admin
-              </a>
-            </div>
-          </form>
         </div>
-      </div>
-      
-      <!-- Upload Info -->
-      <div class="col-lg-4">
-        <!-- Platform Stats -->
-        <div class="upload-stats">
-          <h5>Platform Statistics</h5>
-          <div class="stat-item">
-            <div class="stat-number"><?php echo $totalDatasets; ?></div>
-            <div class="stat-label">Total Datasets</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number"><?php echo $totalUsers; ?></div>
-            <div class="stat-label">Active Users</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number"><?php echo $totalDownloads; ?></div>
-            <div class="stat-label">Total Downloads</div>
-          </div>
+    </nav>
+
+    <!-- Upload Hero Section -->
+    <section class="upload-hero">
+        <div class="container">
+            <div class="text-center">
+                <h1 class="display-4 fw-bold mb-3">Upload Dataset</h1>
+                <p class="lead">Share your datasets with the community</p>
+            </div>
         </div>
+    </section>
 
-        <!-- Upload Guidelines -->
-        <div class="upload-guidelines">
-          <h5>Upload Guidelines</h5>
-          <ul class="guidelines-list">
-            <li><i class="bi bi-check-circle text-success me-2"></i>Use descriptive, clear titles</li>
-            <li><i class="bi bi-check-circle text-success me-2"></i>Select appropriate categories</li>
-            <li><i class="bi bi-check-circle text-success me-2"></i>Provide detailed descriptions</li>
-            <li><i class="bi bi-check-circle text-success me-2"></i>Ensure data quality and accuracy</li>
-            <li><i class="bi bi-check-circle text-success me-2"></i>Remove sensitive information</li>
-            <li><i class="bi bi-check-circle text-success me-2"></i>Use standard file formats</li>
-          </ul>
-        </div>
-
-        <!-- Supported Formats -->
-        <div class="supported-formats">
-          <h5>Supported Formats</h5>
-          <div class="format-list">
-            <div class="format-item">
-              <i class="bi bi-file-earmark-spreadsheet text-success"></i>
-              <span>CSV Files</span>
-            </div>
-            <div class="format-item">
-              <i class="bi bi-file-earmark-excel text-success"></i>
-              <span>Excel Files (.xlsx, .xls)</span>
-            </div>
-            <div class="format-item">
-              <i class="bi bi-file-earmark-code text-success"></i>
-              <span>JSON Files</span>
-            </div>
-            <div class="format-item">
-              <i class="bi bi-file-earmark-text text-success"></i>
-              <span>Text Files</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<style>
-/* Upload page specific styles */
-.page-title {
-  background: #f8f9fa;
-  padding: 40px 0;
-  margin-bottom: 40px;
-}
-
-.page-title h2 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.breadcrumb {
-  background: none;
-  padding: 0;
-  margin: 0;
-}
-
-.upload-form {
-  background: white;
-  border-radius: 15px;
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.upload-form h4 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.file-drop-zone {
-  border: 2px dashed #cbd5e1;
-  border-radius: 10px;
-  padding: 3rem 2rem;
-  text-align: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  background: #f8f9fa;
-}
-
-.file-drop-zone:hover,
-.file-drop-zone.dragover {
-  border-color: #2563eb;
-  background: #eff6ff;
-}
-
-.file-info {
-  display: none;
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.upload-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.upload-stats {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.upload-stats h5 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.stat-item {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.stat-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2563eb;
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.upload-guidelines {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.upload-guidelines h5 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.guidelines-list {
-  list-style: none;
-  padding: 0;
-}
-
-.guidelines-list li {
-  padding: 0.5rem 0;
-  display: flex;
-  align-items: center;
-}
-
-.supported-formats {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.supported-formats h5 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.format-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.format-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.format-item i {
-  font-size: 1.25rem;
-}
-
-@media (max-width: 768px) {
-  .upload-actions {
-    flex-direction: column;
-  }
-}
-</style>
-
-<script>
-// File upload handling
-const fileInput = document.getElementById('dataset_file');
-const fileInfo = document.getElementById('file-info');
-const dropZone = document.querySelector('.file-drop-zone');
-
-fileInput.addEventListener('change', function() {
-    if (this.files.length > 0) {
-        const file = this.files[0];
-        const fileSize = (file.size / 1024 / 1024).toFixed(2);
-        
-        fileInfo.innerHTML = `
-            <div class="d-flex align-items-center">
-                <i class="bi bi-file-earmark me-2 text-primary"></i>
-                <div>
-                    <strong>Selected File:</strong> ${file.name}<br>
-                    <small class="text-muted">Size: ${fileSize} MB | Type: ${file.type || 'Unknown'}</small>
+    <!-- Main Upload Section -->
+    <section class="py-5">
+        <div class="container upload-container">
+            <?php if ($message): ?>
+                <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show" role="alert">
+                    <i class="bi bi-<?php echo $messageType === 'success' ? 'check-circle' : ($messageType === 'warning' ? 'exclamation-triangle' : 'x-circle'); ?>-fill me-2"></i>
+                    <?php echo htmlspecialchars($message); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+            
+            <div class="row">
+                <!-- Upload Form -->
+                <div class="col-lg-8 mb-4">
+                    <div class="upload-box">
+                        <h3 class="mb-4">
+                            <i class="bi bi-cloud-upload me-2"></i>Upload New Dataset
+                        </h3>
+                        
+                        <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                            <!-- Title -->
+                            <div class="mb-4">
+                                <label for="title" class="form-label fw-semibold">Dataset Title *</label>
+                                <input type="text" class="form-control form-control-lg" id="title" name="title" 
+                                       placeholder="Enter a descriptive title for your dataset"
+                                       value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>" required>
+                            </div>
+                            
+                            <!-- Category -->
+                            <div class="mb-4">
+                                <label for="category" class="form-label fw-semibold">Category *</label>
+                                <select class="form-select form-select-lg" id="category" name="category" required>
+                                    <option value="">Select a category...</option>
+                                    <option value="Machine Learning" <?php echo ($_POST['category'] ?? '') === 'Machine Learning' ? 'selected' : ''; ?>>Machine Learning</option>
+                                    <option value="Business" <?php echo ($_POST['category'] ?? '') === 'Business' ? 'selected' : ''; ?>>Business</option>
+                                    <option value="Health" <?php echo ($_POST['category'] ?? '') === 'Health' ? 'selected' : ''; ?>>Health</option>
+                                    <option value="Education" <?php echo ($_POST['category'] ?? '') === 'Education' ? 'selected' : ''; ?>>Education</option>
+                                    <option value="Social Sciences" <?php echo ($_POST['category'] ?? '') === 'Social Sciences' ? 'selected' : ''; ?>>Social Sciences</option>
+                                    <option value="Environment" <?php echo ($_POST['category'] ?? '') === 'Environment' ? 'selected' : ''; ?>>Environment</option>
+                                    <option value="Technology" <?php echo ($_POST['category'] ?? '') === 'Technology' ? 'selected' : ''; ?>>Technology</option>
+                                    <option value="Finance" <?php echo ($_POST['category'] ?? '') === 'Finance' ? 'selected' : ''; ?>>Finance</option>
+                                </select>
+                            </div>
+                            
+                            <!-- File Upload Area -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Select File *</label>
+                                <div class="upload-area" id="uploadArea">
+                                    <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                                    <h4 class="mb-3">Drag & Drop your file here</h4>
+                                    <p class="text-muted mb-4">or</p>
+                                    <button type="button" class="upload-button" onclick="document.getElementById('fileInput').click()">
+                                        <i class="bi bi-folder2-open"></i>
+                                        Browse Files
+                                    </button>
+                                    <input type="file" id="fileInput" name="dataset_file" class="d-none" required 
+                                           accept=".csv,.xlsx,.xls,.json,.txt,.pdf">
+                                    
+                                    <div class="supported-types">
+                                        <span class="type-badge"><i class="bi bi-file-earmark-spreadsheet"></i> CSV</span>
+                                        <span class="type-badge"><i class="bi bi-file-earmark-excel"></i> Excel</span>
+                                        <span class="type-badge"><i class="bi bi-file-earmark-code"></i> JSON</span>
+                                        <span class="type-badge"><i class="bi bi-file-earmark-text"></i> TXT</span>
+                                        <span class="type-badge"><i class="bi bi-file-earmark-pdf"></i> PDF</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="file-info-display" id="fileInfo">
+                                    <i class="bi bi-file-earmark file-icon"></i>
+                                    <div class="file-details">
+                                        <div class="file-name" id="fileName"></div>
+                                        <div class="file-size" id="fileSize"></div>
+                                    </div>
+                                    <i class="bi bi-x-circle remove-file" id="removeFile"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <label for="description" class="form-label fw-semibold">Description (Optional)</label>
+                                <textarea class="form-control" id="description" name="description" rows="4" 
+                                          placeholder="Provide a detailed description of your dataset..."><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                                <button type="submit" name="upload_dataset" class="btn btn-primary btn-lg px-5">
+                                    <i class="bi bi-upload me-2"></i>Upload Dataset
+                                </button>
+                                <a href="admin.php" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>Back to Admin
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Statistics -->
+                    <div class="row mb-4">
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="stats-number"><?php echo $totalDatasets; ?></div>
+                                <div class="stats-label">Total Datasets</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="stats-number"><?php echo $myUploads; ?></div>
+                                <div class="stats-label">My Uploads</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="stats-number"><?php echo $totalUsers; ?></div>
+                                <div class="stats-label">Active Users</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stats-card">
+                                <div class="stats-number"><?php echo number_format($totalDownloads); ?></div>
+                                <div class="stats-label">Downloads</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Guidelines -->
+                    <div class="guidelines-box">
+                        <h5><i class="bi bi-info-circle me-2"></i>Upload Guidelines</h5>
+                        <div class="guideline-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Maximum file size: 50MB</span>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Use descriptive titles</span>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Select appropriate category</span>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Provide detailed descriptions</span>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Ensure data quality</span>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Remove sensitive information</span>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Excel files auto-convert to CSV</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        `;
-        fileInfo.style.display = 'block';
-    }
-});
+        </div>
+    </section>
 
-// Drag and drop
-dropZone.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    this.classList.add('dragover');
-});
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Dataset Sharing Platform. All rights reserved.</p>
+        </div>
+    </footer>
 
-dropZone.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    this.classList.remove('dragover');
-});
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // File upload handling
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFile = document.getElementById('removeFile');
 
-dropZone.addEventListener('drop', function(e) {
-    e.preventDefault();
-    this.classList.remove('dragover');
-    
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        fileInput.files = files;
-        fileInput.dispatchEvent(new Event('change'));
-    }
-});
-</script>
+        // File input change
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                displayFileInfo(this.files[0]);
+            }
+        });
 
-<?php
-// Include footer
-include 'includes/footer.php';
-?>
+        // Remove file
+        removeFile.addEventListener('click', function() {
+            fileInput.value = '';
+            fileInfo.classList.remove('active');
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                displayFileInfo(files[0]);
+            }
+        });
+
+        // Display file information
+        function displayFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.add('active');
+            
+            // Update file icon based on type
+            const fileIcon = document.querySelector('.file-icon');
+            const extension = file.name.split('.').pop().toLowerCase();
+            
+            if (['xlsx', 'xls', 'csv'].includes(extension)) {
+                fileIcon.className = 'bi bi-file-earmark-spreadsheet file-icon';
+            } else if (['pdf'].includes(extension)) {
+                fileIcon.className = 'bi bi-file-earmark-pdf file-icon';
+            } else if (['json'].includes(extension)) {
+                fileIcon.className = 'bi bi-file-earmark-code file-icon';
+            } else if (['txt'].includes(extension)) {
+                fileIcon.className = 'bi bi-file-earmark-text file-icon';
+            } else {
+                fileIcon.className = 'bi bi-file-earmark file-icon';
+            }
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Form validation
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            const title = document.getElementById('title').value;
+            const category = document.getElementById('category').value;
+            const file = fileInput.files[0];
+            
+            if (!title || !category || !file) {
+                e.preventDefault();
+                alert('Please fill in all required fields and select a file');
+                return;
+            }
+            
+            // Check file size (50MB)
+            if (file.size > 50 * 1024 * 1024) {
+                e.preventDefault();
+                alert('File size exceeds maximum allowed size of 50MB');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

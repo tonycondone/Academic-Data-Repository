@@ -223,10 +223,6 @@ include 'includes/header.php';
             <a href="admin.php" class="btn btn-primary w-100 mb-2">
               <i class="bi bi-upload me-2"></i>Admin Upload
             </a>
-            <?php else: ?>
-            <a href="upload.php" class="btn btn-primary w-100 mb-2">
-              <i class="bi bi-upload me-2"></i>Upload Dataset
-            </a>
             <?php endif; ?>
             <a href="profile.php" class="btn btn-outline-secondary w-100">
               <i class="bi bi-person me-2"></i>Edit Profile

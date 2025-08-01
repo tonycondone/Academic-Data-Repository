@@ -3,7 +3,63 @@
 ## 📁 Your Complete Report Files
 
 Your complete report is split across these markdown files:
-1. `Final_Year_Project_Report_Complete.md` - Chapter 1 and preliminaries
+1. `# PowerShell script to combine markdown files into one
+$outputFile = "C:\Users\Admin\final report\Combined_Report.md"
+
+# Define the files in order
+$files = @(
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete.md",
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete_Part2.md",
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete_Part3.md",
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete_Part4.md",
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete_Part5.md"
+)
+
+# Clear output file if it exists
+if (Test-Path $outputFile) {
+    Clear-Content $outputFile
+}
+
+# Combine files
+foreach ($file in $files) {
+    if (Test-Path $file) {
+        Get-Content $file | Add-Content $outputFile
+        # Add a separator between files
+        "`n`n" | Add-Content $outputFile
+    } else {
+        Write-Host "Warning: File not found - $file"
+    }
+}
+
+Write-Host "Files combined successfully into $outputFile"# PowerShell script to combine markdown files into one
+$outputFile = "C:\Users\Admin\final report\Combined_Report.md"
+
+# Define the files in order
+$files = @(
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete.md",
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete_Part2.md",
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete_Part3.md",
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete_Part4.md",
+    "C:\Users\Admin\final report\Final_Year_Project_Report_Complete_Part5.md"
+)
+
+# Clear output file if it exists
+if (Test-Path $outputFile) {
+    Clear-Content $outputFile
+}
+
+# Combine files
+foreach ($file in $files) {
+    if (Test-Path $file) {
+        Get-Content $file | Add-Content $outputFile
+        # Add a separator between files
+        "`n`n" | Add-Content $outputFile
+    } else {
+        Write-Host "Warning: File not found - $file"
+    }
+}
+
+Write-Host "Files combined successfully into $outputFile"` - Chapter 1 and preliminaries
 2. `Final_Year_Project_Report_Complete_Part2.md` - Chapter 2
 3. `Final_Year_Project_Report_Complete_Part3.md` - Chapter 3
 4. `Final_Year_Project_Report_Complete_Part4.md` - Chapter 4
@@ -185,7 +241,7 @@ Before submitting:
 - [ ] All chapters complete
 - [ ] References properly formatted
 - [ ] File saved as PDF
-- [ ] File named appropriately (e.g., FinalYearProject_AcademicDataRepository_2024.pdf)
+- [ ] File named appropriately (e.g., FinalYearProject_AcademicDataRepository_2025.pdf)
 
 ## 🆘 If You Need Help
 

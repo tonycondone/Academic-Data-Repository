@@ -16,6 +16,7 @@ if ($_POST) {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
+    $role = $_POST['role'] ?? 'user'; // default to user
     
     // Validation
     if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
@@ -26,6 +27,8 @@ if ($_POST) {
         $error = 'Password must be at least 6 characters long.';
     } elseif ($password !== $confirm_password) {
         $error = 'Passwords do not match.';
+    } elseif (!in_array($role, ['user', 'admin'])) {
+        $error = 'Invalid role selected.';
     } else {
         // Database connection
         $host = 'localhost';
@@ -46,8 +49,8 @@ if ($_POST) {
             } else {
                 // Insert new user
                 $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, created_at) VALUES (?, ?, ?, 'user', NOW())");
-                $stmt->execute([$name, $email, $hashed_password]);
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, created_at) VALUES (?, ?, ?, ?, NOW())");
+                $stmt->execute([$name, $email, $hashed_password, $role]);
                 
                 $success = 'Registration successful! You can now login.';
                 
@@ -134,6 +137,15 @@ include 'includes/header.php';
                 <label for="confirm_password" class="form-label">Confirm Password</label>
                 <input type="password" name="confirm_password" class="form-control" id="confirm_password" required />
                 <div class="invalid-feedback">Please confirm your password!</div>
+              </div>
+
+              <div class="col-12">
+                <label for="role" class="form-label">Register as</label>
+                <select name="role" id="role" class="form-select" required>
+                  <option value="user" <?php echo (($_POST['role'] ?? '') === 'user') ? 'selected' : ''; ?>>User</option>
+                  <option value="admin" <?php echo (($_POST['role'] ?? '') === 'admin') ? 'selected' : ''; ?>>Admin</option>
+                </select>
+                <div class="invalid-feedback">Please select a role!</div>
               </div>
 
               <div class="col-12">

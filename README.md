@@ -43,10 +43,16 @@ The platform includes basic Excel to CSV conversion functionality:
 ## Installation & Setup
 
 ### Prerequisites
-- PHP 8.0 or higher
+- PHP 8.0 or higher (tested with PHP 8.4.8)
 - MySQL 8.0 or higher
-- Apache/Nginx web server
+- Web server (Apache/Nginx or PHP built-in server)
 - Composer (optional, for future dependencies)
+
+### New Features in Version 1.0.0
+- Role-based login (Admin/User) with separate dashboards
+- Live download count updates after each download
+- Review count and rating updates with duplicate prevention
+- Upload restrictions for non-admin users
 
 ### Step 1: Download & Extract
 ```bash
@@ -123,6 +129,10 @@ add_header X-XSS-Protection "1; mode=block";
 ```
 
 ### Step 5: Configuration
+
+**Note:** After installation, ensure you:
+- Delete the `install.php` file for security
+- Test the application using `php -S localhost:8000` for the built-in server
 1. Update `config/config.php` with your settings:
    - Database credentials
    - Base URL
@@ -141,6 +151,13 @@ The system comes with a default admin account:
 - **Password**: `admin123`
 
 **Important**: Change the default admin password immediately after installation!
+
+## Usage Notes
+
+- **Admins** can upload datasets (upload.php is restricted to admin role)
+- **Users** can only download/view datasets and submit reviews
+- Download counts update live on dataset cards after download
+- Reviews are prevented for duplicate submissions by the same user
 
 ## Quick Start Guide - How to Run the Platform
 
@@ -263,17 +280,18 @@ If you prefer automated setup:
 4. **Manage Files**: Upload, organize, and version control data files
 5. **Monitor Activity**: Track project progress and member contributions
 
-### For Students
-1. **Create Account**: Register with student role
-2. **Join Projects**: Accept invitations from faculty
-3. **Collaborate**: Upload files, contribute to data analysis
-4. **Track Changes**: View version history and project updates
+### For Users
+1. **Create Account**: Register with user/admin role
+2. **Browse Datasets**: View and filter datasets by category/rating
+3. **Download Datasets**: Download files with live count updates
+4. **Submit Reviews**: Rate datasets with duplicate prevention
 
 ### For Administrators
 1. **User Management**: Oversee all users and their roles
 2. **System Monitoring**: Track platform usage and performance
 3. **Project Oversight**: Monitor all projects across the institution
 4. **Security Management**: Manage system security and permissions
+5. **Dataset Uploads**: Admins can upload datasets via admin dashboard
 
 ## File Structure
 
@@ -305,7 +323,8 @@ academic-collaboration-platform/
 - **SQL Injection Prevention**: Prepared statements
 - **File Upload Security**: Type validation and secure storage
 - **Session Management**: Secure session handling with timeout
-- **Access Control**: Role-based permissions system
+- **Access Control**: Role-based permissions system (admin/user)
+- **Duplicate Prevention**: Review/download duplicate handling
 
 ## Development Roadmap
 
