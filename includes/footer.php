@@ -42,8 +42,8 @@
 
         <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
           <h4>Project Info</h4>
-          <p>Final Year Project</p>
-          <p>University of Ghana</p>
+          <p>DataShare Platform</p>
+          <p>Open for All</p>
           <p>Department of Data Management and Analytics</p>
           <p class="mt-4"><strong>Academic Year:</strong> <span>2024/2025</span></p>
           <p><strong>Email:</strong> <span>admin@dataset-platform.com</span></p>
@@ -55,7 +55,7 @@
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">DataShare Platform</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
-        Final Year Project - Dataset Sharing and Collaboration Platform
+        DataShare Platform - Dataset Sharing and Collaboration Platform
       </div>
     </div>
 

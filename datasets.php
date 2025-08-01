@@ -27,12 +27,12 @@ $conditions = [];
 $params = [];
 
 if ($search) {
-    $conditions[] = "(d.title LIKE :search OR d.description LIKE :search)";
+    $conditions[] = "(title LIKE :search OR description LIKE :search)";
     $params[':search'] = "%{$search}%";
 }
 
 if ($category) {
-    $conditions[] = "d.category = :category";
+    $conditions[] = "category = :category";
     $params[':category'] = $category;
 }
 
@@ -40,11 +40,11 @@ $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : 
 
 // Sort options
 $orderClause = match($sort) {
-    'oldest' => 'ORDER BY d.upload_date ASC',
-    'name' => 'ORDER BY d.title ASC',
-    'popular' => 'ORDER BY d.download_count DESC',
+    'oldest' => 'ORDER BY upload_date ASC',
+    'name' => 'ORDER BY title ASC',
+    'popular' => 'ORDER BY download_count DESC',
     'rating' => 'ORDER BY avg_rating DESC',
-    default => 'ORDER BY d.upload_date DESC'
+    default => 'ORDER BY upload_date DESC'
 };
 
 // Get datasets with pagination

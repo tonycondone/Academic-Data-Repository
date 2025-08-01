@@ -52,7 +52,7 @@ We extend our heartfelt appreciation to our supervisor, Dr. Richard Essah, whose
 
 We are profoundly grateful to all lecturers in the Department of Computer Science at Takoradi Technical University. Their dedication to imparting knowledge and fostering critical thinking has significantly contributed to our academic development and the successful completion of this project.
 
-Special recognition goes to the University of Ghana Computing Systems (UGCS) for providing an enriching internship opportunity. This practical experience enhanced our technical skills and provided real-world insights that significantly influenced the development of this platform.
+Special recognition goes to the Open for All Computing Systems (UGCS) for providing an enriching internship opportunity. This practical experience enhanced our technical skills and provided real-world insights that significantly influenced the development of this platform.
 
 We acknowledge our classmates and colleagues in the Computer Science program for their collaborative spirit, intellectual discussions, and mutual support throughout our academic journey. The exchange of ideas and shared learning experiences have been invaluable.
 

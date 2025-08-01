@@ -1,1 +1,11 @@
 [01-Aug-2025 19:33:17 UTC] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in C:\Users\Admin\final year project\test_upload_download.php on line 83
+[01-Aug-2025 22:45:06 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'd.upload_date' in 'order clause' in C:\Users\Admin\final year project\datasets.php:58
+Stack trace:
+#0 C:\Users\Admin\final year project\datasets.php(58): PDOStatement->execute()
+#1 {main}
+  thrown in C:\Users\Admin\final year project\datasets.php on line 58
+[01-Aug-2025 22:45:16 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'd.upload_date' in 'order clause' in C:\Users\Admin\final year project\datasets.php:58
+Stack trace:
+#0 C:\Users\Admin\final year project\datasets.php(58): PDOStatement->execute()
+#1 {main}
+  thrown in C:\Users\Admin\final year project\datasets.php on line 58

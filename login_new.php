@@ -93,7 +93,7 @@
             </div>
 
             <div class="credits text-center">
-              Designed by Final Year Students - University of Ghana
+              Designed by Final Year Students - Open for All
             </div>
           </div>
         </div>

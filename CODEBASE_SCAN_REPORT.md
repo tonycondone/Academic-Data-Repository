@@ -16,7 +16,7 @@ The **Dataset Sharing and Collaboration Platform** (formerly Academic Dataset Co
 ## 📂 Directory Structure
 
 ```
-final year project/
+DataShare Platform/
 ├── 📁 assets/                    # Static assets (CSS, JS, images)
 │   ├── css/                      # Stylesheets
 │   ├── img/                      # Images and icons
@@ -154,7 +154,7 @@ final year project/
 - **FINAL_PROJECT_DOCUMENTATION.md** - Detailed project documentation
 - **PROJECT_SUMMARY.md** - Project summary
 - **the documentation for the project.md** - Additional documentation
-- Multiple report files for final year project submission
+- Multiple report files for DataShare Platform submission
 
 ## 🔧 Installation & Setup
 
@@ -191,4 +191,4 @@ Based on the codebase:
 - Project name standardized to "Dataset Sharing and Collaboration Platform"
 - Excel converter integrated into upload.php and admin.php
 - Comprehensive documentation added
-- Multiple report formats generated for final year project submission
+- Multiple report formats generated for DataShare Platform submission

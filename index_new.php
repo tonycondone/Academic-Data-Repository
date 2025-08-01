@@ -274,7 +274,7 @@ include 'includes/header.php';
 <section id="team" class="team section light-background">
   <div class="container section-title" data-aos="fade-up">
     <h2>Development Team</h2>
-    <p>Final Year Project - University of Ghana, Department of Data Management and Analytics</p>
+    <p>DataShare Platform - Open for All, Department of Data Management and Analytics</p>
   </div>
 
   <div class="container">
@@ -315,7 +315,7 @@ include 'includes/header.php';
           <i class="bi bi-geo-alt flex-shrink-0"></i>
           <div>
             <h3>Address</h3>
-            <p>University of Ghana<br>Department of Data Management and Analytics<br>Legon, Accra, Ghana</p>
+            <p>Open for All<br>Department of Data Management and Analytics<br>Legon, Accra, Ghana</p>
           </div>
         </div>
 
@@ -331,7 +331,7 @@ include 'includes/header.php';
           <i class="bi bi-mortarboard flex-shrink-0"></i>
           <div>
             <h3>Academic Project</h3>
-            <p>Final Year Project 2024/2025</p>
+            <p>DataShare Platform 2024/2025</p>
           </div>
         </div>
       </div>

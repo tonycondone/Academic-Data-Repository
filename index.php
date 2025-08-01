@@ -85,7 +85,7 @@ try {
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Dataset Sharing and Collaboration Platform - Final Year Project</title>
+  <title>Dataset Sharing and Collaboration Platform - DataShare Platform</title>
   <meta name="description" content="A web-based platform for students, educators, and researchers to upload, explore, preview, and download datasets with focus on simplicity, usability, and collaboration.">
   <meta name="keywords" content="dataset, sharing, collaboration, academic, research, data science, CSV, Excel, platform">
 
@@ -470,7 +470,7 @@ try {
               <i class="bi bi-geo-alt flex-shrink-0"></i>
               <div>
                 <h3>Address</h3>
-                <p>University of Ghana<br>Department of Data Management and Analytics<br>Legon, Accra, Ghana</p>
+                <p>TAKORADI TECHNICAL UNIVERSITY<br>Department of Data Management and Analytics<br>Takoradi, Ghana</p>
               </div>
             </div><!-- End Info Item -->
 
@@ -485,8 +485,8 @@ try {
             <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
               <i class="bi bi-mortarboard flex-shrink-0"></i>
               <div>
-                <h3>Academic Project</h3>
-                <p>Final Year Project 2024/2025</p>
+                <h3>DataShare Platform</h3>
+                <p>DataShare Platform 2024/2025</p>
               </div>
             </div><!-- End Info Item -->
 
@@ -570,8 +570,8 @@ try {
 
         <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
           <h4>Project Info</h4>
-          <p>Final Year Project</p>
-          <p>University of Ghana</p>
+          <p>DataShare</p>
+          <p>TAKORADI TECHNICAL UNIVERSITY</p>
           <p>Department of Data Management and Analytics</p>
           <p class="mt-4"><strong>Academic Year:</strong> <span>2024/2025</span></p>
           <p><strong>Email:</strong> <span>admin@dataset-platform.com</span></p>
@@ -583,7 +583,7 @@ try {
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">DataShare Platform</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
-        Final Year Project - Dataset Sharing and Collaboration Platform
+      Dataset Sharing and Collaboration Platform
       </div>
     </div>
 

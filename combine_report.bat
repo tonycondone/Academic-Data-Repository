@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo COMBINING YOUR FINAL YEAR PROJECT REPORT
+echo COMBINING YOUR DataShare Platform REPORT
 echo ========================================
 echo.
 
