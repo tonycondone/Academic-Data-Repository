@@ -64,7 +64,7 @@ class ExcelConverter {
                     $rowData[] = $cell->getCalculatedValue();
                 }
                 
-                fputcsv($csvFile, $rowData);
+                fputcsv($csvFile, $rowData, ',', '"', '\\');
             }
             
             fclose($csvFile);
