@@ -78,6 +78,11 @@ if ($_POST && isset($_POST['submit_review'])) {
             $stmt = $pdo->prepare("SELECT * FROM reviews WHERE user_id = ? AND dataset_id = ?");
             $stmt->execute([$_SESSION['user_id'], $datasetId]);
             $existingReview = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Refresh dataset information to get updated avg_rating and review_count
+            $stmt = $pdo->prepare("SELECT * FROM dataset_overview WHERE id = ?");
+            $stmt->execute([$datasetId]);
+            $dataset = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // AJAX response for live update
             if (isset($_POST['ajax']) && $_POST['ajax'] == '1') {
