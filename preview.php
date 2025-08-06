@@ -276,8 +276,11 @@ include 'includes/header.php';
                       <tr>
                         <td><strong><?php echo $rowIndex + 1; ?></strong></td>
                         <?php foreach ($row as $cell): ?>
-                          <td title="<?php echo htmlspecialchars($cell); ?>">
-                            <?php echo htmlspecialchars(substr($cell, 0, 100)) . (strlen($cell) > 100 ? '...' : ''); ?>
+                          <td title="<?php echo htmlspecialchars($cell ?? ''); ?>">
+                            <?php 
+                            $cellValue = $cell ?? '';
+                            echo htmlspecialchars(substr($cellValue, 0, 100)) . (strlen($cellValue) > 100 ? '...' : ''); 
+                            ?>
                           </td>
                         <?php endforeach; ?>
                       </tr>
