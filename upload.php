@@ -69,32 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_dataset'])) {
             $filePath = $uploadDir . $filename;
             
             if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                // Convert Excel to CSV if needed
+                // Skip Excel to CSV conversion - keep original file
                 $finalPath = $filePath;
                 $finalFilename = $filename;
-                
-                if (in_array($fileExtension, ['xlsx', 'xls']) && class_exists('ExcelConverter')) {
-                    // Use ExcelConverter for proper conversion
-                    $csvFilename = pathinfo($filename, PATHINFO_FILENAME) . '.csv';
-                    $csvPath = $uploadDir . $csvFilename;
-                    
-                    $conversionResult = ExcelConverter::convertToCSV($filePath, $csvPath);
-                    
-                    if ($conversionResult['success']) {
-                        $finalPath = $csvPath;
-                        $finalFilename = $csvFilename;
-                        
-                        // Add conversion note to message
-                        if (isset($conversionResult['partial']) && $conversionResult['partial']) {
-                            $message = 'Dataset uploaded. Note: ' . $conversionResult['message'];
-                            $messageType = 'warning';
-                        }
-                    } else {
-                        // Conversion failed, use original Excel file
-                        $message = 'Excel conversion note: ' . $conversionResult['message'] . '. Original Excel file saved.';
-                        $messageType = 'warning';
-                    }
-                }
                 
                 // Insert into database
                 try {
