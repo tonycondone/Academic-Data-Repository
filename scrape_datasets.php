@@ -50,8 +50,8 @@ $sampleDatasets = [
     [
         'title' => 'Iris Flower Classification',
         'filename' => 'iris_dataset.csv',
-        'category' => 'Machine Learning',
-        'description' => 'Classic machine learning dataset containing measurements of iris flowers. Includes sepal length, sepal width, petal length, petal width, and species classification.',
+        'category' => 'AI',
+        'description' => 'Classic AI dataset containing measurements of iris flowers. Includes sepal length, sepal width, petal length, petal width, and species classification.',
         'file_path' => 'uploads/iris_dataset.csv',
         'file_size' => 4850,
         'uploaded_by' => 1
