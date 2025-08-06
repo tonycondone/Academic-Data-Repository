@@ -12,6 +12,8 @@ php_error.log
 
 # Ignore uploads directory containing data files
 uploads/
+venv/
+vendor/
 
 # Ignore OS generated files
 .DS_Store
