@@ -270,7 +270,7 @@ include 'includes/header.php';
                       <i class="bi bi-download me-1"></i>Download
                     </a>
                     <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="datasets.php?id=<?php echo $dataset['id']; ?>#reviews" class="btn btn-sm btn-outline-secondary">
+                    <a href="review.php?id=<?php echo $dataset['id']; ?>" class="btn btn-sm btn-outline-secondary">
                       <i class="bi bi-star me-1"></i>Rate
                     </a>
                     <?php endif; ?>
