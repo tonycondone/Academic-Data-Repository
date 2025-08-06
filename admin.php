@@ -1,6 +1,10 @@
 <?php
 session_start();
-require_once 'includes/excel_converter.php';
+
+// Include PhpSpreadsheet autoloader
+if (file_exists('autoload.php')) {
+    require_once 'autoload.php';
+}
 
 // Check if user is logged in and is admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
