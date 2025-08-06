@@ -232,7 +232,7 @@ include 'includes/header.php';
                       <a href="#" class="btn btn-sm btn-outline-primary download-button" data-dataset-id="<?php echo $dataset['id']; ?>">
                         <i class="bi bi-download me-1"></i>Download
                       </a>
-                      <a href="#" class="btn btn-sm btn-outline-secondary review-button" data-dataset-id="<?php echo $dataset['id']; ?>">
+                      <a href="review.php?id=<?php echo $dataset['id']; ?>" class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-star me-1"></i>Rate
                       </a>
                     <?php else: ?>
