@@ -13,9 +13,9 @@ if ($_SESSION['role'] !== 'admin') {
     exit;
 }
 
-// Include Excel converter
-if (file_exists('includes/excel_converter.php')) {
-    require_once 'includes/excel_converter.php';
+// Include PhpSpreadsheet autoloader
+if (file_exists('autoload.php')) {
+    require_once 'autoload.php';
 }
 
 // Database connection

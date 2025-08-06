@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+// Include PhpSpreadsheet autoloader
+if (file_exists('autoload.php')) {
+    require_once 'autoload.php';
+}
+
 // Enforce authentication: only logged-in users or admins can preview datasets
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -67,6 +72,7 @@ try {
             // Excel file preview using PhpSpreadsheet
             if (class_exists('PhpOffice\PhpSpreadsheet\IOFactory')) {
                 try {
+                    // Load Excel file using PhpSpreadsheet
                     $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
                     $worksheet = $spreadsheet->getActiveSheet();
                     
@@ -75,23 +81,32 @@ try {
                     $maxRows = 50;
                     $maxCols = 20; // Limit columns to prevent memory issues
                     
+                    // Get the highest row and column with limits
                     $highestRow = min($worksheet->getHighestRow(), $maxRows);
                     $highestCol = min(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($worksheet->getHighestColumn()), $maxCols);
                     
+                    // Extract data from Excel file
                     for ($row = 1; $row <= $highestRow; $row++) {
                         $rowData = [];
                         for ($col = 1; $col <= $highestCol; $col++) {
                             $cellValue = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
-                            $rowData[] = $cellValue;
+                            // Handle null values and convert to string
+                            $rowData[] = $cellValue !== null ? (string)$cellValue : '';
                         }
                         $previewData[] = $rowData;
                     }
                     
+                    // Free up memory
+                    $spreadsheet->disconnectWorksheets();
+                    unset($spreadsheet);
+                    
                 } catch (Exception $e) {
                     $previewData = "Error loading Excel file: " . $e->getMessage();
+                    $canPreview = false;
                 }
             } else {
                 $previewData = "PhpSpreadsheet library not available for Excel preview";
+                $canPreview = false;
             }
             
         } elseif ($fileExtension === 'json' && file_exists($filePath)) {
