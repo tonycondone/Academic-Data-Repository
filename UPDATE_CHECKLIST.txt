@@ -1,0 +1,89 @@
+DATASET SHARING PLATFORM - UPDATE CHECKLIST
+==========================================
+Date: 2025
+Status: Implementation Guide
+
+CATEGORY UPDATES REQUIRED:
+-------------------------
+1. Change "Machine Learning" → "AI" in the following files:
+   - upload.php (line with option value="Machine Learning")
+   - admin.php (line with option value="Machine Learning")
+   - scrape_datasets.php (category field in dataset array)
+   - database/dataset_platform_schema.sql (sample data insert)
+
+2. Change "Technology" → "ICT" in the following files:
+   - upload.php (line with option value="Technology")
+   - admin.php (line with option value="Technology")
+   - database/dataset_platform_schema.sql (sample data insert)
+
+3. Add new categories "AGRICULTURE" and "TRANSPORT" to:
+   - upload.php (add new option values)
+   - admin.php (add new option values)
+
+COPYRIGHT & ATTRIBUTION UPDATES:
+-------------------------------
+1. Update copyright year to 2025 in:
+   - includes/footer.php (change © Copyright year)
+   - index.php (footer section)
+   - index_new.php (footer section)
+   - user_dashboard.php (footer section)
+   - All other PHP files with copyright notices
+
+2. Add "Powered by TTU" above copyright in:
+   - includes/footer.php (add line before copyright)
+   - This will automatically update all pages using the footer include
+
+RATING SYSTEM:
+-------------
+The system already uses a 5-point scale (1-5 stars) as confirmed in:
+- database/dataset_platform_schema.sql: CHECK (rating >= 1 AND rating <= 5)
+- review.php: 5-star rating display
+- No changes needed for rating system
+
+LITERATURE REVIEW:
+-----------------
+Already updated in COMPLETE_FINAL_REPORT.txt with current research (2023-2025)
+
+DATABASE MIGRATION:
+------------------
+Run the following migration script to update existing data:
+
+UPDATE datasets SET category = 'AI' WHERE category = 'Machine Learning';
+UPDATE datasets SET category = 'ICT' WHERE category = 'Technology';
+
+MANUAL FILE UPDATES NEEDED:
+--------------------------
+1. Edit upload.php:
+   - Change line: <option value="Machine Learning" → <option value="AI"
+   - Change line: <option value="Technology" → <option value="ICT"
+   - Add: <option value="AGRICULTURE">AGRICULTURE</option>
+   - Add: <option value="TRANSPORT">TRANSPORT</option>
+
+2. Edit admin.php:
+   - Same changes as upload.php
+
+3. Edit includes/footer.php:
+   - Add before copyright line: <p>Powered by TTU</p>
+   - Change copyright year to 2025
+
+4. Edit scrape_datasets.php:
+   - Change 'category' => 'Machine Learning' to 'category' => 'AI'
+
+5. Edit database/dataset_platform_schema.sql:
+   - Update sample data inserts to use new categories
+
+VERIFICATION STEPS:
+------------------
+After making changes:
+1. Check upload form shows new categories
+2. Verify footer displays "Powered by TTU" and "© 2025"
+3. Confirm existing datasets show updated categories
+4. Test that new uploads can use AGRICULTURE and TRANSPORT categories
+5. Ensure all pages reflect the changes
+
+NOTES:
+------
+- The rating system is already 5-point scale, no changes needed
+- Literature review has been updated with 2023-2025 research
+- All category changes should be consistent across the platform
+- Remember to clear any caches after updates
