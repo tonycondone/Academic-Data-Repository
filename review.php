@@ -197,7 +197,7 @@ include 'includes/header.php';
             <div class="mb-4">
               <label class="form-label">Rating *</label>
               <div class="star-rating">
-                <?php for ($i = 1; $i <= 5; $i++): ?>
+                <?php for ($i = 5; $i >= 1; $i--): ?>
                 <input type="radio" name="rating" value="<?php echo $i; ?>" id="star<?php echo $i; ?>" 
                        <?php echo ($existingReview && $existingReview['rating'] == $i) ? 'checked' : ''; ?> required>
                 <label for="star<?php echo $i; ?>" class="star">
