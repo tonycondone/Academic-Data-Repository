@@ -94,11 +94,11 @@ class ExcelConverter {
             $csvFile = fopen($csvFilePath, 'w');
             
             // Write header indicating this is a converted file
-            fputcsv($csvFile, ['Note', 'This file was converted from Excel format']);
-            fputcsv($csvFile, ['Original File', basename($excelFilePath)]);
-            fputcsv($csvFile, ['Conversion Date', date('Y-m-d H:i:s')]);
-            fputcsv($csvFile, []);
-            fputcsv($csvFile, ['Message', 'Please install PhpSpreadsheet library for full Excel conversion support']);
+            fputcsv($csvFile, ['Note', 'This file was converted from Excel format'], ',', '"', '\\');
+            fputcsv($csvFile, ['Original File', basename($excelFilePath)], ',', '"', '\\');
+            fputcsv($csvFile, ['Conversion Date', date('Y-m-d H:i:s')], ',', '"', '\\');
+            fputcsv($csvFile, [], ',', '"', '\\');
+            fputcsv($csvFile, ['Message', 'Please install PhpSpreadsheet library for full Excel conversion support'], ',', '"', '\\');
             
             fclose($csvFile);
             
