@@ -129,18 +129,18 @@ INSERT INTO datasets (title, filename, category, description, file_path, file_si
 ('Student Performance Dataset', 'student_performance.csv', 'Education', 'Dataset containing student performance metrics including grades, attendance, and demographic information.', 'uploads/student_performance.csv', 15420, 1),
 ('COVID-19 Global Cases', 'covid19_global_cases.csv', 'Health', 'Daily COVID-19 cases, deaths, and recoveries by country. Updated dataset containing global pandemic statistics.', 'uploads/covid19_global_cases.csv', 28750, 1),
 ('House Prices Dataset', 'house_prices.csv', 'Business', 'Real estate data including house prices, square footage, number of bedrooms, bathrooms, and location information.', 'uploads/house_prices.csv', 22100, 1),
-('Iris Dataset', 'iris_dataset.csv', 'Machine Learning', 'Classic machine learning dataset with iris flower measurements and species classification.', 'uploads/iris_dataset.csv', 4800, 1),
+('Iris Dataset', 'iris_dataset.csv', 'AI', 'Classic AI dataset with iris flower measurements and species classification.', 'uploads/iris_dataset.csv', 4800, 1),
 ('Stock Market Data', 'stock_market.csv', 'Finance', 'Historical stock market data including prices, volumes, and technical indicators for major companies.', 'uploads/stock_market.csv', 45600, 1),
 ('Climate Data', 'climate_data.csv', 'Environment', 'Global climate data including temperature, precipitation, and weather patterns over the past decade.', 'uploads/climate_data.csv', 67200, 1),
 ('Social Media Sentiment', 'social_sentiment.csv', 'Social Sciences', 'Social media posts with sentiment analysis labels for natural language processing research.', 'uploads/social_sentiment.csv', 33400, 1),
-('IoT Sensor Data', 'iot_sensors.csv', 'Technology', 'Internet of Things sensor readings including temperature, humidity, and motion detection data.', 'uploads/iot_sensors.csv', 18900, 1);
+('IoT Sensor Data', 'iot_sensors.csv', 'ICT', 'Internet of Things sensor readings including temperature, humidity, and motion detection data.', 'uploads/iot_sensors.csv', 18900, 1);
 
 -- Insert sample reviews
 INSERT INTO reviews (user_id, dataset_id, rating, comment) VALUES
 (1, 1, 5, 'Excellent dataset for educational research. Well-structured and comprehensive.'),
 (1, 2, 4, 'Very useful for pandemic analysis. Data is accurate and up-to-date.'),
 (1, 3, 5, 'Perfect for real estate analysis projects. Clean data with good coverage.'),
-(1, 4, 5, 'Classic dataset, perfect for beginners in machine learning.'),
+(1, 4, 5, 'Classic dataset, perfect for beginners in AI.'),
 (1, 5, 4, 'Good financial data for analysis. Could use more recent entries.'),
 (1, 6, 5, 'Comprehensive climate data. Excellent for environmental studies.'),
 (1, 7, 4, 'Useful for sentiment analysis projects. Good variety of posts.'),
