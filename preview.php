@@ -63,6 +63,37 @@ try {
             }
             fclose($handle);
             
+        } elseif (in_array($fileExtension, ['xlsx', 'xls']) && file_exists($filePath)) {
+            // Excel file preview using PhpSpreadsheet
+            if (class_exists('PhpOffice\PhpSpreadsheet\IOFactory')) {
+                try {
+                    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+                    $worksheet = $spreadsheet->getActiveSheet();
+                    
+                    $canPreview = true;
+                    $previewData = [];
+                    $maxRows = 50;
+                    $maxCols = 20; // Limit columns to prevent memory issues
+                    
+                    $highestRow = min($worksheet->getHighestRow(), $maxRows);
+                    $highestCol = min(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($worksheet->getHighestColumn()), $maxCols);
+                    
+                    for ($row = 1; $row <= $highestRow; $row++) {
+                        $rowData = [];
+                        for ($col = 1; $col <= $highestCol; $col++) {
+                            $cellValue = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
+                            $rowData[] = $cellValue;
+                        }
+                        $previewData[] = $rowData;
+                    }
+                    
+                } catch (Exception $e) {
+                    $previewData = "Error loading Excel file: " . $e->getMessage();
+                }
+            } else {
+                $previewData = "PhpSpreadsheet library not available for Excel preview";
+            }
+            
         } elseif ($fileExtension === 'json' && file_exists($filePath)) {
             $canPreview = true;
             $jsonContent = file_get_contents($filePath);
