@@ -71,38 +71,55 @@ try {
         } elseif (in_array($fileExtension, ['xlsx', 'xls']) && file_exists($filePath)) {
             // Excel file preview using PhpSpreadsheet
             if (class_exists('PhpOffice\PhpSpreadsheet\IOFactory')) {
-                try {
-                    // Load Excel file using PhpSpreadsheet
-                    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
-                    $worksheet = $spreadsheet->getActiveSheet();
-                    
-                    $canPreview = true;
-                    $previewData = [];
-                    $maxRows = 50;
-                    $maxCols = 20; // Limit columns to prevent memory issues
-                    
-                    // Get the highest row and column with limits
-                    $highestRow = min($worksheet->getHighestRow(), $maxRows);
-                    $highestCol = min(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($worksheet->getHighestColumn()), $maxCols);
-                    
-                    // Extract data from Excel file
-                    for ($row = 1; $row <= $highestRow; $row++) {
-                        $rowData = [];
-                        for ($col = 1; $col <= $highestCol; $col++) {
-                            $cellValue = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
-                            // Handle null values and convert to string
-                            $rowData[] = $cellValue !== null ? (string)$cellValue : '';
-                        }
-                        $previewData[] = $rowData;
-                    }
-                    
-                    // Free up memory
-                    $spreadsheet->disconnectWorksheets();
-                    unset($spreadsheet);
-                    
-                } catch (Exception $e) {
-                    $previewData = "Error loading Excel file: " . $e->getMessage();
+                // Check if ZIP extension is available for XLSX files
+                if ($fileExtension === 'xlsx' && !extension_loaded('zip')) {
+                    $previewData = "Error: ZIP extension is required to read XLSX files. Please enable the ZIP extension in your PHP configuration or use XLS format instead.";
                     $canPreview = false;
+                } else {
+                    try {
+                        // Load Excel file using PhpSpreadsheet
+                        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+                        $worksheet = $spreadsheet->getActiveSheet();
+                        
+                        $canPreview = true;
+                        $previewData = [];
+                        $maxRows = 50;
+                        $maxCols = 20; // Limit columns to prevent memory issues
+                        
+                        // Get the highest row and column with limits
+                        $highestRow = min($worksheet->getHighestRow(), $maxRows);
+                        $highestCol = min(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($worksheet->getHighestColumn()), $maxCols);
+                        
+                        // Extract data from Excel file
+                        for ($row = 1; $row <= $highestRow; $row++) {
+                            $rowData = [];
+                            for ($col = 1; $col <= $highestCol; $col++) {
+                                $cellValue = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
+                                // Handle null values and convert to string
+                                $rowData[] = $cellValue !== null ? (string)$cellValue : '';
+                            }
+                            $previewData[] = $rowData;
+                        }
+                        
+                        // Free up memory
+                        $spreadsheet->disconnectWorksheets();
+                        unset($spreadsheet);
+                        
+                    } catch (Exception $e) {
+                        $errorMessage = "Error loading Excel file: " . $e->getMessage();
+                        
+                        // Provide specific guidance based on error type
+                        if (strpos($e->getMessage(), 'ZipArchive') !== false) {
+                            $errorMessage = "Error: ZIP extension is required to read XLSX files. Please enable the ZIP extension in your PHP configuration or use XLS format instead.";
+                        } elseif (strpos($e->getMessage(), 'file_get_contents') !== false) {
+                            $errorMessage = "Error: Unable to read the Excel file. The file may be corrupted or inaccessible.";
+                        } else {
+                            $errorMessage = "Error loading Excel file: " . $e->getMessage();
+                        }
+                        
+                        $previewData = $errorMessage;
+                        $canPreview = false;
+                    }
                 }
             } else {
                 $previewData = "PhpSpreadsheet library not available for Excel preview";
