@@ -450,14 +450,16 @@ $myUploads = $stmt->fetch(PDO::FETCH_ASSOC)['my_uploads'];
                                 <label for="category" class="form-label fw-semibold">Category *</label>
                                 <select class="form-select form-select-lg" id="category" name="category" required>
                                     <option value="">Select a category...</option>
-                                    <option value="Machine Learning" <?php echo ($_POST['category'] ?? '') === 'Machine Learning' ? 'selected' : ''; ?>>Machine Learning</option>
+                                    <option value="AI" <?php echo ($_POST['category'] ?? '') === 'AI' ? 'selected' : ''; ?>>AI</option>
+                                    <option value="AGRICULTURE" <?php echo ($_POST['category'] ?? '') === 'AGRICULTURE' ? 'selected' : ''; ?>>AGRICULTURE</option>
                                     <option value="Business" <?php echo ($_POST['category'] ?? '') === 'Business' ? 'selected' : ''; ?>>Business</option>
-                                    <option value="Health" <?php echo ($_POST['category'] ?? '') === 'Health' ? 'selected' : ''; ?>>Health</option>
                                     <option value="Education" <?php echo ($_POST['category'] ?? '') === 'Education' ? 'selected' : ''; ?>>Education</option>
-                                    <option value="Social Sciences" <?php echo ($_POST['category'] ?? '') === 'Social Sciences' ? 'selected' : ''; ?>>Social Sciences</option>
                                     <option value="Environment" <?php echo ($_POST['category'] ?? '') === 'Environment' ? 'selected' : ''; ?>>Environment</option>
-                                    <option value="Technology" <?php echo ($_POST['category'] ?? '') === 'Technology' ? 'selected' : ''; ?>>Technology</option>
                                     <option value="Finance" <?php echo ($_POST['category'] ?? '') === 'Finance' ? 'selected' : ''; ?>>Finance</option>
+                                    <option value="Health" <?php echo ($_POST['category'] ?? '') === 'Health' ? 'selected' : ''; ?>>Health</option>
+                                    <option value="ICT" <?php echo ($_POST['category'] ?? '') === 'ICT' ? 'selected' : ''; ?>>ICT</option>
+                                    <option value="Social Sciences" <?php echo ($_POST['category'] ?? '') === 'Social Sciences' ? 'selected' : ''; ?>>Social Sciences</option>
+                                    <option value="TRANSPORT" <?php echo ($_POST['category'] ?? '') === 'TRANSPORT' ? 'selected' : ''; ?>>TRANSPORT</option>
                                 </select>
                             </div>
                             
