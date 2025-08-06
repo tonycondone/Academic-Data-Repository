@@ -67,28 +67,8 @@ if ($_POST && isset($_POST['upload_dataset'])) {
                 $finalPath = $filePath;
                 $finalFilename = $filename;
                 
-                if (in_array($fileExtension, ['xlsx', 'xls'])) {
-                    // Use ExcelConverter for proper conversion
-                    $csvFilename = pathinfo($filename, PATHINFO_FILENAME) . '.csv';
-                    $csvPath = $uploadDir . $csvFilename;
-                    
-                    $conversionResult = ExcelConverter::convertToCSV($filePath, $csvPath);
-                    
-                    if ($conversionResult['success']) {
-                        $finalPath = $csvPath;
-                        $finalFilename = $csvFilename;
-                        
-                        // Add conversion note to message
-                        if (isset($conversionResult['partial']) && $conversionResult['partial']) {
-                            $message = 'Dataset uploaded. Note: ' . $conversionResult['message'];
-                            $messageType = 'warning';
-                        }
-                    } else {
-                        // Conversion failed, use original Excel file
-                        $message = 'Excel conversion failed: ' . $conversionResult['message'] . '. Original Excel file saved.';
-                        $messageType = 'warning';
-                    }
-                }
+                // Skip Excel to CSV conversion - keep original file
+                // Excel files will be previewed directly using PhpSpreadsheet
                 
                 // Insert into database
                 try {
