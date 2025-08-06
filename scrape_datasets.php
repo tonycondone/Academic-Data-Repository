@@ -86,7 +86,7 @@ $sampleDatasets = [
     [
         'title' => 'IoT Sensor Data',
         'filename' => 'iot_sensors.csv',
-        'category' => 'Technology',
+        'category' => 'ICT',
         'description' => 'Internet of Things sensor readings including temperature, humidity, pressure, and motion data from smart devices and industrial sensors.',
         'file_path' => 'uploads/iot_sensors.csv',
         'file_size' => 156780,
