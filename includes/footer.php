@@ -11,10 +11,10 @@
           </a>
           <p>A comprehensive web-based platform designed for academic dataset sharing and collaboration. Built with modern technologies and security best practices for educational environments.</p>
           <div class="social-links d-flex mt-4">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
+            <a href="https://x.com/tonykflex" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter-x"></i></a>
+            <a href="https://www.facebook.com/officialttu/" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
+            <a href="https://www.linkedin.com/in/anthony-ofori-owusu/" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.linkedin.com/in/anthony-ofori-owusu/" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
           </div>
         </div>
 
