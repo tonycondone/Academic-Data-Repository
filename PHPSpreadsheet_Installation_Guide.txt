@@ -1,0 +1,19 @@
+PHPSpreadsheet Installation Guide
+================================
+
+Since Composer is not available, please follow these steps:
+
+1. Download PHPSpreadsheet from GitHub:
+   - Go to: https://github.com/PHPOffice/PhpSpreadsheet/releases
+   - Download the latest release ZIP file
+
+2. Extract the ZIP file and copy the contents:
+   - Extract the downloaded ZIP file
+   - Copy the 'src' folder to: vendor/phpoffice/phpspreadsheet/src
+
+3. Test the installation:
+   - Run: php test_phpspreadsheet.php
+
+4. Update your PHP files to include the autoloader:
+   - Add this line at the top of your PHP files:
+     require_once __DIR__ . '/vendor/autoload.php';
