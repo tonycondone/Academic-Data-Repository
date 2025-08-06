@@ -242,9 +242,9 @@ include 'includes/header.php';
           <?php if ($canPreview): ?>
             <?php 
             $fileExtension = strtolower(pathinfo($dataset['filename'], PATHINFO_EXTENSION));
-            if ($fileExtension === 'csv' && !empty($previewData)): 
+            if (in_array($fileExtension, ['csv', 'xlsx', 'xls']) && !empty($previewData) && is_array($previewData)): 
             ?>
-              <!-- CSV Preview -->
+              <!-- CSV/Excel Preview -->
               <h5>Data Preview (First 50 rows)</h5>
               <div class="table-responsive">
                 <table class="table table-striped table-hover">
