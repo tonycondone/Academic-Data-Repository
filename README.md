@@ -1,384 +1,415 @@
-# Dataset Sharing and Collaboration Platform
+# Academic Data Repository: A Web-Based Platform for Dataset Sharing and Collaboration
 
-A comprehensive web-based platform designed for educational institutions to facilitate collaborative data projects between faculty and students. The platform provides secure file sharing, version control, and project management capabilities specifically tailored for academic research and data analysis.
+[![PHP Version](https://img.shields.io/badge/PHP-8.0+-blue.svg)](https://php.net)
+[![MySQL Version](https://img.shields.io/badge/MySQL-8.0+-green.svg)](https://mysql.com)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)]()
 
-## Features
+> **A comprehensive web-based platform designed for educational institutions to facilitate collaborative data projects between faculty and students.**
 
-### Core Functionality
-- **User Authentication & Authorization**: Role-based access control (Admin, Faculty, Student)
-- **Project Management**: Create, manage, and collaborate on data projects
-- **File Management**: Upload, share, and organize multiple file formats
+## 🎓 Project Overview
+
+**Academic Data Repository** is a specialized platform developed for **Takoradi Technical University** that enables secure file sharing, version control, and project management capabilities specifically tailored for academic research and data analysis. The platform bridges the gap between faculty research initiatives and student learning outcomes through structured collaboration.
+
+### 🏫 **Institutional Focus**
+- **Target**: Academic institutions, particularly African universities
+- **Users**: Faculty members, students, and administrators
+- **Purpose**: Research collaboration, dataset sharing, and educational outcomes tracking
+
+## ✨ Key Features
+
+### 🔐 **Authentication & Authorization**
+- **Role-based Access Control**: Admin, Faculty, Student roles with hierarchical permissions
+- **Secure Authentication**: Bcrypt password hashing with salt
+- **Session Management**: Secure session handling with timeout protection
+- **CSRF Protection**: Token-based request validation
+
+### 📊 **Dataset Management**
+- **Multi-format Support**: CSV, Excel (XLSX, XLS), JSON, PDF, DOC, DOCX, TXT, Images (PNG, JPG, JPEG, GIF)
+- **Excel Integration**: Full Excel file support with PhpSpreadsheet library
+- **File Preview**: Built-in preview for various file types
 - **Version Control**: Track changes, branching, merging, and rollback capabilities
-- **Collaboration Tools**: Member invitations, permissions, and activity tracking
-- **Responsive Design**: Modern, mobile-friendly interface
+- **Upload Restrictions**: Role-based upload permissions
 
-### Supported File Types
-- **Data Files**: CSV, Excel (XLSX, XLS), JSON
-- **Documents**: PDF, DOC, DOCX, TXT
-- **Images**: PNG, JPG, JPEG, GIF
+### 👥 **Collaboration Tools**
+- **Project Management**: Create, manage, and collaborate on research projects
+- **Member Invitations**: Faculty can invite students to projects
+- **Activity Tracking**: Monitor project progress and member contributions
+- **Permission System**: Granular permissions for different user roles
 
-#### Excel File Support
-The platform includes basic Excel to CSV conversion functionality:
-- **Current Implementation**: Basic conversion that creates a placeholder CSV file with conversion information
-- **Full Conversion**: To enable full Excel to CSV conversion with actual data extraction, install the PhpSpreadsheet library:
-  ```bash
-  composer require phpoffice/phpspreadsheet
-  ```
-- **Fallback Behavior**: If PhpSpreadsheet is not installed, Excel files are accepted but converted to a basic CSV format with file information only
+### 📱 **User Experience**
+- **Responsive Design**: Modern, mobile-friendly interface using Bootstrap 5.3
+- **Real-time Updates**: Live download counts and review updates
+- **Duplicate Prevention**: Smart handling of duplicate reviews and downloads
+- **Search & Filter**: Advanced dataset browsing and filtering
 
-### User Roles & Permissions
-- **Admin**: Full system access, user management, system oversight
-- **Faculty**: Create/manage projects, invite students, full project control
-- **Student**: Join projects, upload/edit assigned data, collaborate within permissions
+### 🏢 **Academic Features**
+- **Department Integration**: University department support
+- **Research Workflow**: Complete research lifecycle tracking
+- **Educational Analytics**: Learning outcomes and collaboration metrics
+- **Faculty Mentorship**: Structured mentorship tools
 
-## Technology Stack
+## 🛠 Technology Stack
 
-- **Backend**: PHP 8.0+
-- **Database**: MySQL 8.0+
-- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Framework**: Bootstrap 5.3
-- **Icons**: Font Awesome 6.0
-- **Security**: CSRF protection, prepared statements, bcrypt hashing
+### **Backend**
+- **PHP**: 8.0+ with modern syntax and features
+- **Database**: MySQL 8.0+ with optimized queries
+- **Security**: Prepared statements, input validation, secure file handling
 
-## Installation & Setup
+### **Frontend**
+- **HTML5**: Semantic markup with accessibility features
+- **CSS3**: Modern styling with Bootstrap 5.3 framework
+- **JavaScript**: ES6+ with progressive enhancement
+- **Icons**: Font Awesome 6.0 for consistent iconography
 
-### Prerequisites
+### **Libraries & Dependencies**
+- **PhpSpreadsheet**: Excel file processing and manipulation
+- **Bootstrap**: Responsive UI framework
+- **Font Awesome**: Icon library
+- **Custom Autoloader**: Efficient class loading system
+
+## 🚀 Quick Start Guide
+
+### **Prerequisites**
 - PHP 8.0 or higher (tested with PHP 8.4.8)
 - MySQL 8.0 or higher
 - Web server (Apache/Nginx or PHP built-in server)
-- Composer (optional, for future dependencies)
+- Composer (for dependency management)
 
-### New Features in Version 1.0.0
-- Role-based login (Admin/User) with separate dashboards
-- Live download count updates after each download
-- Review count and rating updates with duplicate prevention
-- Upload restrictions for non-admin users
+### **Installation Steps**
 
-### Step 1: Download & Extract
+#### **1. Download & Extract**
 ```bash
-# Clone or download the project files
+# Clone the repository
 git clone <repository-url>
-cd academic-collaboration-platform
+cd academic-data-repository
+
+# Or download and extract ZIP file to your web server directory
 ```
 
-### Step 2: Database Setup
+#### **2. Database Setup**
 
-You can set up the database either manually or using the web-based installation wizard.
+**Option A: Web-based Installation (Recommended)**
+1. Navigate to `http://localhost/[project-folder]/install.php`
+2. Follow the installation wizard
+3. The installer will create database and configure everything automatically
 
-#### Manual Setup
-1. Create a MySQL database named `dataset_platform`:
+**Option B: Manual Database Setup**
 ```sql
-CREATE DATABASE dataset_platform;
+-- Create database
+CREATE DATABASE academic_collaboration;
+
+-- Import schema
+mysql -u root -p academic_collaboration < database/schema.sql
 ```
 
-2. Import the database schema:
-```bash
-mysql -u root -p dataset_platform < database/schema.sql
-```
-
-3. Update database configuration in `config/config.php`:
+#### **3. Configuration**
+Update `config/config.php` with your settings:
 ```php
+// Database settings
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'dataset_platform');
-define('DB_USER', 'root');
-define('DB_PASS', '1212');
+define('DB_NAME', 'academic_collaboration');
+define('DB_USER', 'your_username');
+define('DB_PASS', 'your_password');
+
+// Base URL
+define('BASE_URL', 'http://localhost/[your-project-folder]/');
 ```
 
-#### Web-based Installation Wizard
-Alternatively, you can use the web-based installation wizard by accessing `install.php` in your browser. This wizard will guide you through database setup, admin user creation, and final configuration.
-
-### Step 3: File Permissions
-Create and set permissions for upload directories:
+#### **4. File Permissions**
 ```bash
+# Create required directories
 mkdir uploads versions
+
+# Set permissions (Linux/Mac)
 chmod 755 uploads versions
+
+# Windows: Ensure web server has write access
 ```
 
-### Step 4: Web Server Configuration
-
-#### Apache (.htaccess)
-```apache
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
-
-# Security headers
-Header always set X-Content-Type-Options nosniff
-Header always set X-Frame-Options DENY
-Header always set X-XSS-Protection "1; mode=block"
-```
-
-#### Nginx
-```nginx
-location / {
-    try_files $uri $uri/ /index.php?$query_string;
-}
-
-location ~ \.php$ {
-    fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
-    fastcgi_index index.php;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    include fastcgi_params;
-}
-
-# Security headers
-add_header X-Content-Type-Options nosniff;
-add_header X-Frame-Options DENY;
-add_header X-XSS-Protection "1; mode=block";
-```
-
-### Step 5: Configuration
-
-**Note:** After installation, ensure you:
-- Delete the `install.php` file for security
-- Test the application using `php -S localhost:8000` for the built-in server
-1. Update `config/config.php` with your settings:
-   - Database credentials
-   - Base URL
-   - File upload limits
-   - Email settings (for notifications)
-
-2. Set appropriate timezone in `config/config.php`:
-```php
-date_default_timezone_set('Your/Timezone');
-```
-
-## Default Login Credentials
-
-The system comes with a default admin account:
-- **Username**: `admin`
-- **Password**: `admin123`
-
-**Important**: Change the default admin password immediately after installation!
-
-## Usage Notes
-
-- **Admins** can upload datasets (upload.php is restricted to admin role)
-- **Users** can only download/view datasets and submit reviews
-- Download counts update live on dataset cards after download
-- Reviews are prevented for duplicate submissions by the same user
-
-## Quick Start Guide - How to Run the Platform
-
-### Step-by-Step Instructions to Get the Platform Running:
-
-#### 1. **Prerequisites Check**
-Ensure you have the following installed:
-- **PHP 8.0 or higher**
-- **MySQL 8.0 or higher**
-- **Apache or Nginx web server**
-- **phpMyAdmin** (optional, for easier database management)
-
-#### 2. **Download and Setup Project Files**
-```bash
-# Option A: Clone from repository
-git clone <repository-url>
-cd academic-collaboration-platform
-
-# Option B: Download and extract ZIP file
-# Extract to your web server directory (e.g., htdocs, www, public_html)
-```
-
-#### 3. **Configure Your Web Server**
-
-**For XAMPP/WAMP/MAMP users:**
-- Place the project folder in your `htdocs` directory
-- Start Apache and MySQL services from the control panel
-
-**For standalone Apache:**
-- Copy project to `/var/www/html/` (Linux) or `C:/Apache24/htdocs/` (Windows)
-- Ensure Apache is running
-
-#### 4. **Database Setup**
-
-**Option A: Using phpMyAdmin (Easier)**
-1. Open phpMyAdmin in your browser (usually http://localhost/phpmyadmin)
-2. Create a new database named `dataset_platform`
-3. Select the database and click "Import"
-4. Choose the file `database/schema.sql` from the project
-5. Click "Go" to import
-
-**Option B: Using Command Line**
-```bash
-# Login to MySQL
-mysql -u root -p
-
-# Create database
-CREATE DATABASE dataset_platform;
-EXIT;
-
-# Import schema
-mysql -u root -p dataset_platform < database/schema.sql
-```
-
-#### 5. **Configure Database Connection**
-Edit `config/config.php` and update these lines with your MySQL credentials:
-```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'dataset_platform');
-define('DB_USER', 'root');        // Your MySQL username
-define('DB_PASS', '1212');        // Your MySQL password
-```
-
-#### 6. **Create Required Directories**
-In the project root directory, create these folders if they don't exist:
-```bash
-mkdir uploads versions
-# On Windows, create these folders manually
-```
-
-#### 7. **Access the Platform**
+#### **5. Access the Platform**
 1. Open your web browser
-2. Navigate to:
-   - **XAMPP/WAMP:** `http://localhost/academic-collaboration-platform/`
-   - **Custom setup:** `http://localhost/[your-project-folder]/`
-3. You should see the platform homepage
+2. Navigate to `http://localhost/[project-folder]/`
+3. Login with default admin credentials:
+   - **Username**: `admin`
+   - **Password**: `admin123`
 
-#### 8. **Login to the Platform**
-Use the default admin credentials:
-- **Username:** `admin`
-- **Password:** `admin123`
+⚠️ **Important**: Change the default admin password immediately after installation!
 
-⚠️ **Important:** Change the admin password immediately after first login!
+## 👥 User Roles & Permissions
 
-#### 9. **Alternative: Use Web Installer**
-If you prefer automated setup:
-1. Navigate to `http://localhost/[your-project-folder]/install.php`
-2. Follow the installation wizard steps
-3. The installer will create the database and configure everything for you
+### **🔧 Administrator**
+- **Full system access** and user management
+- **Dataset uploads** and system oversight
+- **User role management** and permissions
+- **System monitoring** and performance tracking
 
-### Common Issues and Solutions
+### **👨‍🏫 Faculty**
+- **Create and manage** research projects
+- **Invite students** to collaborate
+- **Upload datasets** and research materials
+- **Monitor project progress** and student contributions
 
-**Issue: "Database connection failed"**
-- Check MySQL is running
-- Verify credentials in `config/config.php`
-- Ensure database `dataset_platform` exists
+### **🎓 Student**
+- **Join projects** invited by faculty
+- **Download and review** datasets
+- **Contribute to projects** within assigned permissions
+- **Track learning outcomes** and collaboration metrics
 
-**Issue: "Page not found" errors**
-- Check if `.htaccess` file exists (for Apache)
-- Enable `mod_rewrite` in Apache
-- Verify project is in correct web directory
-
-**Issue: "Permission denied" for uploads**
-- Set proper permissions: `chmod 755 uploads versions`
-- On Windows, ensure web server has write access
-
-### Next Steps After Setup
-1. Change admin password
-2. Create user accounts for faculty and students
-3. Start uploading datasets
-4. Create projects and invite collaborators
-5. Explore the platform features!
-
-## Usage Guide
-
-### For Faculty Members
-1. **Create Account**: Register with faculty role
-2. **Create Project**: Use "Create Project" to start new collaboration
-3. **Invite Students**: Add students to your projects
-4. **Manage Files**: Upload, organize, and version control data files
-5. **Monitor Activity**: Track project progress and member contributions
-
-### For Users
-1. **Create Account**: Register with user/admin role
-2. **Browse Datasets**: View and filter datasets by category/rating
-3. **Download Datasets**: Download files with live count updates
-4. **Submit Reviews**: Rate datasets with duplicate prevention
-
-### For Administrators
-1. **User Management**: Oversee all users and their roles
-2. **System Monitoring**: Track platform usage and performance
-3. **Project Oversight**: Monitor all projects across the institution
-4. **Security Management**: Manage system security and permissions
-5. **Dataset Uploads**: Admins can upload datasets via admin dashboard
-
-## File Structure
+## 📁 Project Structure
 
 ```
-academic-collaboration-platform/
+academic-data-repository/
 ├── config/
-│   ├── config.php          # Main configuration
-│   └── database.php        # Database connection
+│   ├── config.php              # Main configuration
+│   └── database.php            # Database connection
 ├── database/
-│   └── schema.sql          # Database schema
+│   ├── schema.sql              # Database schema
+│   ├── migrations.sql          # Database migrations
+│   └── sample_data_schema.sql  # Sample data
 ├── includes/
-│   ├── auth.php           # Authentication system
-│   └── functions.php      # Utility functions
-├── uploads/               # File upload directory
-├── versions/              # Version control storage
-├── login.php             # Login page
-├── register.php          # Registration page
-├── dashboard.php         # Main dashboard
-├── projects.php          # Projects listing
-├── project.php           # Individual project view
-├── create-project.php    # Project creation
-└── README.md            # This file
+│   ├── auth.php               # Authentication system
+│   ├── functions.php          # Utility functions
+│   └── footer.php             # Common footer
+├── uploads/                   # File upload directory
+├── versions/                  # Version control storage
+├── vendor/                    # Composer dependencies
+│   └── phpoffice/phpspreadsheet/  # Excel processing library
+├── assets/                    # Static assets (CSS, JS, images)
+├── image/                     # Platform images
+├── index.php                  # Main homepage
+├── login.php                  # Login page
+├── register.php               # Registration page
+├── dashboard.php              # User dashboard
+├── admin.php                  # Admin dashboard
+├── upload.php                 # File upload system
+├── preview.php                # File preview system
+├── projects.php               # Projects listing
+├── project.php                # Individual project view
+├── create-project.php         # Project creation
+├── review.php                 # Review system
+├── autoload.php               # Custom autoloader
+└── README.md                  # This file
 ```
 
-## Security Features
+## 🔧 Configuration
 
-- **Password Security**: Bcrypt hashing with salt
-- **CSRF Protection**: Token-based request validation
-- **SQL Injection Prevention**: Prepared statements
-- **File Upload Security**: Type validation and secure storage
+### **Database Configuration**
+```php
+// config/config.php
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'academic_collaboration');
+define('DB_USER', 'your_username');
+define('DB_PASS', 'your_password');
+```
+
+### **File Upload Settings**
+```php
+define('MAX_FILE_SIZE', 50 * 1024 * 1024); // 50MB
+define('ALLOWED_FILE_TYPES', [
+    'csv', 'xlsx', 'xls', 'json', 'pdf', 
+    'png', 'jpg', 'jpeg', 'gif', 'txt', 
+    'doc', 'docx'
+]);
+```
+
+### **Security Settings**
+```php
+define('SESSION_LIFETIME', 3600 * 8); // 8 hours
+define('PASSWORD_MIN_LENGTH', 8);
+define('CSRF_TOKEN_NAME', 'csrf_token');
+```
+
+## 📊 Dataset Categories
+
+The platform supports the following academic categories:
+- **AI** (Artificial Intelligence)
+- **ICT** (Information & Communication Technology)
+- **AGRICULTURE**
+- **TRANSPORT**
+- **HEALTH**
+- **EDUCATION**
+- **BUSINESS**
+- **ENGINEERING**
+
+## 🔒 Security Features
+
+### **Authentication Security**
+- **Bcrypt Hashing**: Secure password storage with salt
 - **Session Management**: Secure session handling with timeout
-- **Access Control**: Role-based permissions system (admin/user)
-- **Duplicate Prevention**: Review/download duplicate handling
+- **CSRF Protection**: Token-based request validation
+- **Input Validation**: Comprehensive input sanitization
 
-## Development Roadmap
+### **File Security**
+- **Type Validation**: Strict file type checking
+- **Size Limits**: Configurable file size restrictions
+- **Secure Storage**: Files stored outside web root
+- **Access Control**: Role-based file access permissions
 
-### Phase 1: Core Platform ✅
+### **Database Security**
+- **Prepared Statements**: SQL injection prevention
+- **Input Sanitization**: Comprehensive data cleaning
+- **Access Control**: Role-based database access
+- **Backup Protection**: Regular database backups
+
+## 📈 Recent Updates (Version 1.0.0)
+
+### **✅ New Features**
+- **Excel Integration**: Full Excel file support with PhpSpreadsheet
+- **Enhanced Preview**: Improved file preview with tabular display
+- **Category Updates**: Updated categories (AI, ICT, AGRICULTURE, TRANSPORT)
+- **Live Updates**: Real-time download counts and review updates
+- **Duplicate Prevention**: Smart handling of duplicate submissions
+
+### **🔧 Technical Improvements**
+- **Memory Management**: Optimized Excel file processing
+- **Error Handling**: Comprehensive error handling and user feedback
+- **Performance**: Improved file upload and processing speed
+- **Code Cleanup**: Removed temporary files and optimized codebase
+
+### **📱 User Experience**
+- **Responsive Design**: Enhanced mobile experience
+- **Loading States**: Better user feedback during operations
+- **Error Messages**: Clear and helpful error notifications
+- **Accessibility**: Improved screen reader support
+
+## 🚀 Development Roadmap
+
+### **Phase 1: Core Platform ✅**
 - [x] User authentication and authorization
 - [x] Project management system
-- [x] Basic file operations
+- [x] File upload and management
+- [x] Excel file integration
 - [x] Responsive user interface
 
-### Phase 2: Advanced Features (In Progress)
-- [ ] File upload system with validation
-- [ ] Version control with branching/merging
-- [ ] Member invitation system
-- [ ] File preview and comparison tools
-
-### Phase 3: Enhanced Collaboration
+### **Phase 2: Advanced Features (In Progress)**
 - [ ] Real-time notifications
 - [ ] Advanced search and filtering
 - [ ] Data export and backup
 - [ ] Analytics and reporting
 
-### Phase 4: Enterprise Features
+### **Phase 3: Enhanced Collaboration**
+- [ ] Real-time collaboration tools
+- [ ] Advanced version control
+- [ ] Integration with external tools
+- [ ] Mobile application
+
+### **Phase 4: Enterprise Features**
 - [ ] API development
-- [ ] Integration capabilities
+- [ ] Multi-institution support
 - [ ] Advanced security features
 - [ ] Performance optimization
 
-## Contributing
+## 🐛 Troubleshooting
 
+### **Common Issues**
+
+**Database Connection Failed**
+```bash
+# Check MySQL is running
+sudo systemctl status mysql
+
+# Verify credentials in config/config.php
+# Ensure database exists
+mysql -u root -p -e "SHOW DATABASES;"
+```
+
+**File Upload Issues**
+```bash
+# Check directory permissions
+ls -la uploads/
+chmod 755 uploads versions
+
+# Check PHP upload limits
+php -i | grep upload
+```
+
+**Excel File Processing Issues**
+```bash
+# Verify PhpSpreadsheet installation
+composer require phpoffice/phpspreadsheet
+
+# Check autoloader
+php autoload.php
+```
+
+### **Performance Optimization**
+- Enable PHP OPcache
+- Configure MySQL query cache
+- Use CDN for static assets
+- Implement file compression
+
+## 🤝 Contributing
+
+We welcome contributions from the academic community!
+
+### **Development Setup**
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/new-feature`)
-3. Commit your changes (`git commit -am 'Add new feature'`)
-4. Push to the branch (`git push origin feature/new-feature`)
-5. Create a Pull Request
+3. Make your changes following the coding standards
+4. Test thoroughly
+5. Commit your changes (`git commit -am 'Add new feature'`)
+6. Push to the branch (`git push origin feature/new-feature`)
+7. Create a Pull Request
 
-## Support
+### **Coding Standards**
+- Follow PSR-12 coding standards
+- Add comprehensive comments
+- Include error handling
+- Test all functionality
+- Update documentation
 
-For technical support or questions:
-- Create an issue in the repository
-- Contact the development team
-- Check the documentation wiki
+## 📞 Support
 
-## License
+### **Technical Support**
+- **Issues**: Create an issue in the repository
+- **Documentation**: Check the documentation wiki
+- **Email**: Contact the development team
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### **Academic Support**
+- **Institutional Integration**: Contact for university-specific features
+- **Training**: Available for faculty and staff
+- **Customization**: Custom features for specific academic needs
 
-## Changelog
+## 📄 License
 
-### Version 1.0.0 (Current)
-- Initial release with core functionality
-- User authentication and project management
-- Basic file operations and responsive design
-- Role-based access control system
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Development Team
+
+**Takoradi Technical University - Computer Science Department**
+
+- **Alexander Essien** - BC/ICT/21/075
+- **Anthony Ofori Owusu** - BC/ICT/21/076  
+- **McCarthy Mawuko Kwesi Defor** - BC/ICT/21/045
+- **Broni John Eyra Kobby** - BC/ICT/21/081
+- **Sylvia Esi Amoah** - BC/ICT/21/157
+
+**Supervisor**: [Supervisor Name]
+**Department**: Computer Science
+**Institution**: Takoradi Technical University
+**Year**: 2025
+
+## 📚 Academic Context
+
+This platform is specifically designed for **African academic institutions**, with particular focus on:
+- **Ghanaian educational context**
+- **Faculty-student collaboration patterns**
+- **Research workflow requirements**
+- **Educational outcome tracking**
+- **Institutional integration needs**
+
+## 🔄 Changelog
+
+### **Version 1.0.0 (December 2025)**
+- **Initial Release**: Complete academic collaboration platform
+- **Excel Integration**: Full Excel file support with PhpSpreadsheet
+- **Category Updates**: Updated academic categories
+- **Security Enhancements**: Comprehensive security features
+- **Performance Optimization**: Improved speed and reliability
 
 ---
 
-**Dataset Sharing and Collaboration Platform** - Empowering educational institutions with collaborative data management tools.
+**🎓 Academic Data Repository** - Empowering educational institutions with collaborative data management tools.
+
+**Powered by TTU** | © 2025 Takoradi Technical University. All rights reserved.
