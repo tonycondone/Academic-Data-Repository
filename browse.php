@@ -418,16 +418,6 @@ document.querySelectorAll('.download-button').forEach(button => {
     });
 });
 
-// Live review count update
-document.querySelectorAll('.review-button').forEach(button => {
-    button.addEventListener('click', function(e) {
-        e.preventDefault();
-        const datasetId = this.dataset.datasetId;
-        
-        // Open review modal or redirect to review page
-        window.location.href = `review.php?id=${datasetId}`;
-    });
-});
 </script>
 
 <?php
