@@ -368,7 +368,7 @@ try {
             <div class="service-item item-orange position-relative">
               <div class="icon">
                 <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke="none" stroke-width="0" fill="#f5f5f5" d="M300,582.0697525312426C382.5290701553225,586.8405444964366,449.9789794690241,525.3245884688669,502.5850820975895,461.55621195738473C556.606425686781,396.0723002908107,615.8543463187945,314.28637112970534,586.6730223649479,234.56875336149918C558.9533121215079,158.8439757836574,454.9685369536778,164.00468322053177,381.49747125262974,130.76875717737553C312.15926192815925,99.40240125094834,248.97055460311594,18.661163978235184,179.8680185752513,50.54337015887873C110.5421016452524,82.52863877960104,119.82277516462835,180.83849132639028,109.12597500060166,256.43424936330496C100.08760227029461,320.3096726198365,92.17705696193138,384.0621239912766,124.79988738764834,439.7174275375508C164.83382741302287,508.01625554203684,220.96474134820875,577.5009287672846,300,582.0697525312426"></path>
+                  <path stroke="none" stroke-width="0" fill="#f5f5f5" d="M300,582.0697525312426C382.5290701553225,586.8405444964366,449.9789794690241,525.3245884688669,502.5850820975895,461.55621195738473C556.606425686781,414.80211281144784,517.5187510058486,332.0715597781072,496.52539010469104,255.14436215662573C477.37192572678356,184.95920475031193,473.57363656557914,105.61284051026155,413.0603344069578,65.22779650032875C343.27470386102294,18.654635553484475,251.2091493199835,5.337323636656869,175.0934190732945,40.62881213300186C97.87086631185822,76.43348514350839,51.98124368387456,156.15599469081315,36.44837278890362,239.84606092416172C21.716077023791087,319.22268207091537,43.775223500013084,401.1760424656574,96.891909868211,461.97329694683043C147.22146801428983,519.5804099606455,223.5754009179313,538.201503339737,300,582.0697525312426"></path>
                 </svg>
                 <i class="bi bi-file-earmark-spreadsheet"></i>
               </div>
@@ -474,13 +474,13 @@ try {
               </div>
             </div><!-- End Info Item -->
 
-            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
-              <i class="bi bi-envelope flex-shrink-0"></i>
-              <div>
-                <h3>Email Us</h3>
-                <p>admin@dataset-platform.com</p>
-              </div>
-            </div><!-- End Info Item -->
+                          <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+                <i class="bi bi-envelope flex-shrink-0"></i>
+                <div>
+                  <h3>Email Us</h3>
+                  <p>touyboateng339@gmail.com</p>
+                </div>
+              </div><!-- End Info Item -->
 
             <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
               <i class="bi bi-mortarboard flex-shrink-0"></i>
@@ -574,13 +574,21 @@ try {
           <p>TAKORADI TECHNICAL UNIVERSITY</p>
           <p>Department of Data Management and Analytics</p>
           <p class="mt-4"><strong>Academic Year:</strong> <span>2024/2025</span></p>
-          <p><strong>Email:</strong> <span>admin@dataset-platform.com</span></p>
+          <p><strong>Email:</strong> <span>touyboateng339@gmail.com</span></p>
         </div>
 
       </div>
     </div>
 
     <div class="container copyright text-center mt-4">
+      <div class="powered-by-ttu mb-3">
+        <span class="d-inline-flex align-items-center">
+          <div class="ttu-logo me-2" style="width: 30px; height: 30px; background: linear-gradient(180deg, #fbbf24 50%, #3b82f6 50%); border: 2px solid #1e40af; border-radius: 50%; position: relative; display: inline-flex; align-items: center; justify-content: center;">
+            <div style="background: #dc2626; color: white; width: 16px; height: 10px; font-size: 8px; font-weight: bold; text-align: center; line-height: 10px; border-radius: 2px;">TTU</div>
+          </div>
+          <span class="fw-bold text-white">Powered by TTU</span>
+        </span>
+      </div>
       <p>© <span>Copyright</span> <strong class="px-1 sitename">DataShare Platform</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
       Dataset Sharing and Collaboration Platform

@@ -46,14 +46,21 @@
           <p>Open for All</p>
           <p>Department of Data Management and Analytics</p>
           <p class="mt-4"><strong>Academic Year:</strong> <span>2024/2025</span></p>
-          <p><strong>Email:</strong> <span>admin@dataset-platform.com</span></p>
+          <p><strong>Email:</strong> <span>touyboateng339@gmail.com</span></p>
         </div>
 
       </div>
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>Powered by TTU</p>
+      <div class="powered-by-ttu mb-3">
+        <span class="d-inline-flex align-items-center">
+          <div class="ttu-logo me-2" style="width: 30px; height: 30px; background: linear-gradient(180deg, #fbbf24 50%, #3b82f6 50%); border: 2px solid #1e40af; border-radius: 50%; position: relative; display: inline-flex; align-items: center; justify-content: center;">
+            <div style="background: #dc2626; color: white; width: 16px; height: 10px; font-size: 8px; font-weight: bold; text-align: center; line-height: 10px; border-radius: 2px;">TTU</div>
+          </div>
+          <span class="fw-bold text-white">Powered by TTU</span>
+        </span>
+      </div>
       <p>© <span>Copyright</span> <strong class="px-1 sitename">DataShare Platform</strong> <span>2025</span> <span>All Rights Reserved</span></p>
       <div class="credits">
         DataShare Platform - Dataset Sharing and Collaboration Platform
