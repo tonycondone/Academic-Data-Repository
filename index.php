@@ -506,16 +506,8 @@ try {
                     <i class="bi bi-person me-2"></i>Login / Register
                   </a>
                 </div>
-                <div class="col-md-6 mb-3">
-                  <a href="admin.php" class="btn btn-success w-100">
-                    <i class="bi bi-upload me-2"></i>Admin Panel
-                  </a>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <a href="PROJECT_SUMMARY.md" class="btn btn-info w-100" target="_blank">
-                    <i class="bi bi-file-text me-2"></i>Documentation
-                  </a>
-                </div>
+               
+                
               </div>
             </div>
           </div><!-- End Contact Info -->
