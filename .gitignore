@@ -1,21 +1,11 @@
 .gitignore
-# Ignore config files containing sensitive data
 config/config.php
 config/database.php
-
-# Ignore database schema and migration files
 database/*.sql
-
-# Ignore log files
 *.log
 php_error.log
-
-# Ignore uploads directory containing data files
 uploads/
 venv/
-
-
-# Ignore OS generated files
 .DS_Store
 Thumbs.db
 projext report writing templetes/
