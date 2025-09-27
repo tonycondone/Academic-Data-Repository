@@ -8,7 +8,9 @@
 > **A comprehensive web-based platform designed for educational institutions to facilitate collaborative data projects between faculty and students.**
 
 <p align="center">
-  <img src="assets/img/screenshots.png" alt="Academic Data Repository Screenshot" style="max-width: 100%; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+  <img src="assets/img/screenshots.png" alt="Academic Data Repository Screenshot"
+    width="350"
+    style="background: #181a1b; border: 1px solid #444; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 4px;">
 </p>
 
 ## 🎓 Project Overview
@@ -19,7 +21,7 @@
 ## 📁 Project Structure
 
 ```
-academic-data-repository/
+academic-data-repository
 ├── config/
 │   ├── config.php              # Main configuration
 │   └── database.php            # Database connection
