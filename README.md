@@ -1,7 +1,7 @@
-# Academic Data Repository: A Web-Based Platform for Dataset Sharing and Collaboration
+# Academic Data Repository
 
-[![PHP Version](https://img.shields.io/badge/PHP-8.0+-blue.svg)](https://php.net)
-[![MySQL Version](https://img.shields.io/badge/MySQL-8.0+-green.svg)](https://mysql.com)
+[![PHP](https://img.shields.io/badge/PHP-8.0+-blue.svg)](https://php.net)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0+-green.svg)](https://mysql.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)]()
 
