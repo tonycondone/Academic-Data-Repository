@@ -53,20 +53,6 @@ academic-data-repository/
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Development Team
-
-**Takoradi Technical University - Computer Science Department**
-
-- **Alexander Essien** - BC/ICT/21/075
-- **Anthony Ofori Owusu** - BC/ICT/21/076  
-- **McCarthy Mawuko Kwesi Defor** - BC/ICT/21/045
-- **Broni John Eyra Kobby** - BC/ICT/21/081
-- **Sylvia Esi Amoah** - BC/ICT/21/157
-
-**Supervisor**: Dr. Richard Essah
-**Department**: Computer Science
-**Institution**: Takoradi Technical University
-**Year**: 2025
 
 ## 📚 Academic Context
 
