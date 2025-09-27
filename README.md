@@ -16,7 +16,7 @@
     
 <img src="assets/img/screen-ph.jpg" alt="Academic Data Repository Mobile Screenshot"
          width="520"
-      style="display: inline-block; vertical-align: top;  border: 1px solid #444; border-radius: 12px;  padding: 8px; margin: 0 18px 0 0; max-width: 100%;">
+      style=padding: 8px; margin: 0 18px 0 0; max-width: 100%;">
   </picture>
 </p>
 ## 🎓 Project Overview
