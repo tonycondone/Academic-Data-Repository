@@ -12,7 +12,9 @@
     <img src="assets/img/screenshots.png" alt="Academic Data Repository Screenshot"
       width="520"
       style="display: inline-block; vertical-align: top; background: #181a1b; border: 1px solid #444; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); padding: 8px; margin: 0 18px 0 0; max-width: 100%;">
-    <img src="assets/img/screen-ph.jpg" alt="Academic Data Repository Mobile Screenshot"
+    
+    
+<img src="assets/img/screen-ph.jpg" alt="Academic Data Repository Mobile Screenshot"
          width="520"
       style="display: inline-block; vertical-align: top; background: #181a1b; border: 1px solid #444; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); padding: 8px; margin: 0 18px 0 0; max-width: 100%;">
   </picture>
