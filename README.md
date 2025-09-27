@@ -9,10 +9,15 @@
 
 <p align="center">
   <img src="assets/img/screenshots.png" alt="Academic Data Repository Screenshot"
-    width="350"
-    style="background: #181a1b; border: 1px solid #444; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 4px;">
+    width="420"
+    style="background: #181a1b; border: 1px solid #444; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 4px; margin-bottom: 18px;">
 </p>
 
+<p align="center">
+  <img src="assets/img/screen-ph.jpg" alt="Academic Data Repository Mobile Screenshot"
+    width="420"
+    style="background: #181a1b; border: 1px solid #444; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 4px; margin-top: 18px;">
+</p>
 ## 🎓 Project Overview
 
 **Academic Data Repository** is a specialized platform developed for **Takoradi Technical University** that enables secure file sharing, version control, and project management capabilities specifically tailored for academic research and data analysis. The platform bridges the gap between faculty research initiatives and student learning outcomes through structured collaboration.
