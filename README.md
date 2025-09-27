@@ -8,15 +8,14 @@
 > **A comprehensive web-based platform designed for educational institutions to facilitate collaborative data projects between faculty and students.**
 
 <p align="center">
-  <img src="assets/img/screenshots.png" alt="Academic Data Repository Screenshot"
-    width="420"
-    style="background: #181a1b; border: 1px solid #444; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 4px; margin-bottom: 18px;">
-</p>
-
-<p align="center">
-  <img src="assets/img/screen-ph.jpg" alt="Academic Data Repository Mobile Screenshot"
-    width="420"
-    style="background: #181a1b; border: 1px solid #444; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 4px; margin-top: 18px;">
+  <picture>
+    <img src="assets/img/screenshots.png" alt="Academic Data Repository Screenshot"
+      width="520"
+      style="display: inline-block; vertical-align: top; background: #181a1b; border: 1px solid #444; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); padding: 8px; margin: 0 18px 0 0; max-width: 100%;">
+    <img src="assets/img/screen-ph.jpg" alt="Academic Data Repository Mobile Screenshot"
+      width="320"
+      style="display: inline-block; vertical-align: top; background: #181a1b; border: 1px solid #444; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.18); padding: 8px; margin: 0 0 0 18px; max-width: 100%;">
+  </picture>
 </p>
 ## 🎓 Project Overview
 
