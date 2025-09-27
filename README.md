@@ -7,6 +7,10 @@
 
 > **A comprehensive web-based platform designed for educational institutions to facilitate collaborative data projects between faculty and students.**
 
+<p align="center">
+  <img src="assets/img/screenshots.png" alt="Academic Data Repository Screenshot" style="max-width: 100%; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+</p>
+
 ## 🎓 Project Overview
 
 **Academic Data Repository** is a specialized platform developed for **Takoradi Technical University** that enables secure file sharing, version control, and project management capabilities specifically tailored for academic research and data analysis. The platform bridges the gap between faculty research initiatives and student learning outcomes through structured collaboration.
