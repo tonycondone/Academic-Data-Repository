@@ -1,5 +1,7 @@
 <?php
 session_start();
+require_once __DIR__ . '/config/config.php';
+$db = new Database();
 
 if (isset($_GET['action']) && $_GET['action'] === 'get_download_count') {
     // AJAX endpoint to get current download count
@@ -9,14 +11,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_download_count') {
         exit;
     }
 
-    $host = 'localhost';
-    $dbname = 'dataset_platform';
-    $username = 'root';
-    $password = '1212';
-
     try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo = $db->getConnection();
 
         $stmt = $pdo->prepare("SELECT download_count FROM datasets WHERE id = ?");
         $stmt->execute([$datasetId]);
@@ -43,15 +39,8 @@ if (!$datasetId) {
     exit;
 }
 
-// Database connection
-$host = 'localhost';
-$dbname = 'dataset_platform';
-$username = 'root';
-$password = '1212';
-
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = $db->getConnection();
     
     // Get dataset details
     $stmt = $pdo->prepare("SELECT * FROM datasets WHERE id = ? AND is_active = 1");

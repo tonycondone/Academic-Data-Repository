@@ -20,15 +20,11 @@ if (!$datasetId) {
     exit;
 }
 
-// Database connection
-$host = 'localhost';
-$dbname = 'dataset_platform';
-$username = 'root';
-$password = '1212';
+require_once __DIR__ . '/config/config.php';
+$db = new Database();
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = $db->getConnection();
     
     // Get dataset details
     $stmt = $pdo->prepare("SELECT * FROM dataset_overview WHERE id = ?");
@@ -94,9 +90,14 @@ try {
                         for ($row = 1; $row <= $highestRow; $row++) {
                             $rowData = [];
                             for ($col = 1; $col <= $highestCol; $col++) {
-                                $cellValue = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
-                                // Handle null values and convert to string
-                                $rowData[] = $cellValue !== null ? (string)$cellValue : '';
+                                $cell = $worksheet->getCell([$col, $row]);
+                                $value = $cell->getCalculatedValue();
+                                if (\PhpOffice\PhpSpreadsheet\Shared\Date::isDateTime($cell)) {
+                                    $value = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value)->format('Y-m-d H:i:s');
+                                } elseif ($value instanceof \PhpOffice\PhpSpreadsheet\RichText\RichText) {
+                                    $value = $value->getPlainText();
+                                }
+                                $rowData[] = $value !== null ? (string)$value : '';
                             }
                             $previewData[] = $rowData;
                         }

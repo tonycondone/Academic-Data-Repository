@@ -1,15 +1,11 @@
 <?php
 session_start();
 
-// Database connection for live statistics
-$host = 'localhost';
-$dbname = 'dataset_platform';
-$username = 'root';
-$password = '1212';
+require_once __DIR__ . '/config/config.php';
+$db = new Database();
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = $db->getConnection();
     
     // Get live statistics from database
     $stmt = $pdo->query("SELECT COUNT(*) as total_datasets FROM datasets WHERE is_active = TRUE");

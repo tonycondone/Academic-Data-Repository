@@ -13,8 +13,10 @@ if (session_status() == PHP_SESSION_NONE) {
 // Load environment variables (if using vlucas/phpdotenv)
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ .  '/../vendor/autoload.php';
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/. .');
-    $dotenv->load();
+    if (class_exists('Dotenv\Dotenv')) {
+        $dotenv = \Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+        $dotenv->load();
+    }
 }
 
 // Helper function to get environment variables
@@ -101,7 +103,7 @@ function verifyCSRFToken($token) {
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > SESSION_LIFETIME)) {
     session_unset();
     session_destroy();
-    header('Location: login.php? timeout=1');
+    header('Location: login.php?timeout=1');
     exit();
 }
 $_SESSION['last_activity'] = time();

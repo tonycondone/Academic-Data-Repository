@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/config/config.php';
+
 // Include PhpSpreadsheet autoloader
 if (file_exists('autoload.php')) {
     require_once 'autoload.php';
@@ -12,15 +14,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-// Database connection
-$host = 'localhost';
-$dbname = 'dataset_platform';
-$username = 'root';
-$password = '1212';
+// Database is loaded via config
+$db = new Database();
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = $db->getConnection();
 } catch(PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }

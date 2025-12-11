@@ -29,16 +29,12 @@ if ($_POST) {
         $error = 'Passwords do not match.';
     } elseif (!in_array($role, ['user', 'admin'])) {
         $error = 'Invalid role selected.';
-    } else {
-        // Database connection
-        $host = 'localhost';
-        $dbname = 'dataset_platform';
-        $username = 'root';
-        $db_password = '1212';
+        } else {
+        require_once __DIR__ . '/config/database.php';
+        $db = new Database();
         
         try {
-            $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $db_password);
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo = $db->getConnection();
             
             // Check if email already exists
             $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");

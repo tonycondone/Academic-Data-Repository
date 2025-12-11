@@ -1,15 +1,12 @@
 <?php
 // Database diagnostic script
-$host = 'localhost';
-$dbname = 'dataset_platform';
-$username = 'root';
-$password = '1212';
+require_once __DIR__ . '/config/config.php';
+$db = new Database();
 
 echo "<h1>Dataset Platform Diagnostic Report</h1>\n";
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = $db->getConnection();
     
     echo "<h2>Database Connection</h2>\n";
     echo "<p>✅ Database connection successful</p>\n";
