@@ -14,7 +14,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-// Database is loaded via config
 $db = new Database();
 
 try {

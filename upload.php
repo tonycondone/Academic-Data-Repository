@@ -20,7 +20,6 @@ if (file_exists('autoload.php')) {
     require_once 'autoload.php';
 }
 
-// Database is loaded via config
 $db = new Database();
 
 try {

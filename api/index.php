@@ -3,6 +3,7 @@
 
 // Define the root directory of the  project
 define('APP_ROOT', dirname(__DIR__));
+chdir(APP_ROOT);
 
 // If you use Composer dependencies, include the autoloader:
 if (file_exists(APP_ROOT . '/vendor/autoload.php')) {

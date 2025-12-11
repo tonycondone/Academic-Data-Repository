@@ -3,7 +3,6 @@ session_start();
 
 require_once __DIR__ . '/config/config.php';
 
-// Database is loaded via config
 $db = new Database();
 
 try {

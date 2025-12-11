@@ -17,7 +17,6 @@ if (!$datasetId) {
     exit;
 }
 
-// Database is loaded via config
 $db = new Database();
 
 try {

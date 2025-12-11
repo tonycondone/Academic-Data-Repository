@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Database is loaded via config
 $db = new Database();
 
 try {
