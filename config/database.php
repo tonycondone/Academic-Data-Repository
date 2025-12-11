@@ -1,35 +1,64 @@
 <?php
 /**
- * Database Configuration
+ * Database Configuration (Updated for Vercel)
  * Academic Dataset Collaboration Platform
+ *
+ * Uses getenv() with fallbacks so Vercel env vars take precedence.
  */
 
 class Database {
-    private $host = 'localhost';
-    private $db_name = 'dataset_platform';
-    private $username = 'root';
-    private $password = '1212';
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
+    private $port;
     private $conn;
 
+    public function __construct() {
+        // Database connection (Updated for Vercel)
+        $this->host     = getenv('DB_HOST') ?: 'localhost';
+        $this->db_name  = getenv('DB_NAME') ?: 'dataset_platform';
+        $this->username = getenv('DB_USER') ?: 'root';
+        $this->password = getenv('DB_PASS') ?: '1212';
+        $this->port     = getenv('DB_PORT') ?: '3306';
+
+        // The '?:' part acts as a local fallback for when you develop on your own computer.
+        // When deployed on Vercel, getenv() will fetch the value you set in the Vercel dashboard.
+    }
+
     public function getConnection() {
-        $this->conn = null;
-        
+        if ($this->conn !== null) {
+            return $this->conn;
+        }
+
         try {
+            $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->db_name};charset=utf8mb4";
+
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
+                $dsn,
                 $this->username,
                 $this->password,
-                array(
+                [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
-                )
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+                ]
             );
-        } catch(PDOException $exception) {
-            echo "Connection error: " . $exception->getMessage();
+        } catch (PDOException $e) {
+            // In production don't reveal details to users — log instead
+            if ((getenv('APP_ENV') ?: 'development') === 'production') {
+                error_log('Database Connection Error: ' . $e->getMessage());
+                die('Database connection error.');
+            } else {
+                die('Connection error: ' . $e->getMessage());
+            }
         }
-        
+
         return $this->conn;
+    }
+
+    public function closeConnection() {
+        $this->conn = null;
     }
 }
 ?>

@@ -9,3 +9,7 @@ venv/
 .DS_Store
 Thumbs.db
 projext report writing templetes/
+
+.env
+.env.local
+.env.*.local
