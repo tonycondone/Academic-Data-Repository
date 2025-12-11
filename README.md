@@ -72,9 +72,4 @@ This platform is specifically designed for **African academic institutions**, wi
 - **Educational outcome tracking**
 - **Institutional integration needs**
 
-
----
-
-**🎓 Academic Data Repository** - Empowering educational institutions with collaborative data management tools.
-
 **Powered by TTU** | © 2025 Takoradi Technical University. All rights reserved.
