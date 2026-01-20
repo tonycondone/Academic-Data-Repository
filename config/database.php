@@ -16,7 +16,7 @@ class Database {
 
     public function __construct() {
         // Database connection (Updated for Vercel)
-        $this->host     = getenv('DB_HOST') ?: 'localhost';
+        $this->host     = getenv('DB_HOST') ?: '127.0.0.1';
         $this->db_name  = getenv('DB_NAME') ?: 'dataset_platform';
         $this->username = getenv('DB_USER') ?: 'root';
         $this->password = getenv('DB_PASS') ?: '1212';
