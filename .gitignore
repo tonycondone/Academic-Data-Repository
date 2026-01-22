@@ -13,3 +13,4 @@ projext report writing templetes/
 .env
 .env.local
 .env.*.local
+installed.lock
