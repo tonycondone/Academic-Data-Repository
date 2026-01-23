@@ -41,7 +41,7 @@ define('DB_HOST', getEnvVar('DB_HOST', 'localhost'));
 define('DB_NAME', getEnvVar('DB_NAME', 'dataset_platform'));
 define('DB_USER', getEnvVar('DB_USER', 'root'));
 define('DB_PASS', getEnvVar('DB_PASS', '1212'));
-define('DB_PORT', getEnvVar('DB_PORT', '3306'));
+define('DB_PORT', getEnvVar('DB_PORT', '5432'));
 
 // File upload settings
 define('UPLOAD_PATH', ROOT_PATH . getEnvVar('UPLOAD_PATH', 'uploads/'));

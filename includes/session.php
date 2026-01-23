@@ -200,7 +200,8 @@ function storeSessionInDB($pdo, $userId) {
         $stmt->execute([$userId]);
         
         // Insert new session
-        $stmt = $pdo->prepare("INSERT INTO user_sessions (id, user_id, ip_address, user_agent, expires_at) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE expires_at = ?, is_active = TRUE");
+        // PostgreSQL UPSERT syntax
+        $stmt = $pdo->prepare("INSERT INTO user_sessions (id, user_id, ip_address, user_agent, expires_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET expires_at = ?, is_active = TRUE");
         $stmt->execute([$sessionId, $userId, $ipAddress, $userAgent, $expiresAt, $expiresAt]);
         
     } catch(PDOException $e) {

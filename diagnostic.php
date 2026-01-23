@@ -13,14 +13,14 @@ try {
     
     // Check table structure
     echo "<h2>Table Structure Check</h2>\n";
-    $stmt = $pdo->query("DESCRIBE datasets");
+    $stmt = $pdo->query("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'datasets'");
     $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     $hasDownloadCount = false;
     foreach ($columns as $column) {
-        if ($column['Field'] === 'download_count') {
+        if ($column['column_name'] === 'download_count') {
             $hasDownloadCount = true;
-            echo "<p>✅ download_count column exists: {$column['Type']}</p>\n";
+            echo "<p>✅ download_count column exists: {$column['data_type']}</p>\n";
             break;
         }
     }

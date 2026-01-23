@@ -28,12 +28,9 @@ if ($_POST) {
             } else {
                 // Test database connection
                 try {
-                    $pdo = new PDO("mysql:host={$dbHost}", $dbUser, $dbPass);
+                    // PostgreSQL connection
+                    $pdo = new PDO("pgsql:host={$dbHost};dbname={$dbName}", $dbUser, $dbPass);
                     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    
-                    // Create database if it doesn't exist
-                    $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}`");
-                    $pdo->exec("USE `{$dbName}`");
                     
                     // Store database config in session
                     session_start();
@@ -64,12 +61,12 @@ if ($_POST) {
             }
             
             try {
-                $pdo = new PDO("mysql:host={$config['db_host']};dbname={$config['db_name']}", 
+                $pdo = new PDO("pgsql:host={$config['db_host']};dbname={$config['db_name']}", 
                               $config['db_user'], $config['db_pass']);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 
                 // Read and execute schema
-                $schema = file_get_contents('database/schema.sql');
+                $schema = file_get_contents('database/schema_postgres.sql');
                 $statements = explode(';', $schema);
                 
                 foreach ($statements as $statement) {

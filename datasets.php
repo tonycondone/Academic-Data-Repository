@@ -24,7 +24,7 @@ $conditions = [];
 $params = [];
 
 if ($search) {
-    $conditions[] = "(title LIKE :search OR description LIKE :search)";
+    $conditions[] = "(title ILIKE :search OR description ILIKE :search)";
     $params[':search'] = "%{$search}%";
 }
 

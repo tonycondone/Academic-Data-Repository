@@ -20,7 +20,7 @@ class Database {
         $this->db_name  = getenv('DB_NAME') ?: 'dataset_platform';
         $this->username = getenv('DB_USER') ?: 'root';
         $this->password = getenv('DB_PASS') ?: '1212';
-        $this->port     = getenv('DB_PORT') ?: '3306';
+        $this->port     = getenv('DB_PORT') ?: '5432'; // Default Postgres port
 
         // The '?:' part acts as a local fallback for when you develop on your own computer.
         // When deployed on Vercel, getenv() will fetch the value you set in the Vercel dashboard.
@@ -32,7 +32,8 @@ class Database {
         }
 
         try {
-            $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->db_name};charset=utf8mb4";
+            // PostgreSQL DSN
+            $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->db_name}";
 
             $this->conn = new PDO(
                 $dsn,
@@ -41,7 +42,7 @@ class Database {
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+                    PDO::ATTR_EMULATE_PREPARES => false, // Important for Postgres
                 ]
             );
         } catch (PDOException $e) {

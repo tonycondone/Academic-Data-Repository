@@ -30,7 +30,7 @@ $conditions = [];
 $params = [];
 
 if ($search) {
-    $conditions[] = "(d.title LIKE :search OR d.description LIKE :search)";
+    $conditions[] = "(d.title ILIKE :search OR d.description ILIKE :search)";
     $params[':search'] = "%{$search}%";
 }
 
