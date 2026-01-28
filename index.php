@@ -596,6 +596,12 @@ try {
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
 
+  <!-- Vercel Web Analytics -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+
 </body>
 
 </html>
