@@ -49,25 +49,28 @@ if ($_POST && isset($_POST['upload_dataset'])) {
             $message = 'File size must be less than 10MB.';
             $messageType = 'danger';
         } else {
-            // Create uploads directory if it doesn't exist
-            $uploadDir = 'uploads/';
-            if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-            
             // Generate unique filename
             $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file['name']);
-            $filePath = $uploadDir . $filename;
-            
-            if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                // Convert Excel to CSV if needed
-                $finalPath = $filePath;
+            $keyPath = date('Y/m/') . $filename;
+            $contentTypes = [
+                'csv' => 'text/csv',
+                'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'xls' => 'application/vnd.ms-excel',
+                'json' => 'application/json',
+                'txt' => 'text/plain'
+            ];
+            $contentType = $contentTypes[$fileExtension] ?? 'application/octet-stream';
+
+            // Upload to Supabase Storage if configured
+            $storage = new SupabaseStorage();
+            $objectPath = null;
+            if ($storage->isConfigured()) {
+                $objectPath = $storage->upload($file['tmp_name'], $keyPath, $contentType);
+            }
+
+            if ($objectPath) {
+                $finalPath = $objectPath;
                 $finalFilename = $filename;
-                
-                // Skip Excel to CSV conversion - keep original file
-                // Excel files will be previewed directly using PhpSpreadsheet
-                
-                // Insert into database
                 try {
                     $stmt = $pdo->prepare("INSERT INTO datasets (title, filename, category, description, file_path, file_size, uploaded_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
                     $stmt->execute([
@@ -76,14 +79,11 @@ if ($_POST && isset($_POST['upload_dataset'])) {
                         $category,
                         $description,
                         $finalPath,
-                        filesize($finalPath),
+                        (int)$file['size'],
                         $_SESSION['user_id']
                     ]);
-                    
                     $message = 'Dataset uploaded successfully!';
                     $messageType = 'success';
-                    
-                    // Clear form
                     $_POST = [];
                 } catch(PDOException $e) {
                     $message = 'Database error: ' . $e->getMessage();

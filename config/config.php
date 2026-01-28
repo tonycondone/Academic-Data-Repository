@@ -80,7 +80,8 @@ define('DB_PASS', getEnvVar('DB_PASS', '1212'));
 define('DB_PORT', getEnvVar('DB_PORT', '5432'));
 
 // File upload settings
-define('UPLOAD_PATH', ROOT_PATH . getEnvVar('UPLOAD_PATH', 'uploads/'));
+$IS_SERVERLESS = getEnvVar('VERCEL', null) || getEnvVar('AWS_LAMBDA_FUNCTION_NAME', null);
+define('UPLOAD_PATH', ($IS_SERVERLESS ? '/tmp/uploads/' : (ROOT_PATH . getEnvVar('UPLOAD_PATH', 'uploads/'))));
 define('MAX_FILE_SIZE', (int)getEnvVar('MAX_FILE_SIZE', 52428800)); // 50MB
 $allowed_types = explode(',', getEnvVar('ALLOWED_FILE_TYPES', 'csv,xlsx,xls,json,pdf,png,jpg,jpeg,gif,txt,doc,docx'));
 define('ALLOWED_FILE_TYPES', array_map('trim', $allowed_types));
@@ -96,7 +97,7 @@ define('FILES_PER_PAGE', (int)getEnvVar('FILES_PER_PAGE', 15));
 
 // Version control settings
 define('MAX_VERSIONS_PER_FILE', (int)getEnvVar('MAX_VERSIONS_PER_FILE', 100));
-define('VERSION_STORAGE_PATH', ROOT_PATH . getEnvVar('VERSION_STORAGE_PATH', 'versions/'));
+define('VERSION_STORAGE_PATH', ($IS_SERVERLESS ? '/tmp/versions/' : (ROOT_PATH . getEnvVar('VERSION_STORAGE_PATH', 'versions/'))));
 
 // Email settings (for notifications)
 define('SMTP_HOST', getEnvVar('SMTP_HOST', 'localhost'));
@@ -109,16 +110,22 @@ define('FROM_NAME', getEnvVar('FROM_NAME', 'Academic Collaboration Platform'));
 // Timezone
 date_default_timezone_set(getEnvVar('TIMEZONE', 'UTC'));
 
+// Supabase settings
+define('SUPABASE_URL', getEnvVar('SUPABASE_URL', ''));
+define('SUPABASE_SERVICE_ROLE_KEY', getEnvVar('SUPABASE_SERVICE_ROLE_KEY', ''));
+define('SUPABASE_STORAGE_BUCKET', getEnvVar('SUPABASE_STORAGE_BUCKET', 'uploads'));
+
 // Include required files
 // require_once ROOT_PATH . 'config/database.php'; // Already included at top
 require_once ROOT_PATH . 'includes/functions.php';
 require_once ROOT_PATH . 'includes/auth.php';
+require_once ROOT_PATH . 'includes/storage.php';
 
 // Create upload directories if they don't exist
-if (!file_exists(UPLOAD_PATH)) {
+if (!is_dir(UPLOAD_PATH) && is_writable(dirname(UPLOAD_PATH))) {
     mkdir(UPLOAD_PATH, 0755, true);
 }
-if (!file_exists(VERSION_STORAGE_PATH)) {
+if (!is_dir(VERSION_STORAGE_PATH) && is_writable(dirname(VERSION_STORAGE_PATH))) {
     mkdir(VERSION_STORAGE_PATH, 0755, true);
 }
 

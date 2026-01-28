@@ -52,25 +52,35 @@ try {
         exit;
     }
     
-    // Check if file exists
-    if (!file_exists($dataset['file_path'])) {
+    $stmt = $pdo->prepare("UPDATE datasets SET download_count = download_count + 1 WHERE id = ?");
+    $stmt->execute([$datasetId]);
+    $stmt = $pdo->prepare("INSERT INTO downloads (dataset_id, user_id, ip_address, user_agent) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$datasetId, $_SESSION['user_id'], $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '']);
+    
+    // If file is stored remotely (Supabase Storage/public), redirect to URL
+    $path = $dataset['file_path'];
+    if (!empty($path)) {
+        if (preg_match('/^https?:\\/\\//i', $path)) {
+            header('Location: ' . $path);
+            exit;
+        } else {
+            $storage = new SupabaseStorage();
+            if ($storage->isConfigured()) {
+                $signed = $storage->createSignedUrl($path, 600);
+                if ($signed) {
+                    header('Location: ' . $signed);
+                    exit;
+                }
+            }
+        }
+    }
+    
+    // Local file fallback
+    if (!file_exists($path)) {
         $_SESSION['error'] = 'File not found on server.';
         header('Location: index.php');
         exit;
     }
-    
-    // Update download count
-    $stmt = $pdo->prepare("UPDATE datasets SET download_count = download_count + 1 WHERE id = ?");
-    $stmt->execute([$datasetId]);
-    
-    // Log download
-    $stmt = $pdo->prepare("INSERT INTO downloads (dataset_id, user_id, ip_address, user_agent) VALUES (?, ?, ?, ?)");
-    $stmt->execute([
-        $datasetId,
-        $_SESSION['user_id'],
-        $_SERVER['REMOTE_ADDR'] ?? '',
-        $_SERVER['HTTP_USER_AGENT'] ?? ''
-    ]);
     
     // Get file extension to determine MIME type
     $fileExtension = strtolower(pathinfo($dataset['filename'], PATHINFO_EXTENSION));
@@ -94,13 +104,13 @@ try {
     // Set headers for file download
     header('Content-Type: ' . $mimeType);
     header('Content-Disposition: attachment; filename="' . $dataset['filename'] . '"');
-    header('Content-Length: ' . filesize($dataset['file_path']));
+    header('Content-Length: ' . filesize($path));
     header('Cache-Control: no-cache, no-store, must-revalidate');
     header('Pragma: no-cache');
     header('Expires: 0');
     
     // Output file content
-    readfile($dataset['file_path']);
+    readfile($path);
     exit;
     
 } catch(PDOException $e) {
