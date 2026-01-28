@@ -14,3 +14,4 @@ projext report writing templetes/
 .env.local
 .env.*.local
 installed.lock
+Academic-Data-Repository.code-workspace
