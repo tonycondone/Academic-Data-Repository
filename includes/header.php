@@ -53,7 +53,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
       <a href="index.php" class="logo d-flex align-items-center me-auto">
-        <i class="bi bi-database me-2" style="font-size: 2rem; color: #2563eb;"></i>
         <h1 class="sitename">DataShare Platform</h1>
       </a>
 
