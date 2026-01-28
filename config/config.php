@@ -5,11 +5,6 @@
  * Environment-based configuration for local and production deployments
  */
 
-// Start session if not already started
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
 // Load environment variables (if using vlucas/phpdotenv)
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ .  '/../vendor/autoload.php';
@@ -17,6 +12,47 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
         $dotenv = \Dotenv\Dotenv::createImmutable(dirname(__DIR__));
         $dotenv->load();
     }
+}
+
+// Manual .env loading fallback if composer dependencies are missing
+if (!getenv('DB_HOST') && file_exists(dirname(__DIR__) . '/.env')) {
+    $lines = file(dirname(__DIR__) . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            list($name, $value) = explode('=', $line, 2);
+            $name = trim($name);
+            $value = trim($value);
+            if (!array_key_exists($name, $_SERVER) && !array_key_exists($name, $_ENV)) {
+                putenv(sprintf('%s=%s', $name, $value));
+                $_ENV[$name] = $value;
+                $_SERVER[$name] = $value;
+            }
+        }
+    }
+}
+
+// Include database class first
+require_once dirname(__DIR__) . '/config/database.php';
+require_once dirname(__DIR__) . '/includes/DatabaseSessionHandler.php';
+
+// Initialize Custom Session Handler
+try {
+    // Only use DB sessions if we have a connection
+    $db = new Database();
+    $pdo = $db->getConnection();
+    if ($pdo) {
+        $handler = new DatabaseSessionHandler($pdo);
+        session_set_save_handler($handler, true);
+    }
+} catch (Exception $e) {
+    // Fallback to file sessions if DB fails
+    error_log("Failed to initialize DB session handler: " . $e->getMessage());
+}
+
+// Start session if not already started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
 }
 
 // Helper function to get environment variables
@@ -37,7 +73,7 @@ define('ROOT_PATH', dirname(__DIR__) . '/');
 define('APP_ENV', $app_env);
 
 // Database settings (from environment variables)
-define('DB_HOST', getEnvVar('DB_HOST', 'localhost'));
+define('DB_HOST', getEnvVar('DB_HOST', '127.0.0.1'));
 define('DB_NAME', getEnvVar('DB_NAME', 'dataset_platform'));
 define('DB_USER', getEnvVar('DB_USER', 'root'));
 define('DB_PASS', getEnvVar('DB_PASS', '1212'));
@@ -74,7 +110,7 @@ define('FROM_NAME', getEnvVar('FROM_NAME', 'Academic Collaboration Platform'));
 date_default_timezone_set(getEnvVar('TIMEZONE', 'UTC'));
 
 // Include required files
-require_once ROOT_PATH . 'config/database.php';
+// require_once ROOT_PATH . 'config/database.php'; // Already included at top
 require_once ROOT_PATH . 'includes/functions.php';
 require_once ROOT_PATH . 'includes/auth.php';
 
