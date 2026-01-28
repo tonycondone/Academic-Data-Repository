@@ -11,13 +11,8 @@ class Database {
         $user = defined('DB_USER') ? DB_USER : '';
         $pass = defined('DB_PASS') ? DB_PASS : '';
 
-        // Auto-configure from environment for Vercel/Supabase deployment
         if (empty($dsn) || empty($user)) {
-            $envUrl = getenv('DATABASE_URL')
-                ?: getenv('SUPABASE_DB_URL')
-                ?: getenv('SUPABASE_DB_CONNECTION_STRING')
-                ?: '';
-
+            $envUrl = getenv('DATABASE_URL') ?: getenv('SUPABASE_DB_URL') ?: getenv('SUPABASE_DB_CONNECTION_STRING') ?: '';
             if (!empty($envUrl)) {
                 $parts = parse_url($envUrl);
                 if ($parts && isset($parts['scheme'], $parts['host'], $parts['path'])) {
@@ -29,10 +24,8 @@ class Database {
                     if (!empty($parts['query'])) {
                         parse_str($parts['query'], $query);
                     }
-
                     $user = $user ?: ($parts['user'] ?? '');
                     $pass = $pass ?: ($parts['pass'] ?? '');
-
                     if ($scheme === 'postgres' || $scheme === 'postgresql') {
                         $sslmode = $query['sslmode'] ?? 'require';
                         $dsn = "pgsql:host={$host};port={$port};dbname={$dbname};sslmode={$sslmode}";
@@ -41,6 +34,22 @@ class Database {
                         $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset={$charset}";
                     }
                 }
+            }
+        }
+
+        if (empty($dsn) || empty($user)) {
+            $driver = strtolower(getenv('DB_DRIVER') ?: 'postgres');
+            $host = getenv('DB_HOST') ?: '';
+            $port = getenv('DB_PORT') ?: ($driver === 'postgres' ? '5432' : '3306');
+            $dbname = getenv('DB_NAME') ?: '';
+            $user = $user ?: (getenv('DB_USER') ?: '');
+            $pass = $pass ?: (getenv('DB_PASS') ?: '');
+            if ($driver === 'postgres' && $host && $dbname && $user) {
+                $sslmode = getenv('DB_SSLMODE') ?: 'require';
+                $dsn = "pgsql:host={$host};port={$port};dbname={$dbname};sslmode={$sslmode}";
+            } elseif ($driver === 'mysql' && $host && $dbname && $user) {
+                $charset = getenv('DB_CHARSET') ?: 'utf8mb4';
+                $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset={$charset}";
             }
         }
 

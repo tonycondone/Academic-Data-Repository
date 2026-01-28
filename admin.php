@@ -19,7 +19,7 @@ $db = new Database();
 try {
     $pdo = $db->getConnection();
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    $pdo = null;
 }
 
 $message = '';
@@ -68,7 +68,7 @@ if ($_POST && isset($_POST['upload_dataset'])) {
                 $objectPath = $storage->upload($file['tmp_name'], $keyPath, $contentType);
             }
 
-            if ($objectPath) {
+            if ($objectPath && $pdo) {
                 $finalPath = $objectPath;
                 $finalFilename = $filename;
                 try {
@@ -97,19 +97,25 @@ if ($_POST && isset($_POST['upload_dataset'])) {
     }
 }
 
-// Get recent uploads
-$stmt = $pdo->query("SELECT * FROM dataset_overview ORDER BY upload_date DESC LIMIT 10");
-$recentUploads = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Get statistics
-$stmt = $pdo->query("SELECT COUNT(*) as total_datasets FROM datasets");
-$totalDatasets = $stmt->fetch(PDO::FETCH_ASSOC)['total_datasets'];
-
-$stmt = $pdo->query("SELECT COUNT(*) as total_users FROM users WHERE role = 'user'");
-$totalUsers = $stmt->fetch(PDO::FETCH_ASSOC)['total_users'];
-
-$stmt = $pdo->query("SELECT SUM(download_count) as total_downloads FROM datasets");
-$totalDownloads = $stmt->fetch(PDO::FETCH_ASSOC)['total_downloads'] ?? 0;
+if ($pdo) {
+    $stmt = $pdo->query("SELECT * FROM dataset_overview ORDER BY upload_date DESC LIMIT 10");
+    $recentUploads = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $pdo->query("SELECT COUNT(*) as total_datasets FROM datasets");
+    $totalDatasets = $stmt->fetch(PDO::FETCH_ASSOC)['total_datasets'];
+    $stmt = $pdo->query("SELECT COUNT(*) as total_users FROM users WHERE role = 'user'");
+    $totalUsers = $stmt->fetch(PDO::FETCH_ASSOC)['total_users'];
+    $stmt = $pdo->query("SELECT SUM(download_count) as total_downloads FROM datasets");
+    $totalDownloads = $stmt->fetch(PDO::FETCH_ASSOC)['total_downloads'] ?? 0;
+} else {
+    $recentUploads = [];
+    $totalDatasets = 0;
+    $totalUsers = 0;
+    $totalDownloads = 0;
+    if (!$message) {
+        $message = 'Database not configured';
+        $messageType = 'warning';
+    }
+}
 
 // Page specific variables
 $page_title = 'Admin Panel';

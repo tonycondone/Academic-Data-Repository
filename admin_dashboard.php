@@ -14,49 +14,45 @@ $db = new Database();
 try {
     $pdo = $db->getConnection();
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    $pdo = null;
 }
 
 // Get dashboard statistics
 $stats = [];
 
-// Total datasets
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM datasets");
-$stats['total_datasets'] = $stmt->fetch()['total'];
-
-// Total users
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM users");
-$stats['total_users'] = $stmt->fetch()['total'];
-
-// Total downloads
-$stmt = $pdo->query("SELECT SUM(download_count) as total FROM datasets");
-$stats['total_downloads'] = $stmt->fetch()['total'] ?? 0;
-
-// Total reviews
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM reviews");
-$stats['total_reviews'] = $stmt->fetch()['total'];
-
-// Recent datasets
-$stmt = $pdo->query("SELECT * FROM datasets ORDER BY upload_date DESC LIMIT 5");
-$recent_datasets = $stmt->fetchAll();
-
-// Popular datasets
-$stmt = $pdo->query("SELECT * FROM datasets ORDER BY download_count DESC LIMIT 5");
-$popular_datasets = $stmt->fetchAll();
-
-// Recent reviews
-$stmt = $pdo->query("
-    SELECT r.*, d.title as dataset_title, u.name as user_name 
-    FROM reviews r 
-    JOIN datasets d ON r.dataset_id = d.id 
-    JOIN users u ON r.user_id = u.id 
-    ORDER BY r.timestamp DESC LIMIT 5
-");
-$recent_reviews = $stmt->fetchAll();
-
-// Category statistics
-$stmt = $pdo->query("SELECT category, COUNT(*) as count FROM datasets GROUP BY category ORDER BY count DESC");
-$category_stats = $stmt->fetchAll();
+if ($pdo) {
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM datasets");
+    $stats['total_datasets'] = $stmt->fetch()['total'];
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM users");
+    $stats['total_users'] = $stmt->fetch()['total'];
+    $stmt = $pdo->query("SELECT SUM(download_count) as total FROM datasets");
+    $stats['total_downloads'] = $stmt->fetch()['total'] ?? 0;
+    $stmt = $pdo->query("SELECT COUNT(*) as total FROM reviews");
+    $stats['total_reviews'] = $stmt->fetch()['total'];
+    $stmt = $pdo->query("SELECT * FROM datasets ORDER BY upload_date DESC LIMIT 5");
+    $recent_datasets = $stmt->fetchAll();
+    $stmt = $pdo->query("SELECT * FROM datasets ORDER BY download_count DESC LIMIT 5");
+    $popular_datasets = $stmt->fetchAll();
+    $stmt = $pdo->query("
+        SELECT r.*, d.title as dataset_title, u.name as user_name 
+        FROM reviews r 
+        JOIN datasets d ON r.dataset_id = d.id 
+        JOIN users u ON r.user_id = u.id 
+        ORDER BY r.timestamp DESC LIMIT 5
+    ");
+    $recent_reviews = $stmt->fetchAll();
+    $stmt = $pdo->query("SELECT category, COUNT(*) as count FROM datasets GROUP BY category ORDER BY count DESC");
+    $category_stats = $stmt->fetchAll();
+} else {
+    $stats['total_datasets'] = 0;
+    $stats['total_users'] = 0;
+    $stats['total_downloads'] = 0;
+    $stats['total_reviews'] = 0;
+    $recent_datasets = [];
+    $popular_datasets = [];
+    $recent_reviews = [];
+    $category_stats = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

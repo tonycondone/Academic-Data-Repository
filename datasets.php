@@ -8,7 +8,7 @@ $db = new Database();
 try {
     $pdo = $db->getConnection();
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    $pdo = null;
 }
 
 // Get search and filter parameters
@@ -44,30 +44,32 @@ $orderClause = match($sort) {
     default => 'ORDER BY upload_date DESC'
 };
 
-// Get datasets with pagination
-$query = "SELECT * FROM dataset_overview $whereClause $orderClause LIMIT :limit OFFSET :offset";
-$stmt = $pdo->prepare($query);
-foreach ($params as $key => $value) {
-    $stmt->bindValue($key, $value);
+if ($pdo) {
+    $query = "SELECT * FROM dataset_overview $whereClause $orderClause LIMIT :limit OFFSET :offset";
+    $stmt = $pdo->prepare($query);
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $datasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $countQuery = "SELECT COUNT(*) FROM dataset_overview $whereClause";
+    $stmt = $pdo->prepare($countQuery);
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+    $stmt->execute();
+    $totalDatasets = $stmt->fetchColumn();
+    $totalPages = ceil($totalDatasets / $limit);
+    $stmt = $pdo->query("SELECT category, COUNT(*) as count FROM datasets GROUP BY category ORDER BY count DESC");
+    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    $datasets = [];
+    $totalDatasets = 0;
+    $totalPages = 0;
+    $categories = [];
 }
-$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-$stmt->execute();
-$datasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Get total count for pagination
-$countQuery = "SELECT COUNT(*) FROM dataset_overview $whereClause";
-$stmt = $pdo->prepare($countQuery);
-foreach ($params as $key => $value) {
-    $stmt->bindValue($key, $value);
-}
-$stmt->execute();
-$totalDatasets = $stmt->fetchColumn();
-$totalPages = ceil($totalDatasets / $limit);
-
-// Get categories for filter
-$stmt = $pdo->query("SELECT category, COUNT(*) as count FROM datasets GROUP BY category ORDER BY count DESC");
-$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Page specific variables
 $page_title = 'Browse Datasets';
