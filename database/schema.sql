@@ -13,7 +13,7 @@ CREATE TABLE users (
     role ENUM('admin', 'faculty', 'student') NOT NULL DEFAULT 'student',
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    department VARCHAR(100),
+    department VARCHAR(70),
     student_id VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP NULL,
