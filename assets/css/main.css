@@ -53,11 +53,11 @@
 }
 
 .accent-background {
-  --background-color: #2487ce;
+  --background-color: #191e22;
   --default-color: #ffffff;
   --heading-color: #ffffff;
   --accent-color: #ffffff;
-  --surface-color: #469fdf;
+  --surface-color: #0f1214;
   --contrast-color: #ffffff;
 }
 
@@ -78,7 +78,7 @@ body {
 a {
   color: var(--accent-color);
   text-decoration: none;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 a:hover {
