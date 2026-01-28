@@ -33,7 +33,7 @@ class Database {
 
         try {
             // PostgreSQL DSN
-            $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->db_name}";
+            $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->db_name};sslmode=require";
 
             $this->conn = new PDO(
                 $dsn,
@@ -46,13 +46,8 @@ class Database {
                 ]
             );
         } catch (PDOException $e) {
-            // In production don't reveal details to users — log instead
-            if ((getenv('APP_ENV') ?: 'development') === 'production') {
-                error_log('Database Connection Error: ' . $e->getMessage());
-                die('Database connection error.');
-            } else {
-                die('Connection error: ' . $e->getMessage());
-            }
+            // Re-throw exception so caller can handle it (e.g. fallback to file sessions)
+            throw $e;
         }
 
         return $this->conn;

@@ -387,5 +387,11 @@ class Auth {
 }
 
 // Create global auth instance
-$auth = new Auth();
+try {
+    $auth = new Auth();
+} catch (Exception $e) {
+    // Database connection might be down
+    error_log("Failed to initialize Auth: " . $e->getMessage());
+    $auth = null;
+}
 ?>
