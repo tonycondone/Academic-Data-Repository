@@ -6,7 +6,6 @@
       <div class="row gy-4">
         <div class="col-lg-5 col-md-12 footer-about">
           <a href="index.php" class="logo d-flex align-items-center">
-            <i class="bi bi-database me-2" style="font-size: 1.5rem; color: #2563eb;"></i>
             <span class="sitename">DataShare Platform</span>
           </a>
           <p>A comprehensive web-based platform designed for academic dataset sharing and collaboration. Built with modern technologies and security best practices for educational environments.</p>
@@ -53,14 +52,7 @@
     </div>
 
     <div class="container copyright text-center mt-4">
-      <div class="powered-by-ttu mb-3">
-        <span class="d-inline-flex align-items-center">
-          <div class="ttu-logo me-2" style="width: 30px; height: 30px; background: linear-gradient(180deg, #fbbf24 50%, #3b82f6 50%); border: 2px solid #1e40af; border-radius: 50%; position: relative; display: inline-flex; align-items: center; justify-content: center;">
-            <div style="background: #dc2626; color: white; width: 16px; height: 10px; font-size: 8px; font-weight: bold; text-align: center; line-height: 10px; border-radius: 2px;">TTU</div>
-          </div>
-          <span class="fw-bold text-white">Powered by TTU</span>
-        </span>
-      </div>
+      
       <p>© <span>Copyright</span> <strong class="px-1 sitename">DataShare Platform</strong> <span>2025</span> <span>All Rights Reserved</span></p>
       <div class="credits">
         DataShare Platform - Dataset Sharing and Collaboration Platform
