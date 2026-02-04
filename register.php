@@ -54,7 +54,7 @@ if ($_POST) {
                 $_POST = array();
             }
         } catch(PDOException $e) {
-            $error = 'Database error occurred. Please try again.';
+            $error = 'Database error occurred: ' . $e->getMessage();
         }
     }
 }
