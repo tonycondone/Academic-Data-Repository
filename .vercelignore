@@ -3,7 +3,7 @@
 .env
 .env.local
 tests
-vendor
+/vendor
 composer.lock
 README.md
 LICENSE
