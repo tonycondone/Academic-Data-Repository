@@ -10,70 +10,83 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $db = new Database();
+$pdo = null;
 
 try {
     $pdo = $db->getConnection();
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    // Database unavailable
 }
 
 $user_id = $_SESSION['user_id'];
 $is_admin = $_SESSION['role'] === 'admin';
 
 // Get user statistics
-$stats = [];
+$stats = [
+    'my_reviews' => 0,
+    'my_downloads' => rand(15, 50),
+    'favorite_category' => 'None',
+    'avg_rating' => 0
+];
+$recommended_datasets = [];
+$my_reviews = [];
+$popular_categories = [];
+$recent_activity = [];
 
-// User's reviews count
-$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM reviews WHERE user_id = ?");
-$stmt->execute([$user_id]);
-$stats['my_reviews'] = $stmt->fetch()['total'];
+if ($pdo) {
+    try {
+        // User's reviews count
+        $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM reviews WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        $stats['my_reviews'] = $stmt->fetch()['total'];
 
-// User's downloads (we'll simulate this with a random number for demo)
-$stats['my_downloads'] = rand(15, 50);
+        // Favorite category (most reviewed category)
+        $stmt = $pdo->prepare("
+            SELECT d.category, COUNT(*) as count 
+            FROM reviews r 
+            JOIN datasets d ON r.dataset_id = d.id 
+            WHERE r.user_id = ? 
+            GROUP BY d.category 
+            ORDER BY count DESC 
+            LIMIT 1
+        ");
+        $stmt->execute([$user_id]);
+        $fav_category = $stmt->fetch();
+        $stats['favorite_category'] = $fav_category ? $fav_category['category'] : 'None';
 
-// Favorite category (most reviewed category)
-$stmt = $pdo->prepare("
-    SELECT d.category, COUNT(*) as count 
-    FROM reviews r 
-    JOIN datasets d ON r.dataset_id = d.id 
-    WHERE r.user_id = ? 
-    GROUP BY d.category 
-    ORDER BY count DESC 
-    LIMIT 1
-");
-$stmt->execute([$user_id]);
-$fav_category = $stmt->fetch();
-$stats['favorite_category'] = $fav_category ? $fav_category['category'] : 'None';
+        // Average rating given
+        $stmt = $pdo->prepare("SELECT AVG(rating) as avg_rating FROM reviews WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        $avg_rating = $stmt->fetch()['avg_rating'];
+        $stats['avg_rating'] = $avg_rating ? round($avg_rating, 1) : 0;
 
-// Average rating given
-$stmt = $pdo->prepare("SELECT AVG(rating) as avg_rating FROM reviews WHERE user_id = ?");
-$stmt->execute([$user_id]);
-$avg_rating = $stmt->fetch()['avg_rating'];
-$stats['avg_rating'] = $avg_rating ? round($avg_rating, 1) : 0;
+        // Recent datasets (popular ones)
+        $stmt = $pdo->query("SELECT * FROM datasets ORDER BY download_count DESC LIMIT 6");
+        $recommended_datasets = $stmt->fetchAll();
 
-// Recent datasets (popular ones)
-$stmt = $pdo->query("SELECT * FROM datasets ORDER BY download_count DESC LIMIT 6");
-$recommended_datasets = $stmt->fetchAll();
+        // User's recent reviews
+        $stmt = $pdo->prepare("
+            SELECT r.*, d.title as dataset_title, d.category 
+            FROM reviews r 
+            JOIN datasets d ON r.dataset_id = d.id 
+            WHERE r.user_id = ? 
+            ORDER BY r.timestamp DESC 
+            LIMIT 5
+        ");
+        $stmt->execute([$user_id]);
+        $my_reviews = $stmt->fetchAll();
 
-// User's recent reviews
-$stmt = $pdo->prepare("
-    SELECT r.*, d.title as dataset_title, d.category 
-    FROM reviews r 
-    JOIN datasets d ON r.dataset_id = d.id 
-    WHERE r.user_id = ? 
-    ORDER BY r.timestamp DESC 
-    LIMIT 5
-");
-$stmt->execute([$user_id]);
-$my_reviews = $stmt->fetchAll();
+        // Popular categories
+        $stmt = $pdo->query("SELECT category, COUNT(*) as count FROM datasets GROUP BY category ORDER BY count DESC LIMIT 5");
+        $popular_categories = $stmt->fetchAll();
 
-// Popular categories
-$stmt = $pdo->query("SELECT category, COUNT(*) as count FROM datasets GROUP BY category ORDER BY count DESC LIMIT 5");
-$popular_categories = $stmt->fetchAll();
-
-// Recent activity (latest datasets)
-$stmt = $pdo->query("SELECT * FROM datasets ORDER BY upload_date DESC LIMIT 5");
-$recent_activity = $stmt->fetchAll();
+        // Recent activity (latest datasets)
+        $stmt = $pdo->query("SELECT * FROM datasets ORDER BY upload_date DESC LIMIT 5");
+        $recent_activity = $stmt->fetchAll();
+    } catch(PDOException $e) {
+        // Keep defaults
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

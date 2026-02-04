@@ -10,54 +10,60 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $db = new Database();
+$pdo = null;
 
 try {
     $pdo = $db->getConnection();
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    // Database unavailable
 }
 
 $user = $_SESSION;
 $isAdmin = $user['role'] === 'admin';
 
+// Initialize variables
+$totalDatasets = 0;
+$userReviews = 0;
+$userDownloads = 0;
+$recentDatasets = [];
+$userRecentReviews = [];
+
 // Get user statistics
-try {
-    // Get total datasets
-    $stmt = $pdo->query("SELECT COUNT(*) as count FROM datasets WHERE is_active = TRUE");
-    $totalDatasets = $stmt->fetch()['count'];
-    
-    // Get user's reviews count
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM reviews WHERE user_id = ?");
-    $stmt->execute([$user['user_id']]);
-    $userReviews = $stmt->fetch()['count'];
-    
-    // Get user's downloads count
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM downloads WHERE user_id = ?");
-    $stmt->execute([$user['user_id']]);
-    $userDownloads = $stmt->fetch()['count'];
-    
-    // Get recent datasets
-    $stmt = $pdo->query("SELECT * FROM dataset_overview ORDER BY upload_date DESC LIMIT 5");
-    $recentDatasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    // Get user's recent reviews
-    $stmt = $pdo->prepare("
-        SELECT r.*, d.title as dataset_title 
-        FROM reviews r 
-        JOIN datasets d ON r.dataset_id = d.id 
-        WHERE r.user_id = ? 
-        ORDER BY r.created_at DESC 
-        LIMIT 5
-    ");
-    $stmt->execute([$user['user_id']]);
-    $userRecentReviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-} catch(PDOException $e) {
-    $totalDatasets = 0;
-    $userReviews = 0;
-    $userDownloads = 0;
-    $recentDatasets = [];
-    $userRecentReviews = [];
+if ($pdo) {
+    try {
+        // Get total datasets
+        $stmt = $pdo->query("SELECT COUNT(*) as count FROM datasets WHERE is_active = TRUE");
+        $totalDatasets = $stmt->fetch()['count'];
+        
+        // Get user's reviews count
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM reviews WHERE user_id = ?");
+        $stmt->execute([$user['user_id']]);
+        $userReviews = $stmt->fetch()['count'];
+        
+        // Get user's downloads count
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM downloads WHERE user_id = ?");
+        $stmt->execute([$user['user_id']]);
+        $userDownloads = $stmt->fetch()['count'];
+        
+        // Get recent datasets
+        $stmt = $pdo->query("SELECT * FROM dataset_overview ORDER BY upload_date DESC LIMIT 5");
+        $recentDatasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Get user's recent reviews
+        $stmt = $pdo->prepare("
+            SELECT r.*, d.title as dataset_title 
+            FROM reviews r 
+            JOIN datasets d ON r.dataset_id = d.id 
+            WHERE r.user_id = ? 
+            ORDER BY r.created_at DESC 
+            LIMIT 5
+        ");
+        $stmt->execute([$user['user_id']]);
+        $userRecentReviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch(PDOException $e) {
+        // Keep defaults
+    }
 }
 
 // Page specific variables

@@ -10,89 +10,106 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $db = new Database();
+$pdo = null;
 
 try {
     $pdo = $db->getConnection();
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    // Database unavailable
 }
 
 $message = '';
 $messageType = '';
 
 // Get user details
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+$user = null;
+if ($pdo) {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+}
 
 if (!$user) {
-    session_destroy();
-    header('Location: login.php');
-    exit;
+    if (!$pdo) {
+        // Use session data as fallback
+        $user = $_SESSION;
+        $user['created_at'] = 'N/A'; // We don't have this in session usually
+        $message = "Database connection unavailable. Profile updates disabled.";
+        $messageType = "warning";
+    } else {
+        session_destroy();
+        header('Location: login.php');
+        exit;
+    }
 }
 
 // Handle profile update
 if ($_POST && isset($_POST['update_profile'])) {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $currentPassword = $_POST['current_password'] ?? '';
-    $newPassword = $_POST['new_password'] ?? '';
-    $confirmPassword = $_POST['confirm_password'] ?? '';
-    
-    if (empty($name) || empty($email)) {
-        $message = 'Name and email are required.';
-        $messageType = 'danger';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $message = 'Please enter a valid email address.';
-        $messageType = 'danger';
+    if (!$pdo) {
+         $message = "Service unavailable. Please try again later.";
+         $messageType = "danger";
     } else {
-        try {
-            // Check if email is already taken by another user
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
-            $stmt->execute([$email, $_SESSION['user_id']]);
-            if ($stmt->fetch()) {
-                $message = 'This email address is already in use.';
-                $messageType = 'danger';
-            } else {
-                // Update basic info
-                $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-                $stmt->execute([$name, $email, $_SESSION['user_id']]);
-                
-                // Handle password change
-                if (!empty($newPassword)) {
-                    if (empty($currentPassword)) {
-                        $message = 'Current password is required to set a new password.';
-                        $messageType = 'danger';
-                    } elseif (!password_verify($currentPassword, $user['password'])) {
-                        $message = 'Current password is incorrect.';
-                        $messageType = 'danger';
-                    } elseif (strlen($newPassword) < 6) {
-                        $message = 'New password must be at least 6 characters long.';
-                        $messageType = 'danger';
-                    } elseif ($newPassword !== $confirmPassword) {
-                        $message = 'New password and confirmation do not match.';
-                        $messageType = 'danger';
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $currentPassword = $_POST['current_password'] ?? '';
+        $newPassword = $_POST['new_password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+        
+        if (empty($name) || empty($email)) {
+            $message = 'Name and email are required.';
+            $messageType = 'danger';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $message = 'Please enter a valid email address.';
+            $messageType = 'danger';
+        } else {
+            try {
+                // Check if email is already taken by another user
+                $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+                $stmt->execute([$email, $_SESSION['user_id']]);
+                if ($stmt->fetch()) {
+                    $message = 'This email address is already in use.';
+                    $messageType = 'danger';
+                } else {
+                    // Update basic info
+                    $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                    $stmt->execute([$name, $email, $_SESSION['user_id']]);
+                    
+                    // Handle password change
+                    if (!empty($newPassword)) {
+                        if (empty($currentPassword)) {
+                            $message = 'Current password is required to set a new password.';
+                            $messageType = 'danger';
+                        } elseif (!password_verify($currentPassword, $user['password'])) {
+                            $message = 'Current password is incorrect.';
+                            $messageType = 'danger';
+                        } elseif (strlen($newPassword) < 6) {
+                            $message = 'New password must be at least 6 characters long.';
+                            $messageType = 'danger';
+                        } elseif ($newPassword !== $confirmPassword) {
+                            $message = 'New password and confirmation do not match.';
+                            $messageType = 'danger';
+                        } else {
+                            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                            $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+                            $stmt->execute([$hashedPassword, $_SESSION['user_id']]);
+                            $message = 'Profile and password updated successfully!';
+                            $messageType = 'success';
+                        }
                     } else {
-                        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-                        $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
-                        $stmt->execute([$hashedPassword, $_SESSION['user_id']]);
-                        $message = 'Profile and password updated successfully!';
+                        $message = 'Profile updated successfully!';
                         $messageType = 'success';
                     }
-                } else {
-                    $message = 'Profile updated successfully!';
-                    $messageType = 'success';
+                    
+                    // Refresh user data
+                    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+                    $stmt->execute([$_SESSION['user_id']]);
+                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $_SESSION['name'] = $user['name'];
                 }
-                
-                // Refresh user data
-                $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-                $stmt->execute([$_SESSION['user_id']]);
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                $_SESSION['name'] = $user['name'];
+            } catch(PDOException $e) {
+                $message = 'Error updating profile. Please try again.';
+                $messageType = 'danger';
             }
-        } catch(PDOException $e) {
-            $message = 'Error updating profile. Please try again.';
-            $messageType = 'danger';
         }
     }
 }

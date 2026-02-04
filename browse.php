@@ -8,7 +8,7 @@ $db = new Database();
 try {
     $pdo = $db->getConnection();
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    $pdo = null;
 }
 
 // Get search and filter parameters
@@ -41,18 +41,27 @@ $orderClause = match($sort) {
     default => 'ORDER BY upload_date DESC'
 };
 
-// Get datasets
-$query = "SELECT * FROM dataset_overview $whereClause $orderClause";
-$stmt = $pdo->prepare($query);
-foreach ($params as $key => $value) {
-    $stmt->bindValue($key, $value);
-}
-$stmt->execute();
-$datasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$datasets = [];
+$categories = [];
 
-// Get categories for filter
-$stmt = $pdo->query("SELECT DISTINCT category FROM datasets ORDER BY category");
-$categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+if ($pdo) {
+    try {
+        // Get datasets
+        $query = "SELECT * FROM dataset_overview $whereClause $orderClause";
+        $stmt = $pdo->prepare($query);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->execute();
+        $datasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Get categories for filter
+        $stmt = $pdo->query("SELECT DISTINCT category FROM datasets ORDER BY category");
+        $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    } catch(PDOException $e) {
+        // Log error or handle gracefully
+    }
+}
 
 // Page specific variables
 $page_title = 'Browse Datasets';

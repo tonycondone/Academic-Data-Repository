@@ -18,95 +18,104 @@ if (!$datasetId) {
 }
 
 $db = new Database();
+$pdo = null;
 
 try {
     $pdo = $db->getConnection();
 } catch(PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+    // Database unavailable
 }
 
 $message = '';
 $messageType = '';
 
 // Get dataset details
-try {
-    $stmt = $pdo->prepare("SELECT * FROM dataset_overview WHERE id = ?");
-    $stmt->execute([$datasetId]);
-    $dataset = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if (!$dataset) {
+$dataset = null;
+if ($pdo) {
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM dataset_overview WHERE id = ?");
+        $stmt->execute([$datasetId]);
+        $dataset = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        // error
+    }
+}
+
+if (!$dataset) {
+    if (!$pdo) {
+        $message = "Database connection unavailable.";
+        $messageType = "danger";
+        // Continue to show page but with error
+    } else {
         header('Location: browse.php');
         exit;
     }
-} catch(PDOException $e) {
-    header('Location: browse.php');
-    exit;
 }
 
-// Check if user has already reviewed this dataset
-$stmt = $pdo->prepare("SELECT * FROM reviews WHERE user_id = ? AND dataset_id = ?");
-$stmt->execute([$_SESSION['user_id'], $datasetId]);
-$existingReview = $stmt->fetch(PDO::FETCH_ASSOC);
+$existingReview = null;
+if ($pdo && $dataset) {
+    // Check if user has already reviewed this dataset
+    $stmt = $pdo->prepare("SELECT * FROM reviews WHERE user_id = ? AND dataset_id = ?");
+    $stmt->execute([$_SESSION['user_id'], $datasetId]);
+    $existingReview = $stmt->fetch(PDO::FETCH_ASSOC);
+}
 
 // Handle review submission
 if ($_POST && isset($_POST['submit_review'])) {
-    $rating = (int)($_POST['rating'] ?? 0);
-    $comment = trim($_POST['comment'] ?? '');
-    
-    if ($rating < 1 || $rating > 5) {
-        $message = 'Please select a rating between 1 and 5 stars.';
-        $messageType = 'danger';
+    if (!$pdo) {
+        $message = "Service unavailable. Please try again later.";
+        $messageType = "danger";
     } else {
-        try {
-            if ($existingReview) {
-                // Update existing review
-                $stmt = $pdo->prepare("UPDATE reviews SET rating = ?, comment = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ? AND dataset_id = ?");
-                $stmt->execute([$rating, $comment, $_SESSION['user_id'], $datasetId]);
-                $message = 'Your review has been updated successfully!';
-            } else {
-                // Insert new review
-                $stmt = $pdo->prepare("INSERT INTO reviews (user_id, dataset_id, rating, comment) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$_SESSION['user_id'], $datasetId, $rating, $comment]);
-                $message = 'Thank you for your review!';
-            }
-            $messageType = 'success';
-            
-            // Refresh existing review data
-            $stmt = $pdo->prepare("SELECT * FROM reviews WHERE user_id = ? AND dataset_id = ?");
-            $stmt->execute([$_SESSION['user_id'], $datasetId]);
-            $existingReview = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            // Refresh dataset information to get updated avg_rating and review_count
-            $stmt = $pdo->prepare("SELECT * FROM dataset_overview WHERE id = ?");
-            $stmt->execute([$datasetId]);
-            $dataset = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // AJAX response for live update
-            if (isset($_POST['ajax']) && $_POST['ajax'] == '1') {
-                // Get updated review count and average rating
-                $stmt = $pdo->prepare("SELECT COUNT(*) as review_count, AVG(rating) as avg_rating FROM reviews WHERE dataset_id = ?");
-                $stmt->execute([$datasetId]);
-                $stats = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                echo json_encode([
-                    'success' => true,
-                    'message' => $message,
-                    'review_count' => (int)$stats['review_count'],
-                    'avg_rating' => round($stats['avg_rating'], 1)
-                ]);
-                exit;
-            }
-            
-        } catch(PDOException $e) {
-            $message = 'Error saving review. Please try again.';
+        $rating = (int)($_POST['rating'] ?? 0);
+        $comment = trim($_POST['comment'] ?? '');
+        
+        if ($rating < 1 || $rating > 5) {
+            $message = 'Please select a rating between 1 and 5 stars.';
             $messageType = 'danger';
+        } else {
+            try {
+                if ($existingReview) {
+                    // Update existing review
+                    $stmt = $pdo->prepare("UPDATE reviews SET rating = ?, comment = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ? AND dataset_id = ?");
+                    $stmt->execute([$rating, $comment, $_SESSION['user_id'], $datasetId]);
+                    $message = 'Your review has been updated successfully!';
+                } else {
+                    // Insert new review
+                    $stmt = $pdo->prepare("INSERT INTO reviews (user_id, dataset_id, rating, comment) VALUES (?, ?, ?, ?)");
+                    $stmt->execute([$_SESSION['user_id'], $datasetId, $rating, $comment]);
+                    $message = 'Thank you for your review!';
+                }
+                $messageType = 'success';
+                
+                // Refresh existing review data
+                $stmt = $pdo->prepare("SELECT * FROM reviews WHERE user_id = ? AND dataset_id = ?");
+                $stmt->execute([$_SESSION['user_id'], $datasetId]);
+                $existingReview = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                // Refresh dataset information to get updated avg_rating and review_count
+                $stmt = $pdo->prepare("SELECT * FROM dataset_overview WHERE id = ?");
+                $stmt->execute([$datasetId]);
+                $dataset = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if (isset($_POST['ajax']) && $_POST['ajax'] == '1') {
-                echo json_encode([
-                    'success' => false,
-                    'message' => $message
-                ]);
-                exit;
+                // AJAX response for live update
+                if (isset($_POST['ajax']) && $_POST['ajax'] == '1') {
+                    // Get updated review count and average rating
+                    $stmt = $pdo->prepare("SELECT COUNT(*) as review_count, AVG(rating) as avg_rating FROM reviews WHERE dataset_id = ?");
+                    $stmt->execute([$datasetId]);
+                    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    echo json_encode([
+                        'success' => true,
+                        'message' => $message,
+                        'review_count' => (int)$stats['review_count'],
+                        'avg_rating' => round($stats['avg_rating'], 1)
+                    ]);
+                    exit;
+                }
+                
+            } catch(PDOException $e) {
+                $message = 'Database error occurred.';
+                $messageType = 'danger';
             }
         }
     }
