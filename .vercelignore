@@ -1,0 +1,9 @@
+.git
+.gitignore
+.env
+.env.local
+tests
+vendor
+composer.lock
+README.md
+LICENSE

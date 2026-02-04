@@ -60,7 +60,8 @@ class Database {
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
+            // Enable emulated prepares for Supabase Transaction Poolers (port 6543) support
+            PDO::ATTR_EMULATE_PREPARES => true, 
         ];
 
         $this->pdo = new PDO($dsn, $user, $pass ?? '', $options);
