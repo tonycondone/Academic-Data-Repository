@@ -12,7 +12,14 @@ class Database {
         $pass = defined('DB_PASS') ? DB_PASS : '';
 
         if (empty($dsn) || empty($user)) {
-            $envUrl = getenv('DATABASE_URL') ?: getenv('SUPABASE_DB_URL') ?: getenv('SUPABASE_DB_CONNECTION_STRING') ?: '';
+            // Check for standard Vercel Postgres / Supabase variables
+            $envUrl = getenv('DATABASE_URL') 
+                ?: getenv('POSTGRES_URL') 
+                ?: getenv('POSTGRES_PRISMA_URL') 
+                ?: getenv('SUPABASE_DB_URL') 
+                ?: getenv('SUPABASE_DB_CONNECTION_STRING') 
+                ?: '';
+            
             if (!empty($envUrl)) {
                 $parts = parse_url($envUrl);
                 if ($parts && isset($parts['scheme'], $parts['host'], $parts['path'])) {

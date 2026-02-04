@@ -20,6 +20,9 @@ $results['extensions'] = [
 // 2. Check Environment Variables
 $envVars = [
     'DATABASE_URL',
+    'POSTGRES_URL',
+    'POSTGRES_PRISMA_URL',
+    'POSTGRES_URL_NON_POOLING',
     'SUPABASE_DB_URL',
     'SUPABASE_DB_CONNECTION_STRING',
     'DB_HOST',
@@ -28,14 +31,18 @@ $envVars = [
     'DB_PASS',
     'DB_DRIVER',
     'DB_PORT',
-    'DB_SSLMODE'
+    'DB_SSLMODE',
+    'POSTGRES_HOST',
+    'POSTGRES_USER',
+    'POSTGRES_PASSWORD',
+    'POSTGRES_DATABASE'
 ];
 
 $results['env'] = [];
 foreach ($envVars as $var) {
     $val = getenv($var);
     if ($val) {
-        if (strpos($var, 'PASS') !== false || strpos($var, 'URL') !== false || strpos($var, 'STRING') !== false) {
+        if (strpos($var, 'PASS') !== false || strpos($var, 'KEY') !== false || strpos($var, 'SECRET') !== false || strpos($var, 'URL') !== false || strpos($var, 'STRING') !== false) {
              // Mask sensitive info
              $len = strlen($val);
              $visible = $len > 10 ? substr($val, 0, 7) . '...' : '***';
@@ -64,9 +71,13 @@ try {
     $user = '';
     
     // Copy-paste logic from Database::getConnection for diagnostic display
-    // (We can't access private vars of Database class)
     
-    $url = getenv('DATABASE_URL') ?: getenv('SUPABASE_DB_URL') ?: getenv('SUPABASE_DB_CONNECTION_STRING');
+    $url = getenv('DATABASE_URL') 
+        ?: getenv('POSTGRES_URL') 
+        ?: getenv('POSTGRES_PRISMA_URL') 
+        ?: getenv('SUPABASE_DB_URL') 
+        ?: getenv('SUPABASE_DB_CONNECTION_STRING');
+        
     if ($url) {
         $parts = parse_url($url);
         $parsedConfig['source'] = 'URL Environment Variable';
