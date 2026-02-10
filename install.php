@@ -114,9 +114,8 @@ if ($_POST) {
                     // Update default admin user
                     $passwordHash = password_hash($adminPassword, PASSWORD_DEFAULT);
                     
-                    $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, password_hash = ?, 
-                                          first_name = ?, last_name = ? WHERE id = 1");
-                    $stmt->execute([$adminUsername, $adminEmail, $passwordHash, $adminFirstName, $adminLastName]);
+                    $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, password = ? WHERE id = 1");
+                    $stmt->execute([$adminFirstName . ' ' . $adminLastName, $adminEmail, $passwordHash]);
                     
                     header('Location: install.php?step=4');
                     exit;

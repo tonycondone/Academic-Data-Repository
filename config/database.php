@@ -46,11 +46,14 @@ class Database {
 
         if (empty($dsn) || empty($user)) {
             $driver = strtolower(getenv('DB_DRIVER') ?: 'postgres');
-            $host = getenv('DB_HOST') ?: '';
-            $port = getenv('DB_PORT') ?: ($driver === 'postgres' ? '5432' : '3306');
-            $dbname = getenv('DB_NAME') ?: '';
-            $user = $user ?: (getenv('DB_USER') ?: '');
-            $pass = $pass ?: (getenv('DB_PASS') ?: '');
+            
+            // Support Vercel standard POSTGRES_* variables
+            $host = getenv('DB_HOST') ?: getenv('POSTGRES_HOST') ?: (defined('DB_HOST') ? DB_HOST : '');
+            $port = getenv('DB_PORT') ?: (defined('DB_PORT') ? DB_PORT : ($driver === 'postgres' ? '5432' : '3306'));
+            $dbname = getenv('DB_NAME') ?: getenv('POSTGRES_DATABASE') ?: (defined('DB_NAME') ? DB_NAME : '');
+            $user = $user ?: (getenv('DB_USER') ?: getenv('POSTGRES_USER') ?: (defined('DB_USER') ? DB_USER : ''));
+            $pass = $pass ?: (getenv('DB_PASS') ?: getenv('POSTGRES_PASSWORD') ?: (defined('DB_PASS') ? DB_PASS : ''));
+            
             if ($driver === 'postgres' && $host && $dbname && $user) {
                 $sslmode = getenv('DB_SSLMODE') ?: 'require';
                 $dsn = "pgsql:host={$host};port={$port};dbname={$dbname};sslmode={$sslmode}";

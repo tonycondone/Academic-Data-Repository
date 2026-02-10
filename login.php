@@ -54,7 +54,7 @@ if ($_POST) {
                 $error = 'Invalid email or password.';
             }
         } catch(PDOException $e) {
-            $error = 'Database connection failed.';
+            $error = 'Database connection failed: ' . $e->getMessage();
         }
     }
 }

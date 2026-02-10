@@ -15,18 +15,18 @@ class Auth {
     /**
      * Login user
      */
-    public function login($username, $password) {
+    public function login($email, $password) {
         try {
-            $query = "SELECT id, username, email, password_hash, role, first_name, last_name, is_active 
-                      FROM users WHERE (username = :username OR email = :username) AND is_active = 1";
+            $query = "SELECT id, name, email, password, role, is_active 
+                      FROM users WHERE email = :email AND is_active = true";
             
             $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':email', $email);
             $stmt->execute();
             
             $user = $stmt->fetch();
             
-            if ($user && verifyPassword($password, $user['password_hash'])) {
+            if ($user && verifyPassword($password, $user['password'])) {
                 // Update last login
                 $this->updateLastLogin($user['id']);
                 
@@ -44,7 +44,7 @@ class Auth {
             
             return [
                 'success' => false,
-                'message' => 'Invalid username/email or password'
+                'message' => 'Invalid email or password'
             ];
             
         } catch (Exception $e) {
@@ -70,11 +70,11 @@ class Auth {
                 ];
             }
             
-            // Check if username or email already exists
-            if ($this->userExists($userData['username'], $userData['email'])) {
+            // Check if email already exists
+            if ($this->userExists($userData['email'])) {
                 return [
                     'success' => false,
-                    'message' => 'Username or email already exists'
+                    'message' => 'Email already exists'
                 ];
             }
             
@@ -82,18 +82,14 @@ class Auth {
             $passwordHash = hashPassword($userData['password']);
             
             // Insert user
-            $query = "INSERT INTO users (username, email, password_hash, role, first_name, last_name, department, student_id) 
-                      VALUES (:username, :email, :password_hash, :role, :first_name, :last_name, :department, :student_id)";
+            $query = "INSERT INTO users (name, email, password, role) 
+                      VALUES (:name, :email, :password, :role)";
             
             $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':username', $userData['username']);
+            $stmt->bindParam(':name', $userData['name']);
             $stmt->bindParam(':email', $userData['email']);
-            $stmt->bindParam(':password_hash', $passwordHash);
+            $stmt->bindParam(':password', $passwordHash);
             $stmt->bindParam(':role', $userData['role']);
-            $stmt->bindParam(':first_name', $userData['first_name']);
-            $stmt->bindParam(':last_name', $userData['last_name']);
-            $stmt->bindParam(':department', $userData['department']);
-            $stmt->bindParam(':student_id', $userData['student_id']);
             
             if ($stmt->execute()) {
                 $userId = $this->db->lastInsertId();
@@ -147,7 +143,7 @@ class Auth {
      * Check if user is logged in
      */
     public function isLoggedIn() {
-        return isset($_SESSION['user_id']) && isset($_SESSION['username']);
+        return isset($_SESSION['user_id']);
     }
     
     /**
@@ -159,8 +155,8 @@ class Auth {
         }
         
         try {
-            $query = "SELECT id, username, email, role, first_name, last_name, department, student_id, created_at, last_login 
-                      FROM users WHERE id = :user_id AND is_active = 1";
+            $query = "SELECT id, name, email, role, created_at, last_login 
+                      FROM users WHERE id = :user_id AND is_active = true";
             
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':user_id', $_SESSION['user_id']);
@@ -246,13 +242,13 @@ class Auth {
     public function changePassword($userId, $currentPassword, $newPassword) {
         try {
             // Get current password hash
-            $query = "SELECT password_hash FROM users WHERE id = :user_id";
+            $query = "SELECT password FROM users WHERE id = :user_id";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':user_id', $userId);
             $stmt->execute();
             $user = $stmt->fetch();
             
-            if (!$user || !verifyPassword($currentPassword, $user['password_hash'])) {
+            if (!$user || !verifyPassword($currentPassword, $user['password'])) {
                 return [
                     'success' => false,
                     'message' => 'Current password is incorrect'
@@ -269,9 +265,9 @@ class Auth {
             
             // Update password
             $newPasswordHash = hashPassword($newPassword);
-            $query = "UPDATE users SET password_hash = :password_hash WHERE id = :user_id";
+            $query = "UPDATE users SET password = :password WHERE id = :user_id";
             $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':password_hash', $newPasswordHash);
+            $stmt->bindParam(':password', $newPasswordHash);
             $stmt->bindParam(':user_id', $userId);
             
             if ($stmt->execute()) {
@@ -303,11 +299,9 @@ class Auth {
      */
     private function createSession($user) {
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
+        $_SESSION['name'] = $user['name'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
-        $_SESSION['first_name'] = $user['first_name'];
-        $_SESSION['last_name'] = $user['last_name'];
         $_SESSION['last_activity'] = time();
     }
     
@@ -322,11 +316,10 @@ class Auth {
         }
     }
     
-    private function userExists($username, $email) {
+    private function userExists($email) {
         try {
-            $query = "SELECT id FROM users WHERE username = :username OR email = :email";
+            $query = "SELECT id FROM users WHERE email = :email";
             $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':username', $username);
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             
@@ -339,7 +332,7 @@ class Auth {
     
     private function validateRegistration($data) {
         // Required fields
-        $required = ['username', 'email', 'password', 'first_name', 'last_name', 'role'];
+        $required = ['name', 'email', 'password', 'role'];
         
         foreach ($required as $field) {
             if (empty($data[$field])) {
@@ -367,18 +360,10 @@ class Auth {
         }
         
         // Validate role
-        if (!in_array($data['role'], ['admin', 'faculty', 'student'])) {
+        if (!in_array($data['role'], ['admin', 'faculty', 'student', 'user'])) {
             return [
                 'valid' => false,
                 'message' => 'Invalid role selected'
-            ];
-        }
-        
-        // Validate username (alphanumeric and underscore only)
-        if (!preg_match('/^[a-zA-Z0-9_]+$/', $data['username'])) {
-            return [
-                'valid' => false,
-                'message' => 'Username can only contain letters, numbers, and underscores'
             ];
         }
         

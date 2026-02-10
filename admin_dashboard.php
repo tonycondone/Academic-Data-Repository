@@ -6,7 +6,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: login.php');
     exit();
 }
-session_start();
 
 require_once __DIR__ . '/config/config.php';
 $db = new Database();
@@ -38,7 +37,7 @@ if ($pdo) {
         FROM reviews r 
         JOIN datasets d ON r.dataset_id = d.id 
         JOIN users u ON r.user_id = u.id 
-        ORDER BY r.timestamp DESC LIMIT 5
+        ORDER BY r.created_at DESC LIMIT 5
     ");
     $recent_reviews = $stmt->fetchAll();
     $stmt = $pdo->query("SELECT category, COUNT(*) as count FROM datasets GROUP BY category ORDER BY count DESC");
