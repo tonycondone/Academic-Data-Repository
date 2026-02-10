@@ -63,10 +63,7 @@ academic-data-repository
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 
-## 📚 Academic Context
-
 This platform is specifically designed for **African academic institutions**, with particular focus on:
-- **Ghanaian educational context**
 - **Faculty-student collaboration patterns**
 - **Research workflow requirements**
 - **Educational outcome tracking**
