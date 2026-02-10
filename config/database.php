@@ -1,4 +1,28 @@
 <?php
+// Load .env or .env.local if environment variables are missing (Local Development)
+if (!getenv('POSTGRES_HOST') && !getenv('DATABASE_URL')) {
+    $envFiles = [__DIR__ . '/../.env.local', __DIR__ . '/../.env'];
+    foreach ($envFiles as $file) {
+        if (file_exists($file)) {
+            $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos(trim($line), '#') === 0) continue;
+                if (strpos($line, '=') !== false) {
+                    list($key, $value) = explode('=', $line, 2);
+                    $key = trim($key);
+                    $value = trim($value);
+                    $value = trim($value, '"\'');
+                    if (!getenv($key)) {
+                        putenv("$key=$value");
+                        $_ENV[$key] = $value;
+                    }
+                }
+            }
+            break; // Prefer .env.local if found
+        }
+    }
+}
+
 class Database {
     private ?PDO $pdo = null;
 

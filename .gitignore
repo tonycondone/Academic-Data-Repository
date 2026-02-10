@@ -1,6 +1,6 @@
 .gitignore
 config/config.php
-config/database.php
+# config/database.php
 database/*.sql
 *.log
 php_error.log

@@ -94,13 +94,12 @@ if ($_POST) {
                 exit;
             }
             
-            $adminUsername = $_POST['admin_username'] ?? '';
             $adminEmail = $_POST['admin_email'] ?? '';
             $adminPassword = $_POST['admin_password'] ?? '';
             $adminFirstName = $_POST['admin_first_name'] ?? '';
             $adminLastName = $_POST['admin_last_name'] ?? '';
             
-            if (empty($adminUsername) || empty($adminEmail) || empty($adminPassword) || 
+            if (empty($adminEmail) || empty($adminPassword) || 
                 empty($adminFirstName) || empty($adminLastName)) {
                 $error = 'All fields are required.';
             } elseif (strlen($adminPassword) < 8) {
@@ -496,12 +495,6 @@ if ($_POST) {
                                             <label for="admin_last_name">Last Name</label>
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="admin_username" name="admin_username" 
-                                           placeholder="Username" required>
-                                    <label for="admin_username">Username</label>
                                 </div>
                                 
                                 <div class="form-floating">

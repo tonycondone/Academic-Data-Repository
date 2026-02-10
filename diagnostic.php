@@ -100,10 +100,35 @@ try {
         "Driver Name" => $pdo->getAttribute(PDO::ATTR_DRIVER_NAME),
         "Client Version" => $pdo->getAttribute(PDO::ATTR_CLIENT_VERSION)
     ];
+
+    try {
+        $stmt = $pdo->query("SELECT version()");
+        $version = $stmt->fetchColumn();
+        $attributes['Database Version'] = $version;
+    } catch (Exception $e) {
+        $attributes['Database Version'] = "Could not fetch: " . $e->getMessage();
+    }
 } catch (PDOException $e) {
     $connectionStatus = "Failed";
     $connectionError = $e->getMessage();
     $code = $e->getCode();
+
+    // Add debugging info for environment variables (Masked)
+    $connectionError .= "\n\n--- Debug Info ---\n";
+    $envVars = [
+        'DATABASE_URL', 'POSTGRES_URL', 'POSTGRES_PRISMA_URL', 'SUPABASE_DB_URL',
+        'POSTGRES_HOST', 'POSTGRES_USER', 'POSTGRES_DATABASE', 'DB_HOST', 'DB_USER'
+    ];
+    
+    foreach ($envVars as $var) {
+        $val = getenv($var);
+        if ($val) {
+            $masked = substr($val, 0, 10) . '...';
+            $connectionError .= "$var: $masked (Length: " . strlen($val) . ")\n";
+        } else {
+            $connectionError .= "$var: Not Set\n";
+        }
+    }
 }
 
 ?>
