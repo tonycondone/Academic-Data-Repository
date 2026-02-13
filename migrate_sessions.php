@@ -18,9 +18,9 @@ try {
     ";
     
     $pdo->exec($sql);
-    echo "✅ 'sessions' table created successfully.\n";
+    echo " sessions table created successfully.\n";
     
 } catch (PDOException $e) {
-    echo "❌ Migration failed: " . $e->getMessage() . "\n";
+    echo " Migration failed: " . $e->getMessage() . "\n";
     exit(1);
 }

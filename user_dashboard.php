@@ -24,7 +24,7 @@ $is_admin = $_SESSION['role'] === 'admin';
 // Get user statistics
 $stats = [
     'my_reviews' => 0,
-    'my_downloads' => rand(15, 50),
+    'my_downloads' => 0,
     'favorite_category' => 'None',
     'avg_rating' => 0
 ];
@@ -39,6 +39,11 @@ if ($pdo) {
         $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM reviews WHERE user_id = ?");
         $stmt->execute([$user_id]);
         $stats['my_reviews'] = $stmt->fetch()['total'];
+
+        // User's downloads count
+        $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM downloads WHERE user_id = ?");
+        $stmt->execute([$user_id]);
+        $stats['my_downloads'] = $stmt->fetch()['total'];
 
         // Favorite category (most reviewed category)
         $stmt = $pdo->prepare("
@@ -70,7 +75,7 @@ if ($pdo) {
             FROM reviews r 
             JOIN datasets d ON r.dataset_id = d.id 
             WHERE r.user_id = ? 
-            ORDER BY r.timestamp DESC 
+            ORDER BY r.created_at DESC 
             LIMIT 5
         ");
         $stmt->execute([$user_id]);

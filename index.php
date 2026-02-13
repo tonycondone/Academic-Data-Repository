@@ -7,59 +7,59 @@ $db = new Database();
 try {
     $pdo = $db->getConnection();
     
-    // Get live statistics from database
-    $stmt = $pdo->query("SELECT COUNT(*) as total_datasets FROM datasets WHERE is_active = TRUE");
-    $total_datasets = $stmt->fetch()['total_datasets'];
-    
-    $stmt = $pdo->query("SELECT COUNT(DISTINCT category) as total_categories FROM datasets WHERE is_active = TRUE");
-    $total_categories = $stmt->fetch()['total_categories'];
-    
-    $stmt = $pdo->query("SELECT COUNT(*) as total_users FROM users WHERE is_active = TRUE");
-    $total_users = $stmt->fetch()['total_users'];
-    
-    // Get more realistic total downloads (average per dataset * number of datasets)
-    $stmt = $pdo->query("SELECT AVG(download_count) as avg_downloads, COUNT(*) as dataset_count FROM datasets WHERE is_active = TRUE");
-    $result = $stmt->fetch();
-    $avg_downloads = $result['avg_downloads'] ?? 0;
-    $dataset_count = $result['dataset_count'] ?? 0;
-    // Show a more realistic total (not the actual sum which might be too high)
-    $total_downloads = round($avg_downloads * $dataset_count * 0.6); // Show 60% of actual to be more realistic
-    
-    $stmt = $pdo->query("SELECT COUNT(*) as total_reviews FROM reviews");
-    $total_reviews = $stmt->fetch()['total_reviews'];
-    
-    // Get recent datasets for showcase - with proper error handling
-    try {
-        $stmt = $pdo->query("SELECT * FROM dataset_overview ORDER BY upload_date DESC LIMIT 3");
-        $recent_datasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch(PDOException $e) {
-        // If view doesn't exist, try direct query
-        $stmt = $pdo->query("
-            SELECT 
-                d.id,
-                d.title,
-                d.filename,
-                d.category,
-                d.description,
-                d.file_path,
-                d.file_size,
-                d.uploaded_by,
-                d.upload_date,
-                d.download_count,
-                u.name as uploader_name,
-                COALESCE(AVG(r.rating), 0) as avg_rating,
-                COUNT(r.id) as review_count
-            FROM datasets d
-            LEFT JOIN users u ON d.uploaded_by = u.id
-            LEFT JOIN reviews r ON d.id = r.dataset_id
-            WHERE d.is_active = TRUE
-            GROUP BY d.id, d.title, d.filename, d.category, d.description, 
-                     d.file_path, d.file_size, d.uploaded_by, d.upload_date, 
-                     d.download_count, u.name
-            ORDER BY d.upload_date DESC
-            LIMIT 3
-        ");
-        $recent_datasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($pdo) {
+        // Get live statistics from database
+        $stmt = $pdo->query("SELECT COUNT(*) as total_datasets FROM datasets WHERE is_active = TRUE");
+        $total_datasets = $stmt->fetch()['total_datasets'];
+        
+        $stmt = $pdo->query("SELECT COUNT(DISTINCT category) as total_categories FROM datasets WHERE is_active = TRUE");
+        $total_categories = $stmt->fetch()['total_categories'];
+        
+        $stmt = $pdo->query("SELECT COUNT(*) as total_users FROM users WHERE is_active = TRUE");
+        $total_users = $stmt->fetch()['total_users'];
+        
+        // Get actual total downloads from datasets table
+        $stmt = $pdo->query("SELECT COALESCE(SUM(download_count), 0) as total_downloads FROM datasets WHERE is_active = TRUE");
+        $total_downloads = $stmt->fetch()['total_downloads'];
+        
+        $stmt = $pdo->query("SELECT COUNT(*) as total_reviews FROM reviews");
+        $total_reviews = $stmt->fetch()['total_reviews'];
+        
+        // Get recent datasets for showcase - with proper error handling
+        try {
+            $stmt = $pdo->query("SELECT * FROM dataset_overview ORDER BY upload_date DESC LIMIT 3");
+            $recent_datasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            // If view doesn't exist, try direct query
+            $stmt = $pdo->query("
+                SELECT 
+                    d.id,
+                    d.title,
+                    d.filename,
+                    d.category,
+                    d.description,
+                    d.file_path,
+                    d.file_size,
+                    d.uploaded_by,
+                    d.upload_date,
+                    d.download_count,
+                    u.name as uploader_name,
+                    COALESCE(AVG(r.rating), 0) as avg_rating,
+                    COUNT(r.id) as review_count
+                FROM datasets d
+                LEFT JOIN users u ON d.uploaded_by = u.id
+                LEFT JOIN reviews r ON d.id = r.dataset_id
+                WHERE d.is_active = TRUE
+                GROUP BY d.id, d.title, d.filename, d.category, d.description, 
+                         d.file_path, d.file_size, d.uploaded_by, d.upload_date, 
+                         d.download_count, u.name
+                ORDER BY d.upload_date DESC
+                LIMIT 3
+            ");
+            $recent_datasets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    } else {
+        throw new PDOException("Database connection failed (null)");
     }
     
 } catch(PDOException $e) {

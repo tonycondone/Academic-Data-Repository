@@ -208,7 +208,7 @@ if ($pdo) {
           <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
             <div class="dashboard-card stat-card">
               <i class="bi bi-database stat-icon"></i>
-              <div class="stat-number"><?php echo $stats['total_datasets']; ?></div>
+              <div class="stat-number"><span data-purecounter-start="0" data-purecounter-end="<?php echo $stats['total_datasets']; ?>" data-purecounter-duration="1" class="purecounter"></span></div>
               <div class="stat-label">Total Datasets</div>
             </div>
           </div>
@@ -216,7 +216,7 @@ if ($pdo) {
           <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
             <div class="dashboard-card stat-card">
               <i class="bi bi-people stat-icon"></i>
-              <div class="stat-number"><?php echo $stats['total_users']; ?></div>
+              <div class="stat-number"><span data-purecounter-start="0" data-purecounter-end="<?php echo $stats['total_users']; ?>" data-purecounter-duration="1" class="purecounter"></span></div>
               <div class="stat-label">Registered Users</div>
             </div>
           </div>
@@ -224,7 +224,7 @@ if ($pdo) {
           <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
             <div class="dashboard-card stat-card">
               <i class="bi bi-download stat-icon"></i>
-              <div class="stat-number"><?php echo number_format($stats['total_downloads']); ?></div>
+              <div class="stat-number"><span data-purecounter-start="0" data-purecounter-end="<?php echo $stats['total_downloads']; ?>" data-purecounter-duration="1" class="purecounter"></span></div>
               <div class="stat-label">Total Downloads</div>
             </div>
           </div>
@@ -232,7 +232,7 @@ if ($pdo) {
           <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
             <div class="dashboard-card stat-card">
               <i class="bi bi-star stat-icon"></i>
-              <div class="stat-number"><?php echo $stats['total_reviews']; ?></div>
+              <div class="stat-number"><span data-purecounter-start="0" data-purecounter-end="<?php echo $stats['total_reviews']; ?>" data-purecounter-duration="1" class="purecounter"></span></div>
               <div class="stat-label">User Reviews</div>
             </div>
           </div>
