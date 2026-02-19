@@ -140,6 +140,91 @@ if ($pdo) {
       border-radius: 10px;
       margin-bottom: 0.5rem;
     }
+    
+    /* Mobile Responsive Styles */
+    @media (max-width: 767.98px) {
+      .dashboard-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .stat-card {
+        padding: 1.5rem 0.75rem;
+      }
+      
+      .stat-number {
+        font-size: 2rem;
+      }
+      
+      .stat-icon {
+        font-size: 2.5rem;
+      }
+      
+      .table-responsive {
+        font-size: 0.85rem;
+      }
+      
+      .btn-action {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.75rem;
+      }
+      
+      .category-bar {
+        height: 15px;
+      }
+    }
+    
+    @media (max-width: 575.98px) {
+      .dashboard-card {
+        padding: 0.75rem;
+        border-radius: 8px;
+      }
+      
+      .stat-card {
+        padding: 1rem 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+      
+      .stat-number {
+        font-size: 1.75rem;
+      }
+      
+      .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-label {
+        font-size: 0.85rem;
+      }
+      
+      .table-responsive {
+        font-size: 0.75rem;
+      }
+      
+      .table th,
+      .table td {
+        padding: 0.5rem 0.25rem;
+      }
+      
+      .btn-action {
+        display: inline-block;
+        padding: 0.25rem 0.35rem;
+        margin: 0.1rem;
+      }
+      
+      .list-group-item {
+        padding: 0.75rem 0.5rem;
+      }
+      
+      h4 {
+        font-size: 1rem;
+      }
+      
+      h2 {
+        font-size: 1.25rem;
+      }
+    }
   </style>
 </head>
 

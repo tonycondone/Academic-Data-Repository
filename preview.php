@@ -508,6 +508,136 @@ include 'includes/header.php';
     font-size: 1.5rem;
   }
 }
+
+/* Additional Mobile Responsive Styles */
+@media (max-width: 575.98px) {
+  .page-title {
+    padding: 25px 0;
+    margin-bottom: 25px;
+  }
+  
+  .page-title h2 {
+    font-size: 1.25rem;
+  }
+  
+  .breadcrumb {
+    font-size: 0.85rem;
+  }
+  
+  .dataset-header {
+    padding: 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .dataset-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .meta-item {
+    font-size: 0.8rem;
+  }
+  
+  .action-buttons {
+    margin-top: 1rem;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .dataset-description {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .dataset-description h5 {
+    font-size: 1rem;
+  }
+  
+  .dataset-description p {
+    font-size: 0.9rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+  }
+  
+  .preview-content {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  
+  .preview-content h5 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .table {
+    font-size: 0.75rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 6px 4px;
+  }
+  
+  .json-preview,
+  .text-preview {
+    padding: 1rem;
+    border-radius: 6px;
+    max-height: 300px;
+  }
+  
+  .json-preview pre,
+  .text-preview pre {
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+  
+  .no-preview i {
+    font-size: 3rem !important;
+  }
+  
+  .no-preview h4 {
+    font-size: 1.1rem;
+  }
+  
+  .no-preview p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .dataset-header {
+    padding: 1.5rem;
+  }
+  
+  .dataset-title {
+    font-size: 1.4rem;
+  }
+  
+  .preview-content {
+    padding: 1.5rem;
+  }
+  
+  .table {
+    font-size: 0.8rem;
+  }
+}
 </style>
 
 <?php

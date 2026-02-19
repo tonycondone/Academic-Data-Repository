@@ -411,6 +411,54 @@ include 'includes/header.php';
 .upload-item h6 a:hover {
   color: #2563eb;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 767.98px) {
+  .page-title {
+    padding: 25px 0;
+    margin-bottom: 25px;
+  }
+  
+  .page-title h2 {
+    font-size: 1.5rem;
+  }
+  
+  .stats-card {
+    padding: 1rem;
+    margin-bottom: 15px;
+  }
+  
+  .stats-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  
+  .stats-number {
+    font-size: 1.5rem;
+  }
+  
+  .upload-card {
+    padding: 1.25rem;
+  }
+  
+  .file-drop-zone {
+    padding: 2rem 1rem;
+  }
+  
+  .file-drop-zone i {
+    font-size: 2.5rem !important;
+  }
+  
+  .recent-uploads {
+    padding: 1.25rem;
+    margin-top: 20px;
+  }
+  
+  .upload-item {
+    padding: 0.75rem 0;
+  }
+}
 </style>
 
 <script>

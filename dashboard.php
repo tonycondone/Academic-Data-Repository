@@ -486,6 +486,98 @@ include 'includes/header.php';
     gap: 0.5rem;
   }
 }
+
+/* Additional Mobile Responsive Styles */
+@media (max-width: 575.98px) {
+  .welcome-section {
+    padding: 40px 0;
+    text-align: center;
+  }
+  
+  .welcome-title {
+    font-size: 1.25rem;
+  }
+  
+  .welcome-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .stats-card {
+    padding: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .stats-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stats-number {
+    font-size: 1.5rem;
+  }
+  
+  .stats-label {
+    font-size: 0.75rem;
+  }
+  
+  .section-card {
+    border-radius: 10px;
+  }
+  
+  .section-header {
+    padding: 1rem 1rem 0 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1rem;
+    padding-bottom: 0.75rem;
+  }
+  
+  .dataset-item {
+    padding: 0.75rem 1rem;
+  }
+  
+  .dataset-title {
+    font-size: 0.9rem;
+  }
+  
+  .dataset-meta {
+    font-size: 0.75rem;
+  }
+  
+  .dataset-description {
+    font-size: 0.8rem;
+  }
+  
+  .dataset-actions .btn {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .quick-actions {
+    padding: 0 1rem 1rem;
+  }
+  
+  .quick-actions .btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .review-item {
+    padding: 0.75rem 1rem;
+  }
+  
+  .review-dataset a {
+    font-size: 0.85rem;
+  }
+  
+  .review-comment {
+    font-size: 0.8rem;
+  }
+}
 </style>
 
 <?php

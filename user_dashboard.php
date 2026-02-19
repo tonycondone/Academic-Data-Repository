@@ -205,6 +205,139 @@ if ($pdo) {
       color: white;
       border-radius: 15px;
     }
+    
+    /* Mobile Responsive Styles */
+    @media (max-width: 767.98px) {
+      .dashboard-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .stat-card {
+        padding: 1.5rem 0.75rem;
+        margin-bottom: 1rem;
+      }
+      
+      .stat-number {
+        font-size: 2rem;
+      }
+      
+      .stat-icon {
+        font-size: 2.5rem;
+      }
+      
+      .dataset-card {
+        margin-bottom: 1rem;
+      }
+      
+      .dataset-header {
+        padding: 0.75rem;
+      }
+      
+      .welcome-gradient h2 {
+        font-size: 1.25rem;
+      }
+      
+      .activity-item {
+        padding-left: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+      
+      h4 {
+        font-size: 1rem;
+      }
+    }
+    
+    @media (max-width: 575.98px) {
+      .dashboard-card {
+        padding: 0.75rem;
+        border-radius: 8px;
+      }
+      
+      .stat-card {
+        padding: 1rem 0.5rem;
+        border-radius: 10px;
+        margin-bottom: 0.75rem;
+      }
+      
+      .stat-number {
+        font-size: 1.75rem;
+        margin-bottom: 0.25rem;
+      }
+      
+      .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-label {
+        font-size: 0.85rem;
+      }
+      
+      .dataset-card {
+        margin-bottom: 0.75rem;
+      }
+      
+      .dataset-header {
+        padding: 0.5rem;
+      }
+      
+      .dataset-header h6 {
+        font-size: 0.9rem;
+      }
+      
+      .welcome-gradient {
+        padding: 1rem !important;
+        border-radius: 10px;
+      }
+      
+      .welcome-gradient h2 {
+        font-size: 1.1rem;
+      }
+      
+      .welcome-gradient p {
+        font-size: 0.85rem;
+      }
+      
+      .category-badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+      }
+      
+      .activity-item {
+        padding-left: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .activity-item h6 {
+        font-size: 0.9rem;
+      }
+      
+      .list-group-item {
+        padding: 0.75rem 0.5rem;
+      }
+      
+      h4 {
+        font-size: 0.95rem;
+      }
+      
+      .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+      }
+      
+      .border.rounded.hover-shadow {
+        padding: 0.75rem !important;
+      }
+      
+      .border.rounded.hover-shadow i {
+        font-size: 1.5rem !important;
+      }
+      
+      .border.rounded.hover-shadow h6 {
+        font-size: 0.85rem;
+      }
+    }
   </style>
 </head>
 

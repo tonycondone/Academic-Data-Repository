@@ -375,6 +375,128 @@ include 'includes/header.php';
 .empty-state i {
   opacity: 0.3;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 991.98px) {
+  .sidebar {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .page-title {
+    padding: 25px 0;
+    margin-bottom: 25px;
+  }
+  
+  .page-title h2 {
+    font-size: 1.5rem;
+  }
+  
+  .sidebar {
+    padding: 15px;
+  }
+  
+  .widget-title {
+    font-size: 1rem;
+  }
+  
+  .filter-option {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+  
+  .dataset-card {
+    margin-bottom: 15px;
+  }
+  
+  .dataset-card .card-header {
+    padding: 12px 15px;
+  }
+  
+  .dataset-card .card-title {
+    font-size: 1rem;
+  }
+  
+  .dataset-card .card-body {
+    padding: 15px;
+  }
+  
+  .card-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .card-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .datasets .d-flex {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .datasets .d-flex h4 {
+    font-size: 1.1rem;
+  }
+  
+  .form-select-sm {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .page-title h2 {
+    font-size: 1.25rem;
+  }
+  
+  .breadcrumb {
+    font-size: 0.85rem;
+  }
+  
+  .sidebar {
+    border-radius: 8px;
+  }
+  
+  .widget {
+    margin-bottom: 20px;
+  }
+  
+  .input-group .form-control {
+    font-size: 16px;
+  }
+  
+  .input-group .btn {
+    padding: 10px 15px;
+  }
+  
+  .dataset-card .card-header {
+    padding: 10px 12px;
+  }
+  
+  .dataset-card .card-title {
+    font-size: 0.95rem;
+  }
+  
+  .dataset-card .card-body {
+    padding: 12px;
+  }
+  
+  .dataset-meta .d-flex {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .empty-state i {
+    font-size: 3rem !important;
+  }
+  
+  .empty-state h5 {
+    font-size: 1rem;
+  }
+}
 </style>
 
 <script>
