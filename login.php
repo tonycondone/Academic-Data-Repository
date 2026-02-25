@@ -15,7 +15,6 @@ $error = '';
 if ($_POST) {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
-    $selected_role = $_POST['role'] ?? 'user'; // default to user
     
     if (empty($email) || empty($password)) {
         $error = 'Please enter both email and password.';
@@ -30,26 +29,22 @@ if ($_POST) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($user && password_verify($password, $user['password'])) {
-                if ($user['role'] !== $selected_role) {
-                    $error = 'User role does not match selected login type.';
+                // Set session variables
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['name'] = $user['name'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['role'] = $user['role'];
+                
+                // Regenerate session ID for security
+                session_regenerate_id(true);
+                
+                // Redirect based on role
+                if ($user['role'] === 'admin') {
+                    header('Location: admin.php');
                 } else {
-                    // Set session variables
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['name'] = $user['name'];
-                    $_SESSION['email'] = $user['email'];
-                    $_SESSION['role'] = $user['role'];
-                    
-                    // Regenerate session ID for security
-                    session_regenerate_id(true);
-                    
-                    // Redirect based on role
-                    if ($user['role'] === 'admin') {
-                        header('Location: admin.php');
-                    } else {
-                        header('Location: dashboard.php');
-                    }
-                    exit;
+                    header('Location: dashboard.php');
                 }
+                exit;
             } else {
                 $error = 'Invalid email or password.';
             }
@@ -106,15 +101,6 @@ include 'includes/header.php';
                 <label for="password" class="form-label">Password</label>
                 <input type="password" name="password" class="form-control" id="password" required />
                 <div class="invalid-feedback">Please enter your password!</div>
-              </div>
-
-              <div class="col-12">
-                <label for="role" class="form-label">Login as</label>
-                <select name="role" id="role" class="form-select" required>
-                  <option value="user" <?php echo (($_POST['role'] ?? '') === 'user') ? 'selected' : ''; ?>>User</option>
-                  <option value="admin" <?php echo (($_POST['role'] ?? '') === 'admin') ? 'selected' : ''; ?>>Admin</option>
-                </select>
-                <div class="invalid-feedback">Please select a login role!</div>
               </div>
 
               <div class="col-12">
