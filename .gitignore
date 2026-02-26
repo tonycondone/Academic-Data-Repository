@@ -1,7 +1,7 @@
 .gitignore
 config/config.php
 # config/database.php
-database/*.sql
+# database/*.sql
 *.log
 php_error.log
 uploads/
