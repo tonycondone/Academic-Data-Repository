@@ -12,49 +12,76 @@ if (isset($_SESSION['user_id'])) {
 $error = '';
 
 // Handle login
-if ($_POST) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    checkCSRFToken();
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
     $selected_role = $_POST['role'] ?? 'user'; // default to user
     
-    if (empty($email) || empty($password)) {
+    // Check if locked out
+    if (RateLimiter::isLockedOut($email)) {
+        $error = 'Too many login attempts. Please try again in 15 minutes.';
+    } elseif (empty($email) || empty($password)) {
         $error = 'Please enter both email and password.';
     } else {
-        require_once __DIR__ . '/config/database.php';
-        $db = new Database();
         try {
-            $pdo = $db->getConnection();
-            // Check user credentials and role
-            $stmt = $pdo->prepare("SELECT id, name, email, password, role FROM users WHERE email = ?");
-            $stmt->execute([$email]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $supabaseAuth = new SupabaseAuth();
+            $result = $supabaseAuth->signIn($email, $password);
             
-            if ($user && password_verify($password, $user['password'])) {
-                if ($user['role'] !== $selected_role) {
-                    $error = 'User role does not match selected login type.';
-                } else {
-                    // Set session variables
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['name'] = $user['name'];
-                    $_SESSION['email'] = $user['email'];
-                    $_SESSION['role'] = $user['role'];
-                    
-                    // Regenerate session ID for security
-                    session_regenerate_id(true);
-                    
-                    // Redirect based on role
-                    if ($user['role'] === 'admin') {
-                        header('Location: admin.php');
+            if ($result['status'] === 200) {
+                $authData = $result['data'];
+                $accessToken = $authData['access_token'];
+                $userData = $authData['user'];
+                
+                // Get additional user info from our users table using SupabaseService
+                $pdo = SupabaseService::getConnection();
+                $stmt = $pdo->prepare("SELECT id, name, role FROM users WHERE email = ?");
+                $stmt->execute([$email]);
+                $localUser = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($localUser) {
+                    if ($localUser['role'] !== $selected_role) {
+                        $error = 'User role does not match selected login type.';
+                        RateLimiter::recordAttempt($email, false);
                     } else {
-                        header('Location: dashboard.php');
+                        // Success
+                        RateLimiter::recordAttempt($email, true);
+                        
+                        // Set session variables
+                        $_SESSION['user_id'] = $localUser['id'];
+                        $_SESSION['name'] = $localUser['name'];
+                        $_SESSION['email'] = $email;
+                        $_SESSION['role'] = $localUser['role'];
+                        $_SESSION['supabase_token'] = $accessToken;
+                        
+                        // Regenerate session ID for security
+                        session_regenerate_id(true);
+                        
+                        // Redirect based on role
+                        if ($localUser['role'] === 'admin') {
+                            header('Location: admin.php');
+                        } else {
+                            header('Location: dashboard.php');
+                        }
+                        exit;
                     }
-                    exit;
+                } else {
+                    $error = 'User account not found in local database.';
+                    Logger::security("User account found in Supabase but not locally", ['email' => $email]);
                 }
             } else {
                 $error = 'Invalid email or password.';
+                RateLimiter::recordAttempt($email, false);
+                Logger::info("Failed login attempt", ['email' => $email]);
+                
+                $remaining = RateLimiter::getRemainingAttempts($email);
+                if ($remaining > 0 && $remaining < 3) {
+                    $error .= " You have $remaining attempts left.";
+                }
             }
-        } catch(PDOException $e) {
-            $error = 'Database connection failed: ' . $e->getMessage();
+        } catch(Exception $e) {
+            $error = 'Authentication failed: ' . $e->getMessage();
+            Logger::error("Authentication exception", ['error' => $e->getMessage()]);
         }
     }
 }
@@ -89,6 +116,7 @@ include 'includes/header.php';
             <?php endif; ?>
 
             <form class="row g-3 needs-validation" method="POST" novalidate>
+              <?php echo csrfTokenField(); ?>
               <div class="col-12">
                 <label for="email" class="form-label">Email Address</label>
                 <input

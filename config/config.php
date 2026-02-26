@@ -2,8 +2,16 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+
+// Error reporting configuration based on environment
+if (getenv('APP_ENV') === 'production') {
+    error_reporting(0);
+    ini_set('display_errors', '0');
+} else {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+}
+
 define('ROOT_PATH', dirname(__DIR__) . '/');
 define('APP_NAME', 'Dataset Sharing and Collaboration Platform');
 define('APP_VERSION', '1.0.0');
@@ -23,8 +31,17 @@ if (!defined('DB_PASS')) {
     define('DB_PASS', '');
 }
 require_once ROOT_PATH . 'config/database.php';
+require_once ROOT_PATH . 'includes/SupabaseService.php';
+require_once ROOT_PATH . 'includes/Logger.php';
+require_once ROOT_PATH . 'includes/rate_limit.php';
+require_once ROOT_PATH . 'includes/auth_supabase.php';
+require_once ROOT_PATH . 'includes/SupabaseStorage.php';
 require_once ROOT_PATH . 'includes/functions.php';
+
+// Initialize Logger
+Logger::init();
 require_once ROOT_PATH . 'includes/auth.php';
+require_once ROOT_PATH . 'includes/csrf.php';
 if (!file_exists(UPLOAD_PATH)) {
     @mkdir(UPLOAD_PATH, 0755, true);
 }

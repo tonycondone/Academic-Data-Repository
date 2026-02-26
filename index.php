@@ -2,28 +2,27 @@
 session_start();
 
 require_once __DIR__ . '/config/config.php';
-$db = new Database();
 
 try {
-    $pdo = $db->getConnection();
+    $pdo = SupabaseService::getConnection();
     
     if ($pdo) {
-        // Get live statistics from database
-        $stmt = $pdo->query("SELECT COUNT(*) as total_datasets FROM datasets WHERE is_active = TRUE");
-        $total_datasets = $stmt->fetch()['total_datasets'];
+        // Get live statistics from database in a single query
+        $stmt = $pdo->query("
+            SELECT 
+                (SELECT COUNT(*) FROM datasets WHERE is_active = TRUE) as total_datasets,
+                (SELECT COUNT(DISTINCT category) FROM datasets WHERE is_active = TRUE) as total_categories,
+                (SELECT COUNT(*) FROM users WHERE is_active = TRUE) as total_users,
+                (SELECT COALESCE(SUM(download_count), 0) FROM datasets WHERE is_active = TRUE) as total_downloads,
+                (SELECT COUNT(*) FROM reviews) as total_reviews
+        ");
+        $stats = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        $stmt = $pdo->query("SELECT COUNT(DISTINCT category) as total_categories FROM datasets WHERE is_active = TRUE");
-        $total_categories = $stmt->fetch()['total_categories'];
-        
-        $stmt = $pdo->query("SELECT COUNT(*) as total_users FROM users WHERE is_active = TRUE");
-        $total_users = $stmt->fetch()['total_users'];
-        
-        // Get actual total downloads from datasets table
-        $stmt = $pdo->query("SELECT COALESCE(SUM(download_count), 0) as total_downloads FROM datasets WHERE is_active = TRUE");
-        $total_downloads = $stmt->fetch()['total_downloads'];
-        
-        $stmt = $pdo->query("SELECT COUNT(*) as total_reviews FROM reviews");
-        $total_reviews = $stmt->fetch()['total_reviews'];
+        $total_datasets = $stats['total_datasets'];
+        $total_categories = $stats['total_categories'];
+        $total_users = $stats['total_users'];
+        $total_downloads = $stats['total_downloads'];
+        $total_reviews = $stats['total_reviews'];
         
         // Get recent datasets for showcase - with proper error handling
         try {

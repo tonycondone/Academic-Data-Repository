@@ -1,0 +1,32 @@
+/* Logout page specific styles */
+.logout {
+  padding: 100px 0;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+}
+
+.logout-card {
+  background: white;
+  border-radius: 15px;
+  padding: 3rem 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.logout-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.logout-card h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.logout-actions {
+  margin: 2rem 0;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}

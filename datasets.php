@@ -3,10 +3,8 @@ session_start();
 
 require_once __DIR__ . '/config/config.php';
 
-$db = new Database();
-
 try {
-    $pdo = $db->getConnection();
+    $pdo = SupabaseService::getConnection();
 } catch(PDOException $e) {
     $pdo = null;
 }
@@ -79,6 +77,8 @@ $body_class = 'datasets-page';
 // Include header
 include 'includes/header.php';
 ?>
+
+<link rel="stylesheet" href="assets/css/datasets.css">
 
 <!-- Page Title -->
 <section class="page-title section">
@@ -315,159 +315,6 @@ include 'includes/header.php';
     </div>
   </div>
 </section>
-
-<style>
-/* Page specific styles */
-.page-title {
-  background: #f8f9fa;
-  padding: 40px 0;
-  margin-bottom: 40px;
-}
-
-.page-title h2 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.breadcrumb {
-  background: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.05);
-}
-
-.widget {
-  margin-bottom: 30px;
-}
-
-.widget-title {
-  font-size: 1.1rem;
-  margin-bottom: 15px;
-  color: #333;
-  font-weight: 600;
-}
-
-.filter-option {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  margin-bottom: 5px;
-  border-radius: 5px;
-  text-decoration: none;
-  color: #666;
-  transition: all 0.3s;
-}
-
-.filter-option:hover {
-  background: #f8f9fa;
-  color: #2563eb;
-  text-decoration: none;
-}
-
-.filter-option.active {
-  background: #2563eb;
-  color: white;
-}
-
-.filter-count {
-  background: rgba(0,0,0,0.1);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.filter-option.active .filter-count {
-  background: rgba(255,255,255,0.2);
-}
-
-.dataset-card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.05);
-  transition: transform 0.3s, box-shadow 0.3s;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.dataset-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 30px rgba(0,0,0,0.1);
-}
-
-.dataset-card .card-header {
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
-  padding: 15px 20px;
-  border-radius: 10px 10px 0 0;
-}
-
-.dataset-card .card-title {
-  font-size: 1.1rem;
-  margin: 0;
-  color: #333;
-}
-
-.dataset-card .card-body {
-  padding: 20px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.dataset-meta {
-  margin-top: auto;
-}
-
-.card-actions {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-}
-
-.empty-state {
-  color: #999;
-}
-
-.empty-state i {
-  opacity: 0.3;
-}
-
-.pagination {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.05);
-  padding: 10px;
-}
-
-.page-link {
-  border: none;
-  color: #666;
-  font-weight: 600;
-  padding: 8px 12px;
-  margin: 0 2px;
-  border-radius: 5px;
-  transition: all 0.3s;
-}
-
-.page-link:hover {
-  background: #2563eb;
-  color: white;
-}
-
-.page-item.active .page-link {
-  background: #2563eb;
-  color: white;
-}
-</style>
 
 <?php
 // Include footer

@@ -8,8 +8,7 @@ class Auth {
     private $db;
     
     public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
+        $this->db = SupabaseService::getConnection();
     }
     
     /**

@@ -94,13 +94,11 @@ if ($_POST) {
                 exit;
             }
             
+            $adminName = $_POST['admin_name'] ?? '';
             $adminEmail = $_POST['admin_email'] ?? '';
             $adminPassword = $_POST['admin_password'] ?? '';
-            $adminFirstName = $_POST['admin_first_name'] ?? '';
-            $adminLastName = $_POST['admin_last_name'] ?? '';
             
-            if (empty($adminEmail) || empty($adminPassword) || 
-                empty($adminFirstName) || empty($adminLastName)) {
+            if (empty($adminEmail) || empty($adminPassword) || empty($adminName)) {
                 $error = 'All fields are required.';
             } elseif (strlen($adminPassword) < 8) {
                 $error = 'Password must be at least 8 characters long.';
@@ -114,7 +112,7 @@ if ($_POST) {
                     $passwordHash = password_hash($adminPassword, PASSWORD_DEFAULT);
                     
                     $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, password = ? WHERE id = 1");
-                    $stmt->execute([$adminFirstName . ' ' . $adminLastName, $adminEmail, $passwordHash]);
+                    $stmt->execute([$adminName, $adminEmail, $passwordHash]);
                     
                     header('Location: install.php?step=4');
                     exit;
@@ -186,6 +184,9 @@ if ($_POST) {
             $configContent .= "date_default_timezone_set('UTC');\n\n";
             $configContent .= "// Include required files\n";
             $configContent .= "require_once ROOT_PATH . 'config/database.php';\n";
+            $configContent .= "require_once ROOT_PATH . 'includes/SupabaseService.php';\n";
+            $configContent .= "require_once ROOT_PATH . 'includes/Logger.php';\n";
+            $configContent .= "require_once ROOT_PATH . 'includes/RateLimiter.php';\n";
             $configContent .= "require_once ROOT_PATH . 'includes/functions.php';\n";
             $configContent .= "require_once ROOT_PATH . 'includes/auth.php';\n\n";
             $configContent .= "// Create upload directories if they don't exist\n";
@@ -480,21 +481,10 @@ if ($_POST) {
                             </div>
                             
                             <form method="POST" action="">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="admin_first_name" name="admin_first_name" 
-                                                   placeholder="First Name" required>
-                                            <label for="admin_first_name">First Name</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="admin_last_name" name="admin_last_name" 
-                                                   placeholder="Last Name" required>
-                                            <label for="admin_last_name">Last Name</label>
-                                        </div>
-                                    </div>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="admin_name" name="admin_name" 
+                                           placeholder="Full Name" required>
+                                    <label for="admin_name">Full Name</label>
                                 </div>
                                 
                                 <div class="form-floating">

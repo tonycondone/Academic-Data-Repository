@@ -1,0 +1,292 @@
+/* Preview page specific styles */
+.page-title {
+  background: #f8f9fa;
+  padding: 40px 0;
+  margin-bottom: 40px;
+}
+
+.page-title h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.breadcrumb {
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dataset-header {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.dataset-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.dataset-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: #666;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dataset-description {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.dataset-description h5 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.dataset-stats {
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.preview-content {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.preview-content h5 {
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.table {
+  font-size: 0.875rem;
+}
+
+.table th {
+  background: #f8f9fa;
+  border-top: none;
+  font-weight: 600;
+}
+
+.json-preview {
+  background: #1a202c;
+  color: #e2e8f0;
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-height: 500px;
+  overflow: auto;
+}
+
+.json-preview pre {
+  margin: 0;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.text-preview {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-height: 500px;
+  overflow: auto;
+}
+
+.text-preview pre {
+  margin: 0;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.no-preview {
+  color: #999;
+}
+
+@media (max-width: 768px) {
+  .dataset-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .dataset-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Additional Mobile Responsive Styles */
+@media (max-width: 575.98px) {
+  .page-title {
+    padding: 25px 0;
+    margin-bottom: 25px;
+  }
+  
+  .page-title h2 {
+    font-size: 1.25rem;
+  }
+  
+  .breadcrumb {
+    font-size: 0.85rem;
+  }
+  
+  .dataset-header {
+    padding: 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .dataset-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .meta-item {
+    font-size: 0.8rem;
+  }
+  
+  .action-buttons {
+    margin-top: 1rem;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .dataset-description {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .dataset-description h5 {
+    font-size: 1rem;
+  }
+  
+  .dataset-description p {
+    font-size: 0.9rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+  }
+  
+  .preview-content {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  
+  .preview-content h5 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .table {
+    font-size: 0.75rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 6px 4px;
+  }
+  
+  .json-preview,
+  .text-preview {
+    padding: 1rem;
+    border-radius: 6px;
+    max-height: 300px;
+  }
+  
+  .json-preview pre,
+  .text-preview pre {
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+  
+  .no-preview i {
+    font-size: 3rem !important;
+  }
+  
+  .no-preview h4 {
+    font-size: 1.1rem;
+  }
+  
+  .no-preview p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .dataset-header {
+    padding: 1.5rem;
+  }
+  
+  .dataset-title {
+    font-size: 1.4rem;
+  }
+  
+  .preview-content {
+    padding: 1.5rem;
+  }
+  
+  .table {
+    font-size: 0.8rem;
+  }
+}

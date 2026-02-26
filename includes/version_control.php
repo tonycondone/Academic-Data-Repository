@@ -8,8 +8,7 @@ class VersionControl {
     private $db;
     
     public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
+        $this->db = SupabaseService::getConnection();
     }
     
     /**
@@ -272,7 +271,7 @@ class VersionControl {
      */
     public function getVersionHistory($fileId) {
         try {
-            $query = "SELECT fv.*, u.first_name, u.last_name, b.name as branch_name
+            $query = "SELECT fv.*, u.name as user_name, b.name as branch_name
                       FROM file_versions fv
                       JOIN users u ON fv.created_by = u.id
                       LEFT JOIN branches b ON fv.branch_id = b.id
@@ -296,7 +295,7 @@ class VersionControl {
      */
     public function getProjectBranches($projectId) {
         try {
-            $query = "SELECT b.*, u.first_name, u.last_name,
+            $query = "SELECT b.*, u.name as user_name,
                              (SELECT COUNT(*) FROM file_versions fv WHERE fv.branch_id = b.id) as version_count
                       FROM branches b
                       JOIN users u ON b.created_by = u.id

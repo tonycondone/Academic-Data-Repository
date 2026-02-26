@@ -1,5 +1,5 @@
 <?php
-require_once 'config/config.php';
+require_once __DIR__ . '/config/config.php';
 
 // Require login
 $auth->requireLogin();
@@ -18,11 +18,10 @@ if (!hasProjectPermission($user['id'], $projectId, 'read')) {
 }
 
 try {
-    $database = new Database();
-    $db = $database->getConnection();
+    $db = SupabaseService::getConnection();
     
     // Get project details
-    $query = "SELECT p.*, u.first_name, u.last_name,
+    $query = "SELECT p.*, u.name as owner_name,
                      pm.role as user_role, pm.permissions as user_permissions
               FROM projects p
               JOIN users u ON p.owner_id = u.id
@@ -40,11 +39,11 @@ try {
     }
     
     // Get project members
-    $query = "SELECT pm.*, u.first_name, u.last_name, u.email, u.role as user_system_role
+    $query = "SELECT pm.*, u.name as user_name, u.email, u.role as user_system_role
               FROM project_members pm
               JOIN users u ON pm.user_id = u.id
               WHERE pm.project_id = :project_id AND pm.status = 'active'
-              ORDER BY pm.role DESC, u.first_name ASC";
+              ORDER BY pm.role DESC, u.name ASC";
     
     $stmt = $db->prepare($query);
     $stmt->bindParam(':project_id', $projectId);
@@ -52,7 +51,7 @@ try {
     $members = $stmt->fetchAll();
     
     // Get project files
-    $query = "SELECT f.*, u.first_name, u.last_name,
+    $query = "SELECT f.*, u.name as uploader_name,
                      (SELECT COUNT(*) FROM file_versions fv WHERE fv.file_id = f.id) as version_count
               FROM files f
               JOIN users u ON f.uploaded_by = u.id
@@ -66,7 +65,7 @@ try {
     $files = $stmt->fetchAll();
     
     // Get recent activity
-    $query = "SELECT al.*, u.first_name, u.last_name
+    $query = "SELECT al.*, u.name as user_name
               FROM activity_log al
               JOIN users u ON al.user_id = u.id
               WHERE al.project_id = :project_id
@@ -107,346 +106,7 @@ $userPermissions = json_decode($project['user_permissions'] ?? '{}', true) ?: []
     <title><?php echo htmlspecialchars($project['name']); ?> - <?php echo APP_NAME; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8fafc;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .navbar {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .navbar-brand {
-            font-weight: 600;
-            font-size: 1.25rem;
-        }
-        
-        .main-content {
-            margin-top: 2rem;
-        }
-        
-        .project-header {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            color: white;
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
-        }
-        
-        .project-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 0;
-        }
-        
-        .project-meta {
-            opacity: 0.9;
-            margin-top: 0.5rem;
-        }
-        
-        .project-description {
-            opacity: 0.95;
-            margin-top: 1rem;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        
-        .stats-row {
-            margin-top: 2rem;
-        }
-        
-        .stat-card {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 1.5rem;
-            text-align: center;
-            backdrop-filter: blur(10px);
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0;
-        }
-        
-        .stat-label {
-            opacity: 0.9;
-            margin: 0;
-        }
-        
-        .section-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-        
-        .section-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-            background: #f9fafb;
-        }
-        
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin: 0;
-        }
-        
-        .member-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #f3f4f6;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .member-item:last-child {
-            border-bottom: none;
-        }
-        
-        .member-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .member-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-        }
-        
-        .member-details h6 {
-            margin: 0;
-            font-weight: 600;
-            color: #1f2937;
-        }
-        
-        .member-details small {
-            color: #6b7280;
-        }
-        
-        .role-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .role-owner {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .role-collaborator {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-        
-        .role-viewer {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-        
-        .file-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #f3f4f6;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .file-item:last-child {
-            border-bottom: none;
-        }
-        
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-        }
-        
-        .file-icon.csv {
-            background: #10b981;
-        }
-        
-        .file-icon.excel {
-            background: #059669;
-        }
-        
-        .file-icon.json {
-            background: #3b82f6;
-        }
-        
-        .file-icon.pdf {
-            background: #ef4444;
-        }
-        
-        .file-icon.image {
-            background: #8b5cf6;
-        }
-        
-        .file-icon.default {
-            background: #6b7280;
-        }
-        
-        .file-details h6 {
-            margin: 0;
-            font-weight: 600;
-            color: #1f2937;
-        }
-        
-        .file-details small {
-            color: #6b7280;
-        }
-        
-        .file-meta {
-            text-align: right;
-            font-size: 0.875rem;
-            color: #6b7280;
-        }
-        
-        .activity-item {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #f3f4f6;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        .activity-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.875rem;
-            color: white;
-        }
-        
-        .activity-icon.upload {
-            background: #3b82f6;
-        }
-        
-        .activity-icon.edit {
-            background: #10b981;
-        }
-        
-        .activity-icon.delete {
-            background: #ef4444;
-        }
-        
-        .activity-icon.join {
-            background: #8b5cf6;
-        }
-        
-        .activity-icon.create_project {
-            background: #f59e0b;
-        }
-        
-        .activity-text {
-            flex: 1;
-        }
-        
-        .activity-user {
-            font-weight: 600;
-            color: #1f2937;
-        }
-        
-        .activity-action {
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-        
-        .activity-time {
-            font-size: 0.75rem;
-            color: #9ca3af;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            border: none;
-            border-radius: 10px;
-            padding: 0.5rem 1.5rem;
-            font-weight: 600;
-        }
-        
-        .btn-outline-primary {
-            border: 2px solid #4f46e5;
-            color: #4f46e5;
-            border-radius: 10px;
-            padding: 0.5rem 1.5rem;
-            font-weight: 600;
-        }
-        
-        .btn-outline-primary:hover {
-            background: #4f46e5;
-            border-color: #4f46e5;
-        }
-        
-        .status-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .status-active {
-            background: #dcfce7;
-            color: #166534;
-        }
-        
-        .status-completed {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-        
-        .status-archived {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #6b7280;
-        }
-        
-        .empty-state i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-    </style>
+    <link href="assets/css/project.css" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
@@ -493,7 +153,7 @@ $userPermissions = json_decode($project['user_permissions'] ?? '{}', true) ?: []
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user me-1"></i>
-                            <?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>
+                            <?php echo htmlspecialchars($user['name']); ?>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="profile.php">
@@ -522,7 +182,7 @@ $userPermissions = json_decode($project['user_permissions'] ?? '{}', true) ?: []
                 <div class="col-md-8">
                     <h1 class="project-title"><?php echo htmlspecialchars($project['name']); ?></h1>
                     <div class="project-meta">
-                        by <?php echo htmlspecialchars($project['first_name'] . ' ' . $project['last_name']); ?>
+                        by <?php echo htmlspecialchars($project['owner_name']); ?>
                         • Created <?php echo timeAgo($project['created_at']); ?>
                         • Updated <?php echo timeAgo($project['updated_at']); ?>
                         <?php if ($project['deadline']): ?>
@@ -639,7 +299,7 @@ $userPermissions = json_decode($project['user_permissions'] ?? '{}', true) ?: []
                                 <div class="file-details">
                                     <h6><?php echo htmlspecialchars($file['original_filename']); ?></h6>
                                     <small>
-                                        by <?php echo htmlspecialchars($file['first_name'] . ' ' . $file['last_name']); ?>
+                                        by <?php echo htmlspecialchars($file['uploader_name']); ?>
                                         • <?php echo formatFileSize($file['file_size']); ?>
                                         • v<?php echo $file['current_version']; ?>
                                     </small>
@@ -688,7 +348,7 @@ $userPermissions = json_decode($project['user_permissions'] ?? '{}', true) ?: []
                             </div>
                             <div class="activity-text">
                                 <div class="activity-user">
-                                    <?php echo htmlspecialchars($activity['first_name'] . ' ' . $activity['last_name']); ?>
+                                    <?php echo htmlspecialchars($activity['user_name']); ?>
                                 </div>
                                 <div class="activity-action">
                                     <?php echo ucfirst(str_replace('_', ' ', $activity['action'])); ?>
@@ -729,10 +389,10 @@ $userPermissions = json_decode($project['user_permissions'] ?? '{}', true) ?: []
                     <div class="member-item">
                         <div class="member-info">
                             <div class="member-avatar">
-                                <?php echo strtoupper(substr($member['first_name'], 0, 1) . substr($member['last_name'], 0, 1)); ?>
+                                <?php echo strtoupper(substr($member['user_name'], 0, 1)); ?>
                             </div>
                             <div class="member-details">
-                                <h6><?php echo htmlspecialchars($member['first_name'] . ' ' . $member['last_name']); ?></h6>
+                                <h6><?php echo htmlspecialchars($member['user_name']); ?></h6>
                                 <small><?php echo htmlspecialchars($member['email']); ?></small>
                             </div>
                         </div>

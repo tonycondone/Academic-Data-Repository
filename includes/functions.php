@@ -7,7 +7,7 @@
 /**
  * Sanitize input data
  */
-function sanitizeInput($data) {
+function sanitizeInput(string $data): string {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
@@ -17,35 +17,35 @@ function sanitizeInput($data) {
 /**
  * Validate email format
  */
-function validateEmail($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL);
+function validateEmail(string $email): bool {
+    return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
 /**
  * Generate secure random string
  */
-function generateRandomString($length = 32) {
+function generateRandomString(int $length = 32): string {
     return bin2hex(random_bytes($length / 2));
 }
 
 /**
  * Hash password securely
  */
-function hashPassword($password) {
+function hashPassword(string $password): string {
     return password_hash($password, PASSWORD_DEFAULT);
 }
 
 /**
  * Verify password
  */
-function verifyPassword($password, $hash) {
+function verifyPassword(string $password, string $hash): bool {
     return password_verify($password, $hash);
 }
 
 /**
  * Format file size
  */
-function formatFileSize($bytes, $precision = 2) {
+function formatFileSize(float|int $bytes, int $precision = 2): string {
     $units = array('B', 'KB', 'MB', 'GB', 'TB');
     
     for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
@@ -58,14 +58,14 @@ function formatFileSize($bytes, $precision = 2) {
 /**
  * Get file extension
  */
-function getFileExtension($filename) {
+function getFileExtension(string $filename): string {
     return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 }
 
 /**
  * Check if file type is allowed
  */
-function isAllowedFileType($filename) {
+function isAllowedFileType(string $filename): bool {
     $extension = getFileExtension($filename);
     return in_array($extension, ALLOWED_FILE_TYPES);
 }
@@ -73,7 +73,7 @@ function isAllowedFileType($filename) {
 /**
  * Generate unique filename
  */
-function generateUniqueFilename($originalFilename) {
+function generateUniqueFilename(string $originalFilename): string {
     $extension = getFileExtension($originalFilename);
     $basename = pathinfo($originalFilename, PATHINFO_FILENAME);
     $timestamp = time();
@@ -85,10 +85,9 @@ function generateUniqueFilename($originalFilename) {
 /**
  * Log activity
  */
-function logActivity($projectId, $userId, $action, $targetType, $targetId = null, $details = null) {
+function logActivity(?int $projectId, int $userId, string $action, string $targetType, ?int $targetId = null, ?string $details = null): void {
     try {
-        $database = new Database();
-        $db = $database->getConnection();
+        $db = SupabaseService::getConnection();
         
         $query = "INSERT INTO activity_log (project_id, user_id, action, target_type, target_id, details, ip_address, user_agent) 
                   VALUES (:project_id, :user_id, :action, :target_type, :target_id, :details, :ip_address, :user_agent)";
@@ -115,8 +114,7 @@ function logActivity($projectId, $userId, $action, $targetType, $targetId = null
  */
 function sendNotification($userId, $type, $title, $message, $data = null) {
     try {
-        $database = new Database();
-        $db = $database->getConnection();
+        $db = SupabaseService::getConnection();
         
         $query = "INSERT INTO notifications (user_id, type, title, message, data) 
                   VALUES (:user_id, :type, :title, :message, :data)";
@@ -140,8 +138,7 @@ function sendNotification($userId, $type, $title, $message, $data = null) {
  */
 function getUserNotifications($userId, $limit = 10, $unreadOnly = false) {
     try {
-        $database = new Database();
-        $db = $database->getConnection();
+        $db = SupabaseService::getConnection();
         
         $whereClause = "WHERE user_id = :user_id";
         if ($unreadOnly) {
@@ -167,8 +164,7 @@ function getUserNotifications($userId, $limit = 10, $unreadOnly = false) {
  */
 function markNotificationRead($notificationId, $userId) {
     try {
-        $database = new Database();
-        $db = $database->getConnection();
+        $db = SupabaseService::getConnection();
         
         $query = "UPDATE notifications SET is_read = 1 WHERE id = :id AND user_id = :user_id";
         
@@ -240,8 +236,7 @@ function displayFlashMessage() {
  */
 function hasProjectPermission($userId, $projectId, $permission = 'read') {
     try {
-        $database = new Database();
-        $db = $database->getConnection();
+        $db = SupabaseService::getConnection();
         
         // Check if user is project owner
         $query = "SELECT owner_id FROM projects WHERE id = :project_id";

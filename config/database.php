@@ -1,20 +1,26 @@
 <?php
 // Load .env or .env.local if environment variables are missing (Local Development)
-if (!getenv('POSTGRES_HOST') && !getenv('DATABASE_URL')) {
+if (true) { // Always try to load .env for local consistency unless we are sure we are in production
     $envFiles = [__DIR__ . '/../.env.local', __DIR__ . '/../.env'];
     foreach ($envFiles as $file) {
         if (file_exists($file)) {
             $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             foreach ($lines as $line) {
-                if (strpos(trim($line), '#') === 0) continue;
+                $line = trim($line);
+                if (empty($line) || strpos($line, '#') === 0) continue;
+                
                 if (strpos($line, '=') !== false) {
                     list($key, $value) = explode('=', $line, 2);
                     $key = trim($key);
                     $value = trim($value);
-                    $value = trim($value, '"\'');
-                    if (!getenv($key)) {
+                    // Remove quotes if present
+                    if (preg_match('/^"(.+)"$/', $value, $matches) || preg_match("/^'(.+)'$/", $value, $matches)) {
+                        $value = $matches[1];
+                    }
+                    if (true) { // Prefer .env values when explicitly provided
                         putenv("$key=$value");
                         $_ENV[$key] = $value;
+                        $_SERVER[$key] = $value;
                     }
                 }
             }
@@ -26,7 +32,19 @@ if (!getenv('POSTGRES_HOST') && !getenv('DATABASE_URL')) {
 class Database {
     private ?PDO $pdo = null;
 
+    /**
+     * @deprecated Use SupabaseService::getConnection() instead for better connection management
+     */
     public function getConnection(): PDO {
+        // Delegate to the singleton SupabaseService to ensure only one connection exists
+        return SupabaseService::getConnection();
+    }
+
+    /**
+     * Internal logic for SupabaseService to create the initial connection
+     * @internal
+     */
+    public function createRawConnection(): PDO {
         if ($this->pdo instanceof PDO) {
             return $this->pdo;
         }

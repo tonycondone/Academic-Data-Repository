@@ -9,11 +9,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$db = new Database();
 $pdo = null;
 
 try {
-    $pdo = $db->getConnection();
+    $pdo = SupabaseService::getConnection();
 } catch(PDOException $e) {
     // Database unavailable
 }
@@ -35,35 +34,27 @@ $recent_activity = [];
 
 if ($pdo) {
     try {
-        // User's reviews count
-        $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM reviews WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        $stats['my_reviews'] = $stmt->fetch()['total'];
-
-        // User's downloads count
-        $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM downloads WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        $stats['my_downloads'] = $stmt->fetch()['total'];
-
-        // Favorite category (most reviewed category)
+        // Consolidate user statistics into a single query to avoid N+1 issues
         $stmt = $pdo->prepare("
-            SELECT d.category, COUNT(*) as count 
-            FROM reviews r 
-            JOIN datasets d ON r.dataset_id = d.id 
-            WHERE r.user_id = ? 
-            GROUP BY d.category 
-            ORDER BY count DESC 
-            LIMIT 1
+            SELECT 
+                (SELECT COUNT(*) FROM reviews WHERE user_id = :user_id) as my_reviews,
+                (SELECT COUNT(*) FROM downloads WHERE user_id = :user_id) as my_downloads,
+                (SELECT AVG(rating) FROM reviews WHERE user_id = :user_id) as avg_rating,
+                (SELECT d.category 
+                 FROM reviews r 
+                 JOIN datasets d ON r.dataset_id = d.id 
+                 WHERE r.user_id = :user_id 
+                 GROUP BY d.category 
+                 ORDER BY COUNT(*) DESC 
+                 LIMIT 1) as favorite_category
         ");
-        $stmt->execute([$user_id]);
-        $fav_category = $stmt->fetch();
-        $stats['favorite_category'] = $fav_category ? $fav_category['category'] : 'None';
-
-        // Average rating given
-        $stmt = $pdo->prepare("SELECT AVG(rating) as avg_rating FROM reviews WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        $avg_rating = $stmt->fetch()['avg_rating'];
-        $stats['avg_rating'] = $avg_rating ? round($avg_rating, 1) : 0;
+        $stmt->execute([':user_id' => $user_id]);
+        $db_stats = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $stats['my_reviews'] = $db_stats['my_reviews'];
+        $stats['my_downloads'] = $db_stats['my_downloads'];
+        $stats['avg_rating'] = $db_stats['avg_rating'] ? round($db_stats['avg_rating'], 1) : 0;
+        $stats['favorite_category'] = $db_stats['favorite_category'] ?: 'None';
 
         // Recent datasets (popular ones)
         $stmt = $pdo->query("SELECT * FROM datasets ORDER BY download_count DESC LIMIT 6");
@@ -120,225 +111,7 @@ if ($pdo) {
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
-
-  <style>
-    .dashboard-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      transition: transform 0.2s;
-    }
-    
-    .dashboard-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    .stat-card {
-      text-align: center;
-      padding: 2rem 1rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border-radius: 15px;
-    }
-    
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-    
-    .stat-label {
-      font-weight: 500;
-      opacity: 0.9;
-    }
-    
-    .stat-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.8;
-    }
-    
-    .dataset-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
-      height: 100%;
-    }
-    
-    .dataset-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-    
-    .dataset-header {
-      background: linear-gradient(135deg, #2563eb, #3b82f6);
-      color: white;
-      padding: 1rem;
-    }
-    
-    .rating-stars {
-      color: #fbbf24;
-    }
-    
-    .category-badge {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-    
-    .activity-item {
-      border-left: 3px solid #2563eb;
-      padding-left: 1rem;
-      margin-bottom: 1rem;
-    }
-    
-    .welcome-gradient {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border-radius: 15px;
-    }
-    
-    /* Mobile Responsive Styles */
-    @media (max-width: 767.98px) {
-      .dashboard-card {
-        padding: 1rem;
-        margin-bottom: 1rem;
-      }
-      
-      .stat-card {
-        padding: 1.5rem 0.75rem;
-        margin-bottom: 1rem;
-      }
-      
-      .stat-number {
-        font-size: 2rem;
-      }
-      
-      .stat-icon {
-        font-size: 2.5rem;
-      }
-      
-      .dataset-card {
-        margin-bottom: 1rem;
-      }
-      
-      .dataset-header {
-        padding: 0.75rem;
-      }
-      
-      .welcome-gradient h2 {
-        font-size: 1.25rem;
-      }
-      
-      .activity-item {
-        padding-left: 0.75rem;
-        margin-bottom: 0.75rem;
-      }
-      
-      h4 {
-        font-size: 1rem;
-      }
-    }
-    
-    @media (max-width: 575.98px) {
-      .dashboard-card {
-        padding: 0.75rem;
-        border-radius: 8px;
-      }
-      
-      .stat-card {
-        padding: 1rem 0.5rem;
-        border-radius: 10px;
-        margin-bottom: 0.75rem;
-      }
-      
-      .stat-number {
-        font-size: 1.75rem;
-        margin-bottom: 0.25rem;
-      }
-      
-      .stat-icon {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-      }
-      
-      .stat-label {
-        font-size: 0.85rem;
-      }
-      
-      .dataset-card {
-        margin-bottom: 0.75rem;
-      }
-      
-      .dataset-header {
-        padding: 0.5rem;
-      }
-      
-      .dataset-header h6 {
-        font-size: 0.9rem;
-      }
-      
-      .welcome-gradient {
-        padding: 1rem !important;
-        border-radius: 10px;
-      }
-      
-      .welcome-gradient h2 {
-        font-size: 1.1rem;
-      }
-      
-      .welcome-gradient p {
-        font-size: 0.85rem;
-      }
-      
-      .category-badge {
-        font-size: 0.75rem;
-        padding: 0.2rem 0.5rem;
-      }
-      
-      .activity-item {
-        padding-left: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-      
-      .activity-item h6 {
-        font-size: 0.9rem;
-      }
-      
-      .list-group-item {
-        padding: 0.75rem 0.5rem;
-      }
-      
-      h4 {
-        font-size: 0.95rem;
-      }
-      
-      .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem;
-      }
-      
-      .border.rounded.hover-shadow {
-        padding: 0.75rem !important;
-      }
-      
-      .border.rounded.hover-shadow i {
-        font-size: 1.5rem !important;
-      }
-      
-      .border.rounded.hover-shadow h6 {
-        font-size: 0.85rem;
-      }
-    }
-  </style>
+  <link href="assets/css/user_dashboard.css" rel="stylesheet">
 </head>
 
 <body class="index-page">

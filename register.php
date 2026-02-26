@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/config/config.php';
 
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
@@ -11,15 +11,18 @@ $error = '';
 $success = '';
 
 // Handle registration
-if ($_POST) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    checkCSRFToken();
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     $role = $_POST['role'] ?? 'user'; // default to user
-    
-    // Validation
-    if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
+
+    // Check if locked out
+    if (RateLimiter::isLockedOut($email)) {
+        $error = 'Too many attempts from this IP. Please try again in 15 minutes.';
+    } elseif (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
         $error = 'All fields are required.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Please enter a valid email address.';
@@ -29,32 +32,45 @@ if ($_POST) {
         $error = 'Passwords do not match.';
     } elseif (!in_array($role, ['user', 'admin'])) {
         $error = 'Invalid role selected.';
-        } else {
-        require_once __DIR__ . '/config/database.php';
-        $db = new Database();
-        
+    } else {
         try {
-            $pdo = $db->getConnection();
+            $supabaseAuth = new SupabaseAuth();
             
-            // Check if email already exists
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->execute([$email]);
+            // 1. Sign up in Supabase
+            $result = $supabaseAuth->signUp($email, $password, ['full_name' => $name, 'role' => $role]);
             
-            if ($stmt->fetch()) {
-                $error = 'Email address already registered.';
+            if ($result['status'] === 200 || $result['status'] === 201) {
+                // 2. Insert into local users table for profile and role management
+                $pdo = SupabaseService::getConnection();
+                
+                // Check if email already exists in local DB (redundancy check)
+                $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+                $stmt->execute([$email]);
+                
+                if ($stmt->fetch()) {
+                    $error = 'Email address already registered in local database.';
+                    RateLimiter::recordAttempt($email, false);
+                    Logger::security("Attempt to register already local email", ['email' => $email]);
+                } else {
+                    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+                    $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, created_at) VALUES (?, ?, ?, ?, NOW())");
+                    $stmt->execute([$name, $email, $hashed_password, $role]);
+                    
+                    $success = 'Registration successful! You can now login.';
+                    RateLimiter::recordAttempt($email, true);
+                    Logger::info("User registration successful", ['email' => $email]);
+                    
+                    // Clear form data
+                    $_POST = array();
+                }
             } else {
-                // Insert new user
-                $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, created_at) VALUES (?, ?, ?, ?, NOW())");
-                $stmt->execute([$name, $email, $hashed_password, $role]);
-                
-                $success = 'Registration successful! You can now login.';
-                
-                // Clear form data
-                $_POST = array();
+                $error = $result['data']['msg'] ?? $result['data']['message'] ?? 'Registration failed in Supabase.';
+                RateLimiter::recordAttempt($email, false);
+                Logger::error("Supabase registration failed", ['email' => $email, 'response' => $result]);
             }
-        } catch(PDOException $e) {
-            $error = 'Database error occurred: ' . $e->getMessage();
+        } catch(Exception $e) {
+            $error = 'Registration error: ' . $e->getMessage();
+            Logger::error("Registration exception", ['error' => $e->getMessage()]);
         }
     }
 }
@@ -97,6 +113,7 @@ include 'includes/header.php';
             <?php endif; ?>
 
             <form class="row g-3 needs-validation" method="POST" novalidate>
+              <?php echo csrfTokenField(); ?>
               <div class="col-12">
                 <label for="name" class="form-label">Full Name</label>
                 <input

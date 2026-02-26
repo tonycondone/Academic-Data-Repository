@@ -14,10 +14,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-$db = new Database();
-
 try {
-    $pdo = $db->getConnection();
+    $pdo = SupabaseService::getConnection();
 } catch(PDOException $e) {
     $pdo = null;
 }
@@ -26,7 +24,8 @@ $message = '';
 $messageType = '';
 
 // Handle dataset upload
-if ($_POST && isset($_POST['upload_dataset'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_dataset'])) {
+    checkCSRFToken();
     $title = trim($_POST['title'] ?? '');
     $category = trim($_POST['category'] ?? '');
     $description = trim($_POST['description'] ?? '');
@@ -39,17 +38,36 @@ if ($_POST && isset($_POST['upload_dataset'])) {
         $messageType = 'danger';
     } else {
         $file = $_FILES['dataset_file'];
-        $allowedTypes = ['csv', 'xlsx', 'xls', 'json', 'txt'];
+        $allowedExtensions = ['csv', 'xlsx', 'xls', 'json', 'txt'];
         $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         
-        if (!in_array($fileExtension, $allowedTypes)) {
+        // Basic extension check
+        if (!in_array($fileExtension, $allowedExtensions)) {
             $message = 'Only CSV, Excel, JSON, and TXT files are allowed.';
             $messageType = 'danger';
         } elseif ($file['size'] > 10 * 1024 * 1024) { // 10MB limit
             $message = 'File size must be less than 10MB.';
             $messageType = 'danger';
         } else {
-            // Generate unique filename
+            // Validate MIME type for better security
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $file['tmp_name']);
+            finfo_close($finfo);
+            
+            $allowedMimeTypes = [
+                'text/plain', 
+                'text/csv', 
+                'application/json', 
+                'application/vnd.ms-excel', 
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/octet-stream' // Some CSVs/Excel might show up as octet-stream
+            ];
+            
+            if (!in_array($mimeType, $allowedMimeTypes) && strpos($mimeType, 'text/') !== 0) {
+                $message = 'Invalid file type. Please upload a valid dataset file.';
+                $messageType = 'danger';
+            } else {
+                // Generate unique filename
             $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file['name']);
             $keyPath = date('Y/m/') . $filename;
             $contentTypes = [
@@ -88,10 +106,12 @@ if ($_POST && isset($_POST['upload_dataset'])) {
                 } catch(PDOException $e) {
                     $message = 'Database error: ' . $e->getMessage();
                     $messageType = 'danger';
+                    Logger::error("Database error during dataset upload", ['error' => $e->getMessage(), 'title' => $title]);
                 }
             } else {
                 $message = 'Failed to upload file.';
                 $messageType = 'danger';
+                Logger::error("File upload failed to storage", ['title' => $title, 'filename' => $filename]);
             }
         }
     }
@@ -125,6 +145,8 @@ $body_class = 'admin-page';
 // Include header
 include 'includes/header.php';
 ?>
+
+<link rel="stylesheet" href="assets/css/admin.css">
 
 <!-- Page Title -->
 <section class="page-title section">
@@ -198,6 +220,7 @@ include 'includes/header.php';
           <?php endif; ?>
           
           <form method="POST" enctype="multipart/form-data">
+            <?php echo csrfTokenField(); ?>
             <div class="mb-3">
               <label for="title" class="form-label">Dataset Title *</label>
               <input type="text" class="form-control" id="title" name="title" 
@@ -284,182 +307,6 @@ include 'includes/header.php';
     </div>
   </div>
 </section>
-
-<style>
-/* Admin page specific styles */
-.page-title {
-  background: #f8f9fa;
-  padding: 40px 0;
-  margin-bottom: 40px;
-}
-
-.page-title h2 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.breadcrumb {
-  background: none;
-  padding: 0;
-  margin: 0;
-}
-
-.stats-card {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stats-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.stats-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: white;
-  margin: 0 auto 1rem;
-}
-
-.stats-icon.datasets {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-}
-
-.stats-icon.users {
-  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-}
-
-.stats-icon.downloads {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-}
-
-.stats-number {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin: 0;
-}
-
-.stats-label {
-  color: #6b7280;
-  font-size: 0.875rem;
-  margin: 0;
-}
-
-.upload-card {
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  padding: 2rem;
-}
-
-.file-drop-zone {
-  border: 2px dashed #cbd5e1;
-  border-radius: 10px;
-  padding: 3rem 2rem;
-  text-align: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  background: #f8f9fa;
-}
-
-.file-drop-zone:hover,
-.file-drop-zone.dragover {
-  border-color: #2563eb;
-  background: #eff6ff;
-}
-
-.file-info {
-  display: none;
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.recent-uploads {
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  padding: 2rem;
-}
-
-.upload-item {
-  padding: 1rem 0;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.upload-item:last-child {
-  border-bottom: none;
-}
-
-.upload-item h6 a {
-  color: #1f2937;
-  font-weight: 600;
-}
-
-.upload-item h6 a:hover {
-  color: #2563eb;
-}
-
-/* Mobile Responsive Styles */
-@media (max-width: 767.98px) {
-  .page-title {
-    padding: 25px 0;
-    margin-bottom: 25px;
-  }
-  
-  .page-title h2 {
-    font-size: 1.5rem;
-  }
-  
-  .stats-card {
-    padding: 1rem;
-    margin-bottom: 15px;
-  }
-  
-  .stats-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 1.25rem;
-  }
-  
-  .stats-number {
-    font-size: 1.5rem;
-  }
-  
-  .upload-card {
-    padding: 1.25rem;
-  }
-  
-  .file-drop-zone {
-    padding: 2rem 1rem;
-  }
-  
-  .file-drop-zone i {
-    font-size: 2.5rem !important;
-  }
-  
-  .recent-uploads {
-    padding: 1.25rem;
-    margin-top: 20px;
-  }
-  
-  .upload-item {
-    padding: 0.75rem 0;
-  }
-}
-</style>
 
 <script>
 // File upload handling

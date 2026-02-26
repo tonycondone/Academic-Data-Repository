@@ -3,10 +3,8 @@ require_once __DIR__ . '/config/config.php';
 
 echo "Migrating database for session handling...\n";
 
-$db = new Database();
-$pdo = $db->getConnection();
-
 try {
+    $pdo = SupabaseService::getConnection();
     // Create generic sessions table for PHP SessionHandler
     $sql = "
     CREATE TABLE IF NOT EXISTS sessions (

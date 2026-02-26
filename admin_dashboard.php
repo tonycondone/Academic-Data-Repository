@@ -4,14 +4,11 @@ session_start();
 // Check if user is logged in and is admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: login.php');
-    exit();
+    exit;
 }
 
-require_once __DIR__ . '/config/config.php';
-$db = new Database();
-
 try {
-    $pdo = $db->getConnection();
+    $pdo = SupabaseService::getConnection();
 } catch(PDOException $e) {
     $pdo = null;
 }
@@ -20,18 +17,30 @@ try {
 $stats = [];
 
 if ($pdo) {
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM datasets");
-    $stats['total_datasets'] = $stmt->fetch()['total'];
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM users");
-    $stats['total_users'] = $stmt->fetch()['total'];
-    $stmt = $pdo->query("SELECT SUM(download_count) as total FROM datasets");
-    $stats['total_downloads'] = $stmt->fetch()['total'] ?? 0;
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM reviews");
-    $stats['total_reviews'] = $stmt->fetch()['total'];
+    // Consolidate statistics into a single query to avoid N+1 issues
+    $stmt = $pdo->query("
+        SELECT 
+            (SELECT COUNT(*) FROM datasets) as total_datasets,
+            (SELECT COUNT(*) FROM users) as total_users,
+            (SELECT SUM(download_count) FROM datasets) as total_downloads,
+            (SELECT COUNT(*) FROM reviews) as total_reviews
+    ");
+    $db_stats = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $stats['total_datasets'] = $db_stats['total_datasets'];
+    $stats['total_users'] = $db_stats['total_users'];
+    $stats['total_downloads'] = $db_stats['total_downloads'] ?? 0;
+    $stats['total_reviews'] = $db_stats['total_reviews'];
+    
+    // Get recent datasets
     $stmt = $pdo->query("SELECT * FROM datasets ORDER BY upload_date DESC LIMIT 5");
     $recent_datasets = $stmt->fetchAll();
+    
+    // Get popular datasets
     $stmt = $pdo->query("SELECT * FROM datasets ORDER BY download_count DESC LIMIT 5");
     $popular_datasets = $stmt->fetchAll();
+    
+    // Get recent reviews
     $stmt = $pdo->query("
         SELECT r.*, d.title as dataset_title, u.name as user_name 
         FROM reviews r 
@@ -40,6 +49,8 @@ if ($pdo) {
         ORDER BY r.created_at DESC LIMIT 5
     ");
     $recent_reviews = $stmt->fetchAll();
+    
+    // Get category distribution
     $stmt = $pdo->query("SELECT category, COUNT(*) as count FROM datasets GROUP BY category ORDER BY count DESC");
     $category_stats = $stmt->fetchAll();
 } else {
@@ -80,152 +91,7 @@ if ($pdo) {
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
-
-  <style>
-    .dashboard-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      transition: transform 0.2s;
-    }
-    
-    .dashboard-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    .stat-card {
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-    
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #2563eb;
-      margin-bottom: 0.5rem;
-    }
-    
-    .stat-label {
-      color: #64748b;
-      font-weight: 500;
-    }
-    
-    .stat-icon {
-      font-size: 3rem;
-      color: #2563eb;
-      margin-bottom: 1rem;
-    }
-    
-    .table-responsive {
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    
-    .btn-action {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.875rem;
-      margin: 0 0.125rem;
-    }
-    
-    .rating-stars {
-      color: #fbbf24;
-    }
-    
-    .category-bar {
-      height: 20px;
-      background: linear-gradient(90deg, #2563eb, #3b82f6);
-      border-radius: 10px;
-      margin-bottom: 0.5rem;
-    }
-    
-    /* Mobile Responsive Styles */
-    @media (max-width: 767.98px) {
-      .dashboard-card {
-        padding: 1rem;
-        margin-bottom: 1rem;
-      }
-      
-      .stat-card {
-        padding: 1.5rem 0.75rem;
-      }
-      
-      .stat-number {
-        font-size: 2rem;
-      }
-      
-      .stat-icon {
-        font-size: 2.5rem;
-      }
-      
-      .table-responsive {
-        font-size: 0.85rem;
-      }
-      
-      .btn-action {
-        padding: 0.2rem 0.4rem;
-        font-size: 0.75rem;
-      }
-      
-      .category-bar {
-        height: 15px;
-      }
-    }
-    
-    @media (max-width: 575.98px) {
-      .dashboard-card {
-        padding: 0.75rem;
-        border-radius: 8px;
-      }
-      
-      .stat-card {
-        padding: 1rem 0.5rem;
-        margin-bottom: 0.75rem;
-      }
-      
-      .stat-number {
-        font-size: 1.75rem;
-      }
-      
-      .stat-icon {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-      }
-      
-      .stat-label {
-        font-size: 0.85rem;
-      }
-      
-      .table-responsive {
-        font-size: 0.75rem;
-      }
-      
-      .table th,
-      .table td {
-        padding: 0.5rem 0.25rem;
-      }
-      
-      .btn-action {
-        display: inline-block;
-        padding: 0.25rem 0.35rem;
-        margin: 0.1rem;
-      }
-      
-      .list-group-item {
-        padding: 0.75rem 0.5rem;
-      }
-      
-      h4 {
-        font-size: 1rem;
-      }
-      
-      h2 {
-        font-size: 1.25rem;
-      }
-    }
-  </style>
+  <link href="assets/css/admin_dashboard.css" rel="stylesheet">
 </head>
 
 <body class="index-page">

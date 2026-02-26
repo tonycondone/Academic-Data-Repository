@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once __DIR__ . '/config/config.php';
-$db = new Database();
 
 if (isset($_GET['action']) && $_GET['action'] === 'get_download_count') {
     // AJAX endpoint to get current download count
@@ -12,7 +11,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_download_count') {
     }
 
     try {
-        $pdo = $db->getConnection();
+        $pdo = SupabaseService::getConnection();
 
         $stmt = $pdo->prepare("SELECT download_count FROM datasets WHERE id = ?");
         $stmt->execute([$datasetId]);
@@ -40,7 +39,7 @@ if (!$datasetId) {
 }
 
 try {
-    $pdo = $db->getConnection();
+    $pdo = SupabaseService::getConnection();
     
     // Get dataset details
     $stmt = $pdo->prepare("SELECT * FROM datasets WHERE id = ? AND is_active = 1");

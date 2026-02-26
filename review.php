@@ -17,11 +17,10 @@ if (!$datasetId) {
     exit;
 }
 
-$db = new Database();
 $pdo = null;
 
 try {
-    $pdo = $db->getConnection();
+    $pdo = SupabaseService::getConnection();
 } catch(PDOException $e) {
     // Database unavailable
 }
@@ -61,7 +60,8 @@ if ($pdo && $dataset) {
 }
 
 // Handle review submission
-if ($_POST && isset($_POST['submit_review'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review'])) {
+    checkCSRFToken();
     if (!$pdo) {
         $message = "Service unavailable. Please try again later.";
         $messageType = "danger";
@@ -141,6 +141,8 @@ $body_class = 'review-page';
 include 'includes/header.php';
 ?>
 
+<link rel="stylesheet" href="assets/css/review.css">
+
 <!-- Page Title -->
 <section class="page-title section">
   <div class="container">
@@ -200,6 +202,7 @@ include 'includes/header.php';
           <?php endif; ?>
 
           <form method="POST">
+            <?php echo csrfTokenField(); ?>
             <div class="mb-4">
               <label class="form-label">Rating *</label>
               <div class="star-rating">
@@ -311,224 +314,6 @@ include 'includes/header.php';
     <?php endif; ?>
   </div>
 </section>
-
-<style>
-/* Review page specific styles */
-.page-title {
-  background: #f8f9fa;
-  padding: 40px 0;
-  margin-bottom: 40px;
-}
-
-.page-title h2 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.breadcrumb {
-  background: none;
-  padding: 0;
-  margin: 0;
-}
-
-.dataset-info {
-  background: white;
-  border-radius: 10px;
-  padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.dataset-info h3 {
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.dataset-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  color: #666;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  font-size: 0.9rem;
-}
-
-.dataset-description {
-  color: #666;
-  line-height: 1.6;
-}
-
-.review-form {
-  background: white;
-  border-radius: 10px;
-  padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.review-form h4 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.star-rating {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-end;
-  margin-bottom: 0.5rem;
-}
-
-.star-rating input {
-  display: none;
-}
-
-.star-rating label {
-  cursor: pointer;
-  font-size: 1.5rem;
-  color: #ddd;
-  transition: color 0.2s;
-  margin-right: 0.25rem;
-}
-
-.star-rating label:hover,
-.star-rating label:hover ~ label,
-.star-rating input:checked ~ label {
-  color: #ffc107;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.stats-sidebar {
-  background: white;
-  border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.stats-sidebar h5 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.stat-item {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.stat-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2563eb;
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.rating-stars {
-  margin-top: 0.5rem;
-}
-
-.quick-actions {
-  background: white;
-  border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.quick-actions h5 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.all-reviews {
-  background: white;
-  border-radius: 10px;
-  padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.all-reviews h4 {
-  color: #333;
-  margin-bottom: 2rem;
-}
-
-.review-item {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid #eee;
-}
-
-.review-item:last-child {
-  border-bottom: none;
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-}
-
-.reviewer-info strong {
-  color: #333;
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.review-rating {
-  font-size: 0.9rem;
-}
-
-.review-date {
-  color: #666;
-  font-size: 0.85rem;
-  text-align: right;
-}
-
-.review-comment {
-  color: #555;
-  line-height: 1.6;
-}
-
-@media (max-width: 768px) {
-  .dataset-meta {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .form-actions {
-    flex-direction: column;
-  }
-  
-  .review-header {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .review-date {
-    text-align: left;
-  }
-}
-</style>
 
 <?php
 // Include footer

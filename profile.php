@@ -9,11 +9,10 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$db = new Database();
 $pdo = null;
 
 try {
-    $pdo = $db->getConnection();
+    $pdo = SupabaseService::getConnection();
 } catch(PDOException $e) {
     // Database unavailable
 }
@@ -44,7 +43,8 @@ if (!$user) {
 }
 
 // Handle profile update
-if ($_POST && isset($_POST['update_profile'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
+    checkCSRFToken();
     if (!$pdo) {
          $message = "Service unavailable. Please try again later.";
          $messageType = "danger";
@@ -144,6 +144,8 @@ $body_class = 'profile-page';
 include 'includes/header.php';
 ?>
 
+<link rel="stylesheet" href="assets/css/profile.css">
+
 <!-- Page Title -->
 <section class="page-title section">
   <div class="container">
@@ -179,6 +181,7 @@ include 'includes/header.php';
           <?php endif; ?>
 
           <form method="POST">
+            <?php echo csrfTokenField(); ?>
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="name" class="form-label">Full Name *</label>
@@ -314,174 +317,6 @@ include 'includes/header.php';
     <?php endif; ?>
   </div>
 </section>
-
-<style>
-/* Profile page specific styles */
-.page-title {
-  background: #f8f9fa;
-  padding: 40px 0;
-  margin-bottom: 40px;
-}
-
-.page-title h2 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.breadcrumb {
-  background: none;
-  padding: 0;
-  margin: 0;
-}
-
-.profile-form {
-  background: white;
-  border-radius: 15px;
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.profile-form h4 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.profile-form h5 {
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.user-stats {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.user-stats h5 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.stat-item {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.stat-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2563eb;
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.account-actions {
-  background: white;
-  border-radius: 15px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.account-actions h5 {
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.recent-reviews {
-  background: white;
-  border-radius: 15px;
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-}
-
-.recent-reviews h4 {
-  color: #333;
-  margin-bottom: 2rem;
-}
-
-.review-item {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid #eee;
-}
-
-.review-item:last-child {
-  border-bottom: none;
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-}
-
-.dataset-info strong {
-  color: #333;
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.review-rating {
-  font-size: 0.9rem;
-}
-
-.review-date {
-  color: #666;
-  font-size: 0.85rem;
-  text-align: right;
-}
-
-.review-comment {
-  color: #555;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-.review-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .form-actions {
-    flex-direction: column;
-  }
-  
-  .review-header {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .review-date {
-    text-align: left;
-  }
-  
-  .review-actions {
-    flex-direction: column;
-  }
-}
-</style>
 
 <script>
 // Password confirmation validation

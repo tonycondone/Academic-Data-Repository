@@ -186,8 +186,7 @@ class ExcelConverter {
             
             if ($result['success']) {
                 // Create CSV file record in database
-                $database = new Database();
-                $db = $database->getConnection();
+                $db = SupabaseService::getConnection();
                 
                 $query = "INSERT INTO files (project_id, filename, original_filename, file_path, file_type, file_size, mime_type, uploaded_by, description, tags) 
                           VALUES (:project_id, :filename, :original_filename, :file_path, :file_type, :file_size, :mime_type, :uploaded_by, :description, :tags)";

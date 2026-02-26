@@ -5,10 +5,9 @@ require_once 'includes/session.php';
 startSecureSession();
 
 require_once __DIR__ . '/config/config.php';
-$db = new Database();
 
 try {
-    $pdo = $db->getConnection();
+    $pdo = SupabaseService::getConnection();
     
     // Clean up session from database
     if (isset($_SESSION['user_id'])) {
@@ -31,6 +30,8 @@ $body_class = 'logout-page';
 // Include header
 include 'includes/header.php';
 ?>
+
+<link rel="stylesheet" href="assets/css/logout.css">
 
 <!-- Logout Section -->
 <section class="logout section">
@@ -64,56 +65,6 @@ include 'includes/header.php';
     </div>
   </div>
 </section>
-
-<style>
-/* Logout page specific styles */
-.logout {
-  padding: 100px 0;
-  min-height: 60vh;
-  display: flex;
-  align-items: center;
-}
-
-.logout-card {
-  background: white;
-  border-radius: 15px;
-  padding: 3rem 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.logout-icon {
-  font-size: 4rem;
-  margin-bottom: 1.5rem;
-}
-
-.logout-card h3 {
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.logout-actions {
-  margin: 2rem 0;
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.security-note {
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-}
-
-@media (max-width: 576px) {
-  .logout-actions {
-    flex-direction: column;
-  }
-  
-  .logout-card {
-    padding: 2rem 1rem;
-  }
-}
-</style>
 
 <script>
 // Auto-redirect after 10 seconds
