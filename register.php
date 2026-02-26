@@ -17,12 +17,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
+<<<<<<< HEAD
     $role = $_POST['role'] ?? 'user'; // default to user
 
     // Check if locked out
     if (RateLimiter::isLockedOut($email)) {
         $error = 'Too many attempts from this IP. Please try again in 15 minutes.';
     } elseif (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
+=======
+    $role = 'user'; // Hardcoded to user
+    
+    // Validation
+    if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
+>>>>>>> 01c93f0732de6436998d738acc5e925e27a58fb5
         $error = 'All fields are required.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Please enter a valid email address.';
@@ -30,9 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Password must be at least 6 characters long.';
     } elseif ($password !== $confirm_password) {
         $error = 'Passwords do not match.';
+<<<<<<< HEAD
     } elseif (!in_array($role, ['user', 'admin'])) {
         $error = 'Invalid role selected.';
     } else {
+=======
+    } else {
+        require_once __DIR__ . '/config/database.php';
+        $db = new Database();
+        
+>>>>>>> 01c93f0732de6436998d738acc5e925e27a58fb5
         try {
             $supabaseAuth = new SupabaseAuth();
             
@@ -150,15 +164,6 @@ include 'includes/header.php';
                 <label for="confirm_password" class="form-label">Confirm Password</label>
                 <input type="password" name="confirm_password" class="form-control" id="confirm_password" required />
                 <div class="invalid-feedback">Please confirm your password!</div>
-              </div>
-
-              <div class="col-12">
-                <label for="role" class="form-label">Register as</label>
-                <select name="role" id="role" class="form-select" required>
-                  <option value="user" <?php echo (($_POST['role'] ?? '') === 'user') ? 'selected' : ''; ?>>User</option>
-                  <option value="admin" <?php echo (($_POST['role'] ?? '') === 'admin') ? 'selected' : ''; ?>>Admin</option>
-                </select>
-                <div class="invalid-feedback">Please select a role!</div>
               </div>
 
               <div class="col-12">

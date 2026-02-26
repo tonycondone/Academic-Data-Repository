@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     checkCSRFToken();
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
-    $selected_role = $_POST['role'] ?? 'user'; // default to user
     
     // Check if locked out
     if (RateLimiter::isLockedOut($email)) {
@@ -28,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $supabaseAuth = new SupabaseAuth();
             $result = $supabaseAuth->signIn($email, $password);
             
+<<<<<<< HEAD
             if ($result['status'] === 200) {
                 $authData = $result['data'];
                 $accessToken = $authData['access_token'];
@@ -68,7 +68,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     $error = 'User account not found in local database.';
                     Logger::security("User account found in Supabase but not locally", ['email' => $email]);
+=======
+            if ($user && password_verify($password, $user['password'])) {
+                // Set session variables
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['name'] = $user['name'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['role'] = $user['role'];
+                
+                // Regenerate session ID for security
+                session_regenerate_id(true);
+                
+                // Redirect based on role
+                if ($user['role'] === 'admin') {
+                    header('Location: admin.php');
+                } else {
+                    header('Location: dashboard.php');
+>>>>>>> 01c93f0732de6436998d738acc5e925e27a58fb5
                 }
+                exit;
             } else {
                 $error = 'Invalid email or password.';
                 RateLimiter::recordAttempt($email, false);
@@ -134,15 +152,6 @@ include 'includes/header.php';
                 <label for="password" class="form-label">Password</label>
                 <input type="password" name="password" class="form-control" id="password" required />
                 <div class="invalid-feedback">Please enter your password!</div>
-              </div>
-
-              <div class="col-12">
-                <label for="role" class="form-label">Login as</label>
-                <select name="role" id="role" class="form-select" required>
-                  <option value="user" <?php echo (($_POST['role'] ?? '') === 'user') ? 'selected' : ''; ?>>User</option>
-                  <option value="admin" <?php echo (($_POST['role'] ?? '') === 'admin') ? 'selected' : ''; ?>>Admin</option>
-                </select>
-                <div class="invalid-feedback">Please select a login role!</div>
               </div>
 
               <div class="col-12">
